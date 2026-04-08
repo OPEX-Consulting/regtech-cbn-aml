@@ -433,7 +433,7 @@ Here is my assessment data:
               />
             ))}
           </div>
-          <NavButtons onBack={() => goTo(4)} onNext={() => goTo(6)} />
+          <NavButtons onBack={() => goTo(4)} onNext={() => tryNext(6)} />
         </div>
       )}
 
