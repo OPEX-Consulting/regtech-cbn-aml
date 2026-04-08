@@ -411,7 +411,7 @@ Here is my assessment data:
           <p className="text-xs text-muted-foreground -mt-3 mb-5">
             Note: Automated alert closure requires CBN notification and strict governance controls under §5.5.
           </p>
-          <NavButtons onBack={() => goTo(3)} onNext={() => goTo(5)} />
+          <NavButtons onBack={() => goTo(3)} onNext={() => tryNext(5)} />
         </div>
       )}
 
