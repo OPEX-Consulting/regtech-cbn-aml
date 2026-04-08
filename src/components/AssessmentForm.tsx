@@ -296,8 +296,10 @@ const AssessmentForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const generateReport = async () => {
+    console.log("generateReport called, data:", JSON.stringify(data));
     setSubmitting(true);
     try {
+      console.log("Attempting Supabase insert...");
       const { error } = await supabase.from("assessments").insert({
         inst_name: data.instName,
         contact_name: data.contactName,
