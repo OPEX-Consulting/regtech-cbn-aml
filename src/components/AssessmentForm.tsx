@@ -467,7 +467,7 @@ Here is my assessment data:
             onChange={(v) => update("extraContext", v)}
             placeholder="Any additional context about your current AML programme, system limitations, or compliance concerns…"
           />
-          <NavButtons onBack={() => goTo(5)} onNext={() => goTo(7)} nextLabel="Review & Generate →" />
+          <NavButtons onBack={() => goTo(5)} onNext={() => tryNext(7)} nextLabel="Review & Generate →" />
         </div>
       )}
 
