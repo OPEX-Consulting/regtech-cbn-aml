@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -187,11 +187,30 @@ const auditOptions = [
   { id: "aud-qtr", value: "Quarterly", label: "Quarterly" },
 ];
 
+const STORAGE_KEY = "aml_assessment_draft";
+
+const loadDraft = (): { step: number; data: FormData } => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return { step: parsed.step || 1, data: { ...initialData, ...parsed.data } };
+    }
+  } catch {}
+  return { step: 1, data: initialData };
+};
+
 const AssessmentForm: React.FC = () => {
-  const [step, setStep] = useState(1);
-  const [data, setData] = useState<FormData>(initialData);
+  const draft = loadDraft();
+  const [step, setStep] = useState(draft.step);
+  const [data, setData] = useState<FormData>(draft.data);
   const [errors, setErrors] = useState<string[]>([]);
   const [showErrors, setShowErrors] = useState(false);
+
+  // Persist to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, data }));
+  }, [step, data]);
 
   const validateStep = useCallback((s: number, d: FormData): string[] => {
     const errs: string[] = [];
@@ -304,6 +323,7 @@ const AssessmentForm: React.FC = () => {
 
       if (error) throw error;
       toast.success("Assessment submitted successfully!");
+      localStorage.removeItem(STORAGE_KEY);
     } catch (err: any) {
       console.error("Failed to save assessment:", err);
       toast.error("Failed to save assessment. Please try again.");
