@@ -330,6 +330,18 @@ Here is my assessment data:
         Step {step} of {TOTAL_STEPS}
       </div>
 
+      {/* Validation errors */}
+      {showErrors && errors.length > 0 && (
+        <div className="bg-destructive-light border border-destructive/30 rounded-md px-4 py-3 mb-6">
+          <p className="text-sm font-medium text-destructive mb-1">Please fix the following:</p>
+          <ul className="list-disc list-inside text-[13px] text-destructive space-y-0.5">
+            {errors.map((err, i) => (
+              <li key={i}>{err}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Step 1 */}
       {step === 1 && (
         <div>
