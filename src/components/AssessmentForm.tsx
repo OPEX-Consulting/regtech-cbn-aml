@@ -542,7 +542,7 @@ Here is my assessment data:
             <ReviewRow label="Controls in place" value={Object.keys(data.governance).length ? `${govYes} of ${govTotal} controls confirmed` : "Not yet completed"} />
             <ReviewRow label="Internal audit frequency" value={data.audit || "—"} />
           </ReviewSection>
-          <NavButtons onBack={() => goTo(6)} onNext={generateReport} nextLabel="Generate Gap Report ↗" />
+          <NavButtons onBack={() => goTo(6)} onNext={generateReport} nextLabel={submitting ? "Submitting…" : "Generate Gap Report ↗"} />
         </div>
       )}
     </div>
