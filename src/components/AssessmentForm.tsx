@@ -323,6 +323,7 @@ const AssessmentForm: React.FC = () => {
 
       if (error) throw error;
       toast.success("Assessment submitted successfully!");
+      localStorage.removeItem(STORAGE_KEY);
     } catch (err: any) {
       console.error("Failed to save assessment:", err);
       toast.error("Failed to save assessment. Please try again.");
