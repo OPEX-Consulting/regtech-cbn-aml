@@ -188,11 +188,64 @@ const auditOptions = [
 const AssessmentForm: React.FC = () => {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<FormData>(initialData);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const validateStep = useCallback((s: number, d: FormData): string[] => {
+    const errs: string[] = [];
+    switch (s) {
+      case 1:
+        if (!d.instName.trim()) errs.push("Institution name is required");
+        if (!d.contactName.trim()) errs.push("Your full name is required");
+        if (!d.contactEmail.trim()) errs.push("Work email is required");
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contactEmail)) errs.push("Please enter a valid email address");
+        if (!d.contactRole.trim()) errs.push("Your role is required");
+        if (!d.instType) errs.push("Please select an institution type");
+        break;
+      case 2:
+        if (!d.txVol) errs.push("Please select daily transaction volume");
+        if (!d.custBase) errs.push("Please select active customer base");
+        if (!d.cbnRisk) errs.push("Please select CBN risk classification");
+        if (!d.geo) errs.push("Please select geographic footprint");
+        if (!d.group) errs.push("Please select group structure");
+        break;
+      case 3:
+        if (d.products.length === 0) errs.push("Please select at least one product or service");
+        if (d.channels.length === 0) errs.push("Please select at least one delivery channel");
+        break;
+      case 4:
+        if (!d.amlStatus) errs.push("Please select AML system status");
+        if (!d.aiml) errs.push("Please select AI/ML usage status");
+        if (!d.autoClose) errs.push("Please select automated alert closure status");
+        break;
+      case 6:
+        if (Object.keys(d.governance).length < 10) errs.push("Please answer all governance questions");
+        if (!d.audit) errs.push("Please select internal audit frequency");
+        break;
+    }
+    return errs;
+  }, []);
 
   const goTo = useCallback((n: number) => {
     setStep(n);
+    setErrors([]);
+    setShowErrors(false);
     window.scrollTo(0, 0);
   }, []);
+
+  const tryNext = useCallback((nextStep: number) => {
+    const errs = validateStep(step, data);
+    if (errs.length > 0) {
+      setErrors(errs);
+      setShowErrors(true);
+      window.scrollTo(0, 0);
+      return;
+    }
+    setErrors([]);
+    setShowErrors(false);
+    setStep(nextStep);
+    window.scrollTo(0, 0);
+  }, [step, data, validateStep]);
 
   const update = <K extends keyof FormData>(key: K, value: FormData[K]) => {
     setData((prev) => ({ ...prev, [key]: value }));
