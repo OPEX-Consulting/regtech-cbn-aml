@@ -1,4 +1,6 @@
 import React, { useState, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   TextField,
   RadioGroupField,
@@ -272,7 +274,44 @@ const AssessmentForm: React.FC = () => {
   const govYes = Object.values(data.governance).filter((v) => v === "Yes").length;
   const govTotal = Math.max(Object.keys(data.governance).length, 10);
 
-  const generateReport = () => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const generateReport = async () => {
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from("assessments").insert({
+        inst_name: data.instName,
+        contact_name: data.contactName,
+        contact_email: data.contactEmail,
+        contact_role: data.contactRole,
+        inst_type: data.instType,
+        tx_vol: data.txVol,
+        cust_base: data.custBase,
+        cbn_risk: data.cbnRisk,
+        geo: data.geo,
+        group_structure: data.group,
+        products: data.products,
+        channels: data.channels,
+        aml_status: data.amlStatus,
+        aml_functions: data.amlFunctions,
+        aiml: data.aiml,
+        auto_close: data.autoClose,
+        risk_factors: data.riskFactors,
+        governance: data.governance,
+        audit: data.audit,
+        extra_context: data.extraContext,
+      });
+
+      if (error) throw error;
+      toast.success("Assessment submitted successfully!");
+    } catch (err: any) {
+      console.error("Failed to save assessment:", err);
+      toast.error("Failed to save assessment. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+
+    // Generate report prompt
     const allFuncs = [
       "CDD/KYC/KYB",
       "Sanctions & PEP screening",
@@ -306,6 +345,7 @@ Here is my assessment data:
 - Geographic footprint: ${data.geo}`;
 
     console.log("Generated report prompt:", prompt);
+    setSubmitting(false);
     alert("Report generation prompt has been logged to the console. In production, this would be sent to an AI service.");
   };
 
@@ -502,7 +542,7 @@ Here is my assessment data:
             <ReviewRow label="Controls in place" value={Object.keys(data.governance).length ? `${govYes} of ${govTotal} controls confirmed` : "Not yet completed"} />
             <ReviewRow label="Internal audit frequency" value={data.audit || "—"} />
           </ReviewSection>
-          <NavButtons onBack={() => goTo(6)} onNext={generateReport} nextLabel="Generate Gap Report ↗" />
+          <NavButtons onBack={() => goTo(6)} onNext={generateReport} nextLabel={submitting ? "Submitting…" : "Generate Gap Report ↗"} />
         </div>
       )}
     </div>
