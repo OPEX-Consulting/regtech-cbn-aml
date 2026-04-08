@@ -359,7 +359,7 @@ Here is my assessment data:
             <TextField label="Your role" value={data.contactRole} onChange={(v) => update("contactRole", v)} placeholder="e.g. Chief Compliance Officer" />
           </div>
           <RadioGroupField label="Institution type" name="inst-type" options={institutionTypes} value={data.instType} onChange={(v) => update("instType", v)} />
-          <NavButtons onNext={() => goTo(2)} />
+          <NavButtons onNext={() => tryNext(2)} />
         </div>
       )}
 
