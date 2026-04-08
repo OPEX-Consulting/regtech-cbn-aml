@@ -9,6 +9,8 @@ import {
   TextAreaField,
 } from "@/components/FormFields";
 import { RiskFlagItem, GovItem } from "@/components/GovAndRiskFields";
+import { ReportLoadingScreen } from "@/components/ReportLoadingScreen";
+import { generatePdf, type AmlReportJson } from "@/lib/reportGenerator";
 
 interface FormData {
   instName: string;
@@ -294,80 +296,106 @@ const AssessmentForm: React.FC = () => {
   const govTotal = Math.max(Object.keys(data.governance).length, 10);
 
   const [submitting, setSubmitting] = useState(false);
+  const [reportProgress, setReportProgress] = useState<number | null>(null);
 
   const generateReport = async () => {
     setSubmitting(true);
-    try {
-      const { error } = await supabase.from("assessments").insert({
-        inst_name: data.instName,
-        contact_name: data.contactName,
-        contact_email: data.contactEmail,
-        contact_role: data.contactRole,
-        inst_type: data.instType,
-        tx_vol: data.txVol,
-        cust_base: data.custBase,
-        cbn_risk: data.cbnRisk,
-        geo: data.geo,
-        group_structure: data.group,
-        products: data.products,
-        channels: data.channels,
-        aml_status: data.amlStatus,
-        aml_functions: data.amlFunctions,
-        aiml: data.aiml,
-        auto_close: data.autoClose,
-        risk_factors: data.riskFactors,
-        governance: data.governance,
-        audit: data.audit,
-        extra_context: data.extraContext,
-      });
+    setReportProgress(0);
 
+    // ── Step 1: Build the exact input JSON the AI prompt expects ──────────
+    const inputJson = {
+      inst_name: data.instName,
+      contact_name: data.contactName,
+      contact_email: data.contactEmail,
+      contact_role: data.contactRole,
+      inst_type: data.instType,
+      tx_vol: data.txVol,
+      cust_base: data.custBase,
+      cbn_risk: data.cbnRisk,
+      geo: data.geo,
+      group_structure: data.group, // form stores as `group`, schema expects `group_structure`
+      products: data.products,
+      channels: data.channels,
+      aml_status: data.amlStatus,
+      aml_functions: data.amlFunctions,
+      aiml: data.aiml,
+      auto_close: data.autoClose,
+      risk_factors: data.riskFactors,
+      governance: data.governance,
+      audit: data.audit,
+      extra_context: data.extraContext,
+    };
+
+    // ── Step 2: Save assessment to Supabase ───────────────────────────────
+    try {
+      const { error } = await supabase.from("assessments").insert(inputJson);
       if (error) throw error;
-      toast.success("Assessment submitted successfully!");
       localStorage.removeItem(STORAGE_KEY);
     } catch (err: any) {
       console.error("Failed to save assessment:", err);
       toast.error("Failed to save assessment. Please try again.");
       setSubmitting(false);
+      setReportProgress(null);
       return;
     }
 
-    // Generate report prompt
-    const allFuncs = [
-      "CDD/KYC/KYB",
-      "Sanctions & PEP screening",
-      "Customer risk assessment",
-      "Transaction monitoring",
-      "Fraud monitoring",
-      "Case management",
-      "Regulatory reporting (STR/CTR)",
-      "Audit trail",
-    ];
-    const missing = allFuncs.filter(
-      (f) =>
-        !data.amlFunctions.includes(f) &&
-        !data.amlFunctions.some((x) => x.includes(f.split("/")[0]))
-    );
-    const govPct = Math.round((govYes / govTotal) * 100);
+    setReportProgress(5);
 
-    const prompt = `Based on the CBN AML Baseline Standards gap assessment I just completed, please generate a detailed, branded gap assessment report for ${data.instName || "Your Institution"} (${data.instType}).
+    // ── Step 3: Call Supabase Edge Function → Gemini API ─────────────────
+    let reportJson: AmlReportJson;
+    try {
+      const { data: fnData, error: fnError } = await supabase.functions.invoke(
+        "generate-aml-report",
+        { body: { inputJson } }
+      );
 
-Here is my assessment data:
-- Institution type: ${data.instType}
-- AML system status: ${data.amlStatus}
-- AML functions currently covered: ${data.amlFunctions.length ? data.amlFunctions.join(", ") : "None"}
-- Missing functions: ${missing.join(", ") || "None"}
-- AI/ML usage: ${data.aiml}
-- CBN risk classification: ${data.cbnRisk}
-- Risk factors: ${data.riskFactors.length ? data.riskFactors.join(", ") : "None selected"}
-- Governance controls in place: ${govYes} of ${govTotal} (${govPct}%)
-- Internal audit frequency: ${data.audit}
-- Transaction volume: ${data.txVol}
-- Geographic footprint: ${data.geo}`;
+      if (fnError) throw fnError;
+      if (fnData?.error) throw new Error(fnData.error);
+      if (!fnData?.report) throw new Error("Edge function returned no report data.");
 
-    console.log("Generated report prompt:", prompt);
-    setSubmitting(false);
-    alert("Report generation prompt has been logged to the console. In production, this would be sent to an AI service.");
+      reportJson = fnData.report as AmlReportJson;
+
+      // Inject passthrough fields for the HTML template (cbn_risk, tx_vol, geo)
+      reportJson._input = {
+        cbn_risk: data.cbnRisk,
+        tx_vol: data.txVol,
+        geo: data.geo,
+      };
+
+      setReportProgress(30);
+    } catch (err: any) {
+      console.error("Report generation failed:", err);
+      toast.error(`Report generation failed: ${err.message ?? "Unknown error"}`);
+      setSubmitting(false);
+      setReportProgress(null);
+      return;
+    }
+
+    // ── Step 4: Generate PDF with progress tracking ───────────────────────
+    try {
+      await generatePdf(reportJson, (pct) => {
+        // PDF progress runs 30→100; offset by 30 since API took us to 30
+        setReportProgress(30 + Math.round(pct * 0.7));
+      });
+      toast.success(`Report downloaded: CBN_AML_Gap_Assessment_${data.instName.replace(/\s+/g, "_")}_April2026.pdf`);
+    } catch (err: any) {
+      console.error("PDF generation failed:", err);
+      toast.error("PDF generation failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+      setReportProgress(null);
+    }
   };
+
+  // Show the full-screen loading overlay while generating
+  if (reportProgress !== null) {
+    return (
+      <ReportLoadingScreen
+        progress={reportProgress}
+        institutionName={data.instName}
+      />
+    );
+  }
 
   return (
     <div className="max-w-[720px] mx-auto px-4 py-6 pb-12">
