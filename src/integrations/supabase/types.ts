@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assessments: {
+        Row: {
+          aiml: string | null
+          aml_functions: string[] | null
+          aml_status: string | null
+          audit: string | null
+          auto_close: string | null
+          cbn_risk: string | null
+          channels: string[] | null
+          contact_email: string
+          contact_name: string
+          contact_role: string
+          created_at: string
+          cust_base: string | null
+          extra_context: string | null
+          geo: string | null
+          governance: Json | null
+          group_structure: string | null
+          id: string
+          inst_name: string
+          inst_type: string
+          products: string[] | null
+          risk_factors: string[] | null
+          tx_vol: string | null
+        }
+        Insert: {
+          aiml?: string | null
+          aml_functions?: string[] | null
+          aml_status?: string | null
+          audit?: string | null
+          auto_close?: string | null
+          cbn_risk?: string | null
+          channels?: string[] | null
+          contact_email: string
+          contact_name: string
+          contact_role: string
+          created_at?: string
+          cust_base?: string | null
+          extra_context?: string | null
+          geo?: string | null
+          governance?: Json | null
+          group_structure?: string | null
+          id?: string
+          inst_name: string
+          inst_type: string
+          products?: string[] | null
+          risk_factors?: string[] | null
+          tx_vol?: string | null
+        }
+        Update: {
+          aiml?: string | null
+          aml_functions?: string[] | null
+          aml_status?: string | null
+          audit?: string | null
+          auto_close?: string | null
+          cbn_risk?: string | null
+          channels?: string[] | null
+          contact_email?: string
+          contact_name?: string
+          contact_role?: string
+          created_at?: string
+          cust_base?: string | null
+          extra_context?: string | null
+          geo?: string | null
+          governance?: Json | null
+          group_structure?: string | null
+          id?: string
+          inst_name?: string
+          inst_type?: string
+          products?: string[] | null
+          risk_factors?: string[] | null
+          tx_vol?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
