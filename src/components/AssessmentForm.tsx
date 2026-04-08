@@ -378,7 +378,7 @@ Here is my assessment data:
             <SelectField label="Geographic footprint" value={data.geo} onChange={(v) => update("geo", v)} options={["Single state", "Multiple states", "Cross-border"]} />
             <SelectField label="Group structure" value={data.group} onChange={(v) => update("group", v)} options={["Standalone", "Subsidiary", "Group holding", "Shared services arrangement"]} />
           </div>
-          <NavButtons onBack={() => goTo(1)} onNext={() => goTo(3)} />
+          <NavButtons onBack={() => goTo(1)} onNext={() => tryNext(3)} />
         </div>
       )}
 
