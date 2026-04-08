@@ -188,11 +188,64 @@ const auditOptions = [
 const AssessmentForm: React.FC = () => {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<FormData>(initialData);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const validateStep = useCallback((s: number, d: FormData): string[] => {
+    const errs: string[] = [];
+    switch (s) {
+      case 1:
+        if (!d.instName.trim()) errs.push("Institution name is required");
+        if (!d.contactName.trim()) errs.push("Your full name is required");
+        if (!d.contactEmail.trim()) errs.push("Work email is required");
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contactEmail)) errs.push("Please enter a valid email address");
+        if (!d.contactRole.trim()) errs.push("Your role is required");
+        if (!d.instType) errs.push("Please select an institution type");
+        break;
+      case 2:
+        if (!d.txVol) errs.push("Please select daily transaction volume");
+        if (!d.custBase) errs.push("Please select active customer base");
+        if (!d.cbnRisk) errs.push("Please select CBN risk classification");
+        if (!d.geo) errs.push("Please select geographic footprint");
+        if (!d.group) errs.push("Please select group structure");
+        break;
+      case 3:
+        if (d.products.length === 0) errs.push("Please select at least one product or service");
+        if (d.channels.length === 0) errs.push("Please select at least one delivery channel");
+        break;
+      case 4:
+        if (!d.amlStatus) errs.push("Please select AML system status");
+        if (!d.aiml) errs.push("Please select AI/ML usage status");
+        if (!d.autoClose) errs.push("Please select automated alert closure status");
+        break;
+      case 6:
+        if (Object.keys(d.governance).length < 10) errs.push("Please answer all governance questions");
+        if (!d.audit) errs.push("Please select internal audit frequency");
+        break;
+    }
+    return errs;
+  }, []);
 
   const goTo = useCallback((n: number) => {
     setStep(n);
+    setErrors([]);
+    setShowErrors(false);
     window.scrollTo(0, 0);
   }, []);
+
+  const tryNext = useCallback((nextStep: number) => {
+    const errs = validateStep(step, data);
+    if (errs.length > 0) {
+      setErrors(errs);
+      setShowErrors(true);
+      window.scrollTo(0, 0);
+      return;
+    }
+    setErrors([]);
+    setShowErrors(false);
+    setStep(nextStep);
+    window.scrollTo(0, 0);
+  }, [step, data, validateStep]);
 
   const update = <K extends keyof FormData>(key: K, value: FormData[K]) => {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -277,6 +330,18 @@ Here is my assessment data:
         Step {step} of {TOTAL_STEPS}
       </div>
 
+      {/* Validation errors */}
+      {showErrors && errors.length > 0 && (
+        <div className="bg-destructive-light border border-destructive/30 rounded-md px-4 py-3 mb-6">
+          <p className="text-sm font-medium text-destructive mb-1">Please fix the following:</p>
+          <ul className="list-disc list-inside text-[13px] text-destructive space-y-0.5">
+            {errors.map((err, i) => (
+              <li key={i}>{err}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Step 1 */}
       {step === 1 && (
         <div>
@@ -294,7 +359,7 @@ Here is my assessment data:
             <TextField label="Your role" value={data.contactRole} onChange={(v) => update("contactRole", v)} placeholder="e.g. Chief Compliance Officer" />
           </div>
           <RadioGroupField label="Institution type" name="inst-type" options={institutionTypes} value={data.instType} onChange={(v) => update("instType", v)} />
-          <NavButtons onNext={() => goTo(2)} />
+          <NavButtons onNext={() => tryNext(2)} />
         </div>
       )}
 
@@ -313,7 +378,7 @@ Here is my assessment data:
             <SelectField label="Geographic footprint" value={data.geo} onChange={(v) => update("geo", v)} options={["Single state", "Multiple states", "Cross-border"]} />
             <SelectField label="Group structure" value={data.group} onChange={(v) => update("group", v)} options={["Standalone", "Subsidiary", "Group holding", "Shared services arrangement"]} />
           </div>
-          <NavButtons onBack={() => goTo(1)} onNext={() => goTo(3)} />
+          <NavButtons onBack={() => goTo(1)} onNext={() => tryNext(3)} />
         </div>
       )}
 
@@ -327,7 +392,7 @@ Here is my assessment data:
           />
           <CheckboxGroupField label="Products & services offered" options={productOptions} values={data.products} onChange={(v) => update("products", v)} />
           <CheckboxGroupField label="Delivery channels" options={channelOptions} values={data.channels} onChange={(v) => update("channels", v)} />
-          <NavButtons onBack={() => goTo(2)} onNext={() => goTo(4)} />
+          <NavButtons onBack={() => goTo(2)} onNext={() => tryNext(4)} />
         </div>
       )}
 
@@ -346,7 +411,7 @@ Here is my assessment data:
           <p className="text-xs text-muted-foreground -mt-3 mb-5">
             Note: Automated alert closure requires CBN notification and strict governance controls under §5.5.
           </p>
-          <NavButtons onBack={() => goTo(3)} onNext={() => goTo(5)} />
+          <NavButtons onBack={() => goTo(3)} onNext={() => tryNext(5)} />
         </div>
       )}
 
@@ -368,7 +433,7 @@ Here is my assessment data:
               />
             ))}
           </div>
-          <NavButtons onBack={() => goTo(4)} onNext={() => goTo(6)} />
+          <NavButtons onBack={() => goTo(4)} onNext={() => tryNext(6)} />
         </div>
       )}
 
@@ -402,7 +467,7 @@ Here is my assessment data:
             onChange={(v) => update("extraContext", v)}
             placeholder="Any additional context about your current AML programme, system limitations, or compliance concerns…"
           />
-          <NavButtons onBack={() => goTo(5)} onNext={() => goTo(7)} nextLabel="Review & Generate →" />
+          <NavButtons onBack={() => goTo(5)} onNext={() => tryNext(7)} nextLabel="Review & Generate →" />
         </div>
       )}
 
