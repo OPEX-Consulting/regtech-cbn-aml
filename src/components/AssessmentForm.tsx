@@ -392,7 +392,7 @@ Here is my assessment data:
           />
           <CheckboxGroupField label="Products & services offered" options={productOptions} values={data.products} onChange={(v) => update("products", v)} />
           <CheckboxGroupField label="Delivery channels" options={channelOptions} values={data.channels} onChange={(v) => update("channels", v)} />
-          <NavButtons onBack={() => goTo(2)} onNext={() => goTo(4)} />
+          <NavButtons onBack={() => goTo(2)} onNext={() => tryNext(4)} />
         </div>
       )}
 
