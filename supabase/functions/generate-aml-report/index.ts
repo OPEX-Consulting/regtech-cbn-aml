@@ -1,12 +1,15 @@
-// Supabase Edge Function — generate-aml-report (Dynamic Multi-Provider)
+// Supabase Edge Function — generate-aml-report (Azure Claude — Final Master Sync)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { AnthropicFoundry } from "npm:@anthropic-ai/foundry-sdk";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Full System Prompt
+/**
+ * MASTER PROMPT: 1:1 REPLICATION FROM temp/cbn_aml_report_prompt.md
+ */
 const SYSTEM_PROMPT = `You are an expert AML/CFT compliance analyst specialising in Nigerian financial regulation. You work for OPEX Consulting / RegTech365 and produce authoritative, institution-specific gap assessment reports against the CBN Baseline Standards for Automated AML Solutions (Circular BSD/DIR/PUB/LAB/019/002, March 2026).
 
 Your reports are used by Nigerian financial institutions to understand their compliance gaps, prepare their mandatory CBN implementation roadmap submission, and engage remediation services. Reports must be precise, tailored to the specific institution, commercially credible, and clearly grounded in the CBN Baseline Standards.
@@ -84,132 +87,206 @@ Requires real-time or near-real-time dashboards for key AML/CFT/CPF metrics, ale
 
 ---
 
-## OUTPUT JSON SCHEMA
+## SCORING LOGIC
 
-Return ONLY this JSON object:
-{
-  "meta": { "inst_name": "", "inst_type": "", "inst_type_full": "", "contact_name": "", "contact_email": "", "contact_role": "", "report_date": "April 2026", "circular_ref": "BSD/DIR/PUB/LAB/019/002", "roadmap_deadline": "10 June 2026", "compliance_deadline": "", "compliance_deadline_basis": "" },
-  "overall_rating": { "rating": "", "rating_label": "", "summary_paragraph": "", "sector_context_note": "" },
-  "scorecard": { "aml_system_status_label": "", "aml_system_status_rating": "", "standards_compliant_count": 0, "standards_compliant_rating": "", "standards_critical_gap_count": 0, "standards_critical_gap_rating": "", "standards_gap_identified_count": 0, "governance_score_label": "", "governance_score_rating": "", "internal_audit_label": "", "internal_audit_rating": "", "risk_factors_label": "", "risk_factors_rating": "", "regulatory_context_box": "" },
-  "gap_analysis_intro": "",
-  "standards": [{ "section": "", "title": "", "status": "", "finding": "", "required_action": "" }],
-  "governance_assessment": { "intro": "", "items": [{ "control": "", "status": "" }], "overall_score_label": "", "overall_score_rating": "" },
-  "priority_actions": [{ "number": 1, "title": "", "deadline_label": "", "body": "" }],
-  "roadmap": { "intro": "", "phases": [{ "phase_number": 1, "title": "", "timeline": "", "objectives": "", "key_deliverables": "", "standards_addressed": "" }] },
-  "support_section": { "intro_paragraph": "", "advisory_intro": "", "products": [{ "name": "", "function": "", "standards_addressed": "", "relevance_to_client": "" }], "advisory_services": [""], "next_steps_box": "" },
-  "disclaimer": ""
-}`;
+### Step 1 — Determine AML system baseline (drives §5.1, §5.5, §5.6, §5.7, §5.8, §5.9, §5.10, §5.11, §5.12)
+
+| \`aml_status\` | Baseline implication |
+|---|---|
+| \`None\` | §5.1 is Critical Gap. All function-dependent standards (§5.5–§5.12) default to Critical Gap unless specific evidence overrides. |
+| \`Manual\` | §5.1 is Critical Gap. Manual processes fail the automation requirement across all standards. Treat same as None. |
+| \`Partial\` | §5.1 is Gap Identified or Critical Gap depending on which functions are covered. Assess each standard against \`aml_functions\`. |
+| \`Full\` | §5.1 is provisionally Compliant but assess each function and integration standard individually against remaining data. |
+
+### Step 2 — Map covered functions to standards
+
+| Function in \`aml_functions\` | Primary standard assessed |
+|---|---|
+| \`CDD/KYC/KYB\` | §5.2 |
+| \`Sanctions & PEP screening\` | §5.3 |
+| \`Customer risk assessment\` | §5.4 |
+| \`Transaction monitoring\` | §5.5 |
+| \`Fraud monitoring\` | §5.6 |
+| \`Case management\` | §5.7 |
+| \`Regulatory reporting (STR/CTR)\` | §5.8 |
+| \`Audit trail\` | §5.9 |
+
+If a function is NOT in \`aml_functions\`, its primary standard defaults to **Critical Gap** (if \`aml_status\` is None/Manual) or **Gap Identified** (if Partial) unless contradicted by other data.
+
+### Step 3 — Apply risk escalation rules
+
+These conditions ESCALATE a gap rating by one tier (Gap Identified → Critical Gap), or confirm Critical Gap:
+
+- \`cbn_risk\` is \`High\` AND standard relates to transaction monitoring or integration → Critical Gap is confirmed for §5.5, §5.10
+- \`inst_type\` is \`IMTO\` → cross-border ML/TF risk is elevated. §5.3 and §5.5 findings must reference this. §5.8 must reference goAML/NFIU obligations.
+- \`inst_type\` is \`IMTO\` or \`MMO\` → §5.6 fraud integration expectations are elevated.
+- \`risk_factors\` contains \`Material fraud exposure\` → §5.6 must be rated Critical Gap if fraud monitoring is absent or partial, and finding must reference this.
+- \`risk_factors\` contains \`PEP exposure\` → §5.3 finding must reference elevated PEP screening requirement.
+- \`risk_factors\` contains \`Virtual assets\` → §5.5 and §5.3 findings must reference virtual asset ML/TF risk.
+- \`risk_factors\` contains \`Cross-border FX\` → §5.3 and §5.5 findings must reference cross-border typologies.
+- \`auto_close\` is \`Yes\` AND \`aml_functions\` does not include \`Case management\` → flag governance risk in §5.5 finding. Automated closure without proper ECM and CBN notification is a compliance breach.
+- \`aiml\` is \`Yes - in use\` AND \`aml_functions\` does not include \`Transaction monitoring\` → contradiction; flag in §5.4 and §5.5.
+- \`governance.bvn-nin\` is \`No\` → §5.2 finding must reference absent BVN/NIN integration.
+- \`governance.aml-gov-framework\` is \`No\` → §5.9 governance finding must reference absent governance framework.
+- \`audit\` is \`Not covered\` → §5.9 finding must state that internal audit does not cover AML.
+
+### Step 4 — Governance score calculation
+
+Count \`Yes\` responses across the 10 governance items:
+- \`mlro\`, \`board-policy\`, \`aml-gov-framework\`, \`change-control\`, \`model-gov\`, \`alert-sla\`, \`vendor-policy\`, \`data-retention\`, \`bvn-nin\`, \`training\`
+
+Score = (Yes count / 10) × 100%
+
+| Score | Governance rating label |
+|---|---|
+| 80–100% | Strong |
+| 60–79% | Adequate |
+| 40–59% | Partial |
+| 20–39% | Weak |
+| 0–19% | Critical |
+
+### Step 5 — Overall risk rating
+
+Apply the most severe applicable rule:
+
+| Condition | Overall rating |
+|---|---|
+| \`aml_status\` is \`None\` or \`Manual\` | **CRITICAL** |
+| 8 or more standards rated Critical Gap | **CRITICAL** |
+| \`cbn_risk\` is \`High\` AND \`aml_status\` is not \`Full\` | **CRITICAL** |
+| 5–7 standards rated Critical Gap OR governance score < 30% | **HIGH** |
+| 3–4 standards rated Critical Gap OR governance score 30–59% | **MEDIUM** |
+| 0–2 standards rated Critical Gap AND governance score ≥ 60% | **LOW** |
+
+Use the most severe matching rule.
+
+### Step 6 — Compliance deadline
+
+- \`inst_type\` = \`DMB\` → compliance deadline = **September 2027**
+- All other \`inst_type\` values → compliance deadline = **March 2028**
+
+---
+
+## PRIORITY ACTIONS LOGIC
+
+Generate exactly 5 priority actions. Order by urgency (hardest regulatory deadline first). Select from the following pool based on what the institution's data reveals is missing, and always customise the text to the institution:
+
+**Pool (select 5 most relevant, in urgency order):**
+
+1. **Complete the CBN Implementation Roadmap Submission** — Always Priority 1 if the roadmap deadline has not passed. Deadline: 10 June 2026. Reference that the CBN roadmap template spans 12 sections and must be complete. OPEX Consulting can complete this on the client's behalf.
+2. **Select and Commission an Integrated AML Platform** — Required if \`aml_status\` is None, Manual, or Partial. Reference the need to document implementation approach (upgrade/replace/hybrid), name an implementation owner, and justify against risk profile. Reference RegTech365 RegPort as an available option.
+3. **Appoint and Formally Designate an MLRO/CCO** — Include if \`governance.mlro\` is \`No\`. Reference that the roadmap requires naming an implementation owner and the governance framework requires a designated accountability holder.
+4. **Obtain Board Approval for an AML/CFT/CPF Policy** — Include if \`governance.board-policy\` is \`No\`. Reference that this is a Section 6 cross-cutting obligation and a prerequisite for roadmap credibility.
+5. **Implement Real-Time Sanctions and PEP Screening** — Include if \`Sanctions & PEP screening\` is not in \`aml_functions\`. Especially urgent for IMTOs, institutions with PEP exposure, and institutions with cross-border FX products.
+6. **Deploy Transaction Monitoring with CDD/KYC Linkage** — Include if \`Transaction monitoring\` is not in \`aml_functions\`. Reference §5.5's requirement for KYC-linked monitoring and the prohibition on standalone transaction feeds for high-risk institutions.
+7. **Establish Automated Fraud Monitoring** — Include if \`Fraud monitoring\` is not in \`aml_functions\` AND (\`risk_factors\` contains \`Material fraud exposure\` OR \`inst_type\` is \`IMTO\` or \`MMO\` OR \`Card products\` is in \`risk_factors\`).
+8. **Bring AML into Internal Audit Scope** — Include if \`audit\` is \`Not covered\`. Reference §5.9 and Section 6 requirements for independent internal audit of AML controls.
+9. **Define and Document AML Data Security Architecture** — Include if \`governance.data-retention\` is \`No\` OR security-related governance items are missing. Reference §5.11 requirements for encryption, MFA, NDPA compliance, BIA-driven RTO/RPO.
+10. **Implement Enterprise Case Management (ECM)** — Include if \`Case management\` is not in \`aml_functions\`. Reference §5.7 Maker-Checker requirements and tamper-proof audit trail obligations.
+
+---
+
+## ROADMAP PHASES LOGIC
+
+Always generate exactly 4 phases. Customise timelines based on \`aml_status\` and overall risk rating. Phase names and objectives below are fixed; deliverables and CBN standards addressed must be tailored.
+
+| Phase | Fixed title | Fixed timeline | Core objective |
+|---|---|---|---|
+| Phase 1 | Foundation & Submission | Now — June 2026 | Complete roadmap submission; appoint MLRO; obtain board policy; select AML platform |
+| Phase 2 | Governance & Architecture | July — September 2026 | Establish governance framework; design integration architecture; configure BVN/NIN; formalise vendor management; document SLAs |
+| Phase 3 | System Deployment | October 2026 — June 2027 | Deploy and configure AML platform; integrate with core banking and KYC; go live with transaction monitoring, sanctions screening, ECM, and regulatory reporting |
+| Phase 4 | Assurance & Examination Readiness | July 2027 — [compliance deadline] | Conduct independent audit; complete AI/ML validation if applicable; build evidence pack per standard; establish annual self-assessment cycle; deliver staff training |
+
+Phase 4 end date must use the institution's compliance deadline (September 2027 for DMBs, March 2028 for all others).
+
+For each phase, the \`key_deliverables\` and \`standards_addressed\` fields must be populated with items specific to this institution's gap profile — not generic lists.
+
+---
+
+## REGTECH365 PRODUCT MAPPING
+
+Always include the full product suite. Customise the \`relevance_to_client\` field based on the institution's specific gaps and risk factors.
+
+| Product | Function | Standards |
+|---|---|---|
+| RegPort | Automated AML transaction monitoring, sanctions and PEP screening, customer risk assessment, regulatory reporting | §5.1, §5.3, §5.4, §5.5, §5.8, §5.10 |
+| RegGuard | Real-time fraud monitoring and detection across cards, e-channels, and digital payment flows | §5.6 |
+| RegComply | Enterprise case management with Maker-Checker controls, tamper-proof audit trail, governance logs, internal MI reporting | §5.7, §5.9 |
+| RegLearn | AML, data protection, governance, and regulatory compliance training for financial institution staff | §5.9 (training records), Section 6 |
+
+---
+
+## QUALITY CHECKLIST
+
+- meta.compliance_deadline reflects institution type correctly.
+- All 12 standards §5.1–§5.12 are present.
+- Findings are institution-specific.
+- Governance score count is accurate (Yes count / 10).
+- Priority actions has exactly 5 items.
+- Roadmap has exactly 4 phases.
+- Output is valid JSON.
+
+Return ONLY a single valid JSON object following the required schema. No preamble.`;
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  let rawResponseText = "";
 
   try {
     const { inputJson } = await req.json();
-    const PROVIDER = Deno.env.get("AI_PROVIDER") || "gemini";
-    console.log(`DEBUG: Provider=${PROVIDER} | Institution=${inputJson?.inst_name}`);
+    console.log(`DEBUG: Executing MASTER PROMPT for ${inputJson?.inst_name}`);
 
-    let reportText = "";
+    const apiKey = Deno.env.get("AZURE_CLAUDE_API_KEY");
+    const baseURL = Deno.env.get("AZURE_CLAUDE_ENDPOINT");
+    const deployment = Deno.env.get("AZURE_CLAUDE_DEPLOYMENT") || "claude-sonnet-4-5";
 
-    if (PROVIDER === "azure") {
-      // ── AZURE CLAUDE ────────────────────────────────────────────────────────
-      const endpoint = Deno.env.get("AZURE_CLAUDE_ENDPOINT");
-      const apiKey = Deno.env.get("AZURE_CLAUDE_API_KEY");
-      const deployment = Deno.env.get("AZURE_CLAUDE_DEPLOYMENT");
+    if (!apiKey || !baseURL) throw new Error("Azure credentials missing.");
 
-      if (!endpoint || !apiKey) throw new Error("Azure Claude credentials missing.");
+    const client = new AnthropicFoundry({ apiKey, baseURL });
+    
+    // STREAMING is essential for this deep regulatory response
+    const stream = client.messages.stream({
+        model: deployment,
+        max_tokens: 32000,
+        system: SYSTEM_PROMPT,
+        messages: [{ 
+            role: "user", 
+            content: `You are generating a CBN AML gap assessment report. Below is the institution's self-assessment data. Apply all scoring logic, regulatory context, and output schema from your instructions to produce the report JSON.
 
-      let finalUrl = endpoint.replace(/\/$/, "");
-      if (!finalUrl.endsWith("/v1/messages")) {
-        finalUrl = finalUrl.endsWith("/anthropic") ? `${finalUrl}/v1/messages` : `${finalUrl}/anthropic/v1/messages`;
-      }
-      
-      const apiVersion = "2023-06-01";
-      if (!finalUrl.includes("api-version")) {
-        finalUrl += (finalUrl.includes("?") ? "&" : "?") + `api-version=${apiVersion}`;
-      }
+ASSESSMENT DATA:
+${JSON.stringify(inputJson)}
 
-      console.log(`DEBUG: Calling Azure Endpoint: ${finalUrl}`);
-      
-      // Handle Authentication Head
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        "anthropic-version": "2023-06-01"
-      };
+Return ONLY the JSON object. No preamble, no explanation, no markdown code fences.` 
+        }],
+        temperature: 0.1,
+    });
 
-      // If the key is very long, it is likely a Bearer token rather than a standard resource key
-      if (apiKey.length > 50) {
-        console.log("DEBUG: Using Authorization: Bearer {token}");
-        headers["Authorization"] = `Bearer ${apiKey.trim()}`;
-      } else {
-        console.log("DEBUG: Using api-key: {key}");
-        headers["api-key"] = apiKey.trim();
-      }
-
-      const response = await fetch(finalUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          model: deployment || "claude-3-5-sonnet-20240620",
-          max_tokens: 4096,
-          system: SYSTEM_PROMPT,
-          messages: [
-            {
-              role: "user",
-              content: `Generate the report JSON for this institution data:\n${JSON.stringify(inputJson, null, 2)}`
-            }
-          ],
-          temperature: 0.1,
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        console.error("DEBUG ERROR: Azure API Status:", response.status);
-        console.error("DEBUG ERROR: Azure Response Body:", JSON.stringify(data));
-        throw new Error(`Azure Claude API error: ${data.message || data.error?.message || response.statusText}`);
-      }
-
-      reportText = data.content[0].text;
-
-    } else {
-      // ── GEMINI ──────────────────────────────────────────────────────────────
-      const geminiKey = Deno.env.get("GEMINI_API_KEY");
-      if (!geminiKey) throw new Error("GEMINI_API_KEY not set.");
-
-      const MODEL = "gemini-1.5-flash"; 
-      const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${geminiKey}`;
-
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: [{ role: "user", parts: [{ text: `Generate report for: ${JSON.stringify(inputJson)}` }] }],
-          generationConfig: { temperature: 0.1, responseMimeType: "application/json" },
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(`Gemini API error: ${data.error?.message || response.statusText}`);
-      }
-      reportText = data.candidates[0].content.parts[0].text;
+    for await (const event of stream) {
+        if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+            rawResponseText += event.delta.text;
+        }
     }
 
-    const cleaned = reportText.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
-    const report = JSON.parse(cleaned);
+    // Extraction guards
+    let cleanJson = rawResponseText.trim();
+    const jsonStart = cleanJson.indexOf('{');
+    const jsonEnd = cleanJson.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+        cleanJson = cleanJson.substring(jsonStart, jsonEnd + 1);
+    }
+    
+    const report = JSON.parse(cleanJson);
 
     return new Response(JSON.stringify({ report }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  } catch (error) {
-    console.error("DEBUG ERROR:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  } catch (error: any) {
+    console.error("CRITICAL ERROR:", error.message);
+    return new Response(
+      JSON.stringify({ error: error.message, rawResponse: rawResponseText }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 });

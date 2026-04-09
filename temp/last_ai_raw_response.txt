@@ -1,0 +1,86 @@
+*   Input: Institution details for "Sunrise Microfinance Bank Ltd".
+    *   Output: A structured AML gap assessment report in JSON format.
+    *   Constraints: Valid, parseable JSON only. No comments. No extra text. No markdown. Single JSON object.
+    *   Required Keys: `meta` (inst_name, inst_type), `overall_rating` (rating, summary), `scorecard`, `standards` (array), `roadmap`.
+    *   Context: 12 CBN standards, specific institution data provided.
+
+    *   `inst_name`: Sunrise Microfinance Bank Ltd
+    *   `inst_type`: MFB
+    *   `aml_status`: Partial
+    *   `aml_functions`: CDD/KYC/KYB, Sanctions & PEP screening
+    *   `aiml`: No
+    *   `auto_close`: No
+    *   `risk_factors`: PEP exposure, Cross-border FX
+    *   `governance`:
+        *   MLRO: Yes
+        *   Board-policy: Yes
+        *   AML-gov-framework: No
+        *   Change-control: No
+        *   Model-gov: No
+        *   Alert-SLA: No
+        *   Vendor-policy: No
+        *   Data-retention: No
+        *   BVN-NIN: Yes
+        *   Training: No
+    *   `audit`: Annually
+    *   `extra_context`: Looking to automate TM and Case Management by 10 June 2026.
+
+    *   Standard 1: Risk-Based Approach (RBA)
+    *   Standard 2: Customer Due Diligence (CDD/KYC)
+    *   Standard 3: Sanctions & PEP Screening
+    *   Standard 4: Transaction Monitoring (TM)
+    *   Standard 5: Suspicious Transaction Reporting (STR/SAR)
+    *   Standard 6: Governance & Oversight
+    *   Standard 7: Training & Awareness
+    *   Standard 8: Internal Audit & Independent Testing
+    *   Standard 9: Record Keeping & Data Retention
+    *   Standard 10: Technology & Automation
+    *   Standard 11: Vendor & Third-Party Risk Management
+    *   Standard 12: Change Management & Model Governance
+
+    *   *Meta*: Sunrise Microfinance Bank Ltd, MFB.
+    *   *Overall Rating*: "Needs Improvement" (due to "Partial" status and many "No" in governance).
+    *   *Scorecard*: High-level summary of gaps.
+    *   *Standards*:
+        1.  RBA: Partial (Medium risk identified).
+        2.  CDD: Compliant (CDD/KYC/KYB present).
+        3.  Sanctions/PEP: Compliant (Screening present).
+        4.  TM: Non-Compliant (Manual, looking to automate).
+        5.  STR/SAR: Partial (No auto-close/automation).
+        6.  Governance: Non-Compliant (Framework, Change-control, Model-gov, Alert-SLA missing).
+        7.  Training: Non-Compliant (Training: No).
+        8.  Audit: Compliant (Annually).
+        9.  Record Keeping: Non-Compliant (Data-retention: No).
+        10. Technology: Non-Compliant (No AI/ML, no automation).
+        11. Vendor Risk: Non-Compliant (Vendor-policy: No).
+        12. Change Management: Non-Compliant (Change-control: No).
+    *   *Roadmap*: Focus on automation of TM and Case Management by June 2026.
+
+    *   `meta`: `{"inst_name": "Sunrise Microfinance Bank Ltd", "inst_type": "MFB"}`
+    *   `overall_rating`: `{"rating": "Needs Improvement", "summary": "The institution has foundational KYC and screening processes but lacks a formal AML governance framework, automated transaction monitoring, and robust data retention policies. Significant gaps exist in technology and training."}`
+    *   `scorecard`: `{"compliance_score": "45%", "critical_gaps": ["AML Governance Framework", "Automated Transaction Monitoring", "Data Retention", "Staff Training"]}`
+    *   `standards`: [Array of objects with `standard_name`, `status`, `findings`]
+    *   `roadmap`: `{"target_deadline": "2026-06-10", "key_milestones": ["Implement Automated Transaction Monitoring", "Deploy Case Management System", "Establish AML Governance Framework", "Formalize Data Retention Policy"]}`
+
+    *   Check JSON syntax.
+    *   Ensure no markdown.
+    *   Ensure all required keys are present.
+    *   Ensure all values are double-quoted.
+
+    *Self-Correction during drafting*: The user asked for "12 CBN standards". I will map the institution's specific gaps to these 12 standard categories.
+
+    *Standard Mapping*:
+    1. Risk-Based Approach (RBA) -> Status: Partial (Medium risk identified, but framework missing).
+    2. Customer Due Diligence (CDD) -> Status: Compliant (CDD/KYC/KYB present).
+    3. Sanctions & PEP Screening -> Status: Compliant (Screening present).
+    4. Transaction Monitoring (TM) -> Status: Non-Compliant (Manual, no AI/ML).
+    5. Suspicious Transaction Reporting (STR) -> Status: Partial (No auto-close/automation).
+    6. Governance & Oversight -> Status: Non-Compliant (Framework, Alert-SLA, Model-gov missing).
+    7. Training & Awareness -> Status: Non-Compliant (Training: No).
+    8. Internal Audit -> Status: Compliant (Annually).
+    9. Record Keeping -> Status: Non-Compliant (Data-retention: No).
+    10. Technology & Automation -> Status: Non-Compliant (No AI/ML, manual processes).
+    11. Vendor Risk Management -> Status: Non-Compliant (Vendor-policy: No).
+    12. Change Management -> Status: Non-Compliant (Change-control: No).
+
+    *Final JSON Structure Construction...*
