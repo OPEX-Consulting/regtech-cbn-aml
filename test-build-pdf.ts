@@ -12,10 +12,10 @@ import { chromium } from 'playwright';
 async function main() {
     console.log("🚀 Starting PDF Generation Test...");
 
-    const aiRespPath = path.resolve(process.cwd(), 'temp/ai_resp.json');
+    const aiRespPath = path.resolve(process.cwd(), 'temp/last_ai_report_response.json');
     const templatePath = path.resolve(process.cwd(), 'temp/cbn_aml_report_template.html');
     const outputHtmlPath = path.resolve(process.cwd(), 'temp/test_report_populated.html');
-    const outputPdfPath = path.resolve(process.cwd(), 'temp/test_report.pdf');
+    const outputPdfPath = path.resolve(process.cwd(), 'temp/test_report_final.pdf');
 
     // 1. Validate inputs
     if (!fs.existsSync(aiRespPath)) {

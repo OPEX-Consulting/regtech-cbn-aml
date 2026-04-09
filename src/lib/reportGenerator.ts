@@ -1,16 +1,6 @@
-/**
- * reportGenerator.ts
- *
- * Injects the Gemini report JSON into the CBN AML HTML report template
- * and triggers a silent PDF download via html2canvas + jsPDF.
- *
- * The HTML template lives in /temp/cbn_aml_report_template.html inside
- * the project, but at runtime it is served from the public/ directory.
- * Copy or symlink it there — or fetch it from a known URL.
- */
-
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
+/** ---------------------------------------------------------------
+ * reportGenerator.ts — Native High-Fidelity Version
+ * --------------------------------------------------------------- */
 
 /** ---------------------------------------------------------------
  * Type definitions mirroring the AI output JSON schema
@@ -100,7 +90,6 @@ export interface AmlReportJson {
     next_steps_box: string;
   };
   disclaimer: string;
-  // Passthrough block for optional meta fields the AI may not echo
   _input?: {
     cbn_risk?: string;
     tx_vol?: string;
@@ -172,7 +161,7 @@ function gapRowClass(status: string): string {
 }
 
 /** ---------------------------------------------------------------
- * Section builders (mirrors the template JS exactly, but in TS)
+ * Section builders
  * --------------------------------------------------------------- */
 function buildCover(r: AmlReportJson): string {
   const rc = ratingClass(r.overall_rating.rating);
@@ -236,14 +225,14 @@ function buildSection1(r: AmlReportJson): string {
     </table>
 
     <div class="subsection-heading">1.2 Overall Compliance Risk Rating</div>
-    <div class="rating-callout ${rc}">
+    <div class="rating-callout ${rc} avoid-break">
       <div class="rating-callout-title">${esc(r.overall_rating.rating)}</div>
       <div class="rating-callout-body">${esc(r.overall_rating.summary_paragraph)}</div>
       <div class="rating-callout-note">${esc(r.overall_rating.sector_context_note)}</div>
     </div>
 
     <div class="subsection-heading">1.3 Assessment Scorecard</div>
-    <table class="scorecard-table">
+    <table class="scorecard-table avoid-break">
       <thead>
         <tr>
           <th>Assessment Dimension</th>
@@ -289,7 +278,7 @@ function buildSection1(r: AmlReportJson): string {
         </tr>
       </tbody>
     </table>
-    <div class="info-box">
+    <div class="info-box avoid-break">
       <strong>Regulatory Context</strong>
       ${esc(sc.regulatory_context_box)}
     </div>
@@ -300,13 +289,23 @@ function buildSection2(r: AmlReportJson): string {
   const standards = (r.standards || [])
     .map(
       (s) => `
-    <tr class="${gapRowClass(s.status)}">
-      <td><span class="gap-section-ref">${esc(s.section)}</span></td>
-      <td><span class="gap-std-title">${esc(s.title)}</span></td>
-      <td>${statusBadge(s.status)}</td>
-      <td class="gap-finding">${esc(s.finding)}</td>
-      <td class="gap-action">${esc(s.required_action)}</td>
-    </tr>`
+    <div class="gap-card avoid-break ${gapRowClass(s.status)}">
+      <div class="gap-card-header">
+        <span class="gap-ref-pill">${esc(s.section)}</span>
+        <span class="gap-card-title">${esc(s.title)}</span>
+        ${statusBadge(s.status)}
+      </div>
+      <div class="gap-card-body">
+        <div class="gap-card-finding">
+          <div class="gap-col-label">Finding</div>
+          ${esc(s.finding)}
+        </div>
+        <div class="gap-card-action">
+          <div class="gap-col-label">Required Action</div>
+          ${esc(s.required_action)}
+        </div>
+      </div>
+    </div>`
     )
     .join("");
 
@@ -322,26 +321,17 @@ function buildSection2(r: AmlReportJson): string {
     .join("");
 
   return `
-  <div class="report-section page-break">
+  <div class="report-section">
     <div class="section-heading">Section 2: Gap Analysis — 12 CBN Baseline Standards</div>
     <p class="section-intro">${esc(r.gap_analysis_intro)}</p>
 
-    <table class="gap-table">
-      <thead>
-        <tr>
-          <th style="width:6%">Std.</th>
-          <th style="width:16%">Standard</th>
-          <th style="width:12%">Status</th>
-          <th style="width:41%">Finding</th>
-          <th style="width:25%">Required Action</th>
-        </tr>
-      </thead>
-      <tbody>${standards}</tbody>
-    </table>
+    <div class="gap-list">
+      ${standards}
+    </div>
 
     <div class="subsection-heading" style="margin-top:40px">2.1 Governance Assessment</div>
     <p class="section-intro">${esc(ga.intro)}</p>
-    <table class="gov-table">
+    <table class="gov-table avoid-break">
       <thead>
         <tr>
           <th>Governance Control</th>
@@ -377,9 +367,9 @@ function buildSection3(r: AmlReportJson): string {
     .join("");
 
   return `
-  <div class="report-section page-break">
-    <div class="section-heading">Section 3: Top 5 Priority Actions Before ${esc(r.meta.roadmap_deadline)}</div>
-    <p class="section-intro">The following five actions are the minimum required for ${esc(r.meta.inst_name)} to submit a credible, CBN-compliant implementation roadmap by the ${esc(r.meta.roadmap_deadline)} deadline. The roadmap submission itself is mandatory under Circular ${esc(r.meta.circular_ref)}.</p>
+  <div class="report-section">
+    <div class="section-heading">Section 3: Top 5 Priority Actions</div>
+    <p class="section-intro">Essential actions for ${esc(r.meta.inst_name)} to achieve CBN compliance.</p>
     ${actions}
   </div>`;
 }
@@ -401,10 +391,10 @@ function buildSection4(r: AmlReportJson): string {
     .join("");
 
   return `
-  <div class="report-section page-break">
+  <div class="report-section">
     <div class="section-heading">Section 4: Recommended Implementation Roadmap</div>
     <p class="section-intro">${esc(r.roadmap.intro)}</p>
-    <table class="roadmap-table">
+    <table class="roadmap-table avoid-break">
       <thead>
         <tr>
           <th style="width:20%">Phase</th>
@@ -437,20 +427,20 @@ function buildSection5(r: AmlReportJson): string {
     .join("");
 
   return `
-  <div class="report-section page-break">
+  <div class="report-section">
     <div class="section-heading">Section 5: How RegTech365 and OPEX Consulting Can Support</div>
     <p class="section-intro">${esc(ss.intro_paragraph)}</p>
 
-    <div class="subsection-heading">5.1 Immediate Advisory Support — Roadmap Submission</div>
+    <div class="subsection-heading">5.1 Immediate Advisory Support</div>
     <p class="section-intro">${esc(ss.advisory_intro)}</p>
 
-    <div class="subsection-heading">5.2 RegTech365 Product Suite — Mapped to Your Gaps</div>
+    <div class="subsection-heading">5.2 RegTech365 Product Suite</div>
     <div class="product-grid">${products}</div>
 
     <div class="subsection-heading">5.3 OPEX Advisory Services</div>
-    <ul class="advisory-list">${services}</ul>
+    <ul class="advisory-list avoid-break">${services}</ul>
 
-    <div class="next-steps-box">
+    <div class="next-steps-box avoid-break">
       <strong>Next Step</strong>
       ${esc(ss.next_steps_box)}
       <a class="next-steps-email" href="mailto:compliance@opexconsulting.ng">compliance@opexconsulting.ng</a>
@@ -469,172 +459,97 @@ function buildFooter(r: AmlReportJson): string {
   </div>`;
 }
 
-/** ---------------------------------------------------------------
- * Fetches the CSS from the template so we can embed it in the
- * off-screen container used for PDF rendering.
- * --------------------------------------------------------------- */
 async function fetchTemplateCSS(): Promise<string> {
-  // The template HTML is served from /temp/cbn_aml_report_template.html
-  // We only need the <style> block — fetch it and strip prose outside <style>
   try {
     const res = await fetch("/temp/cbn_aml_report_template.html");
     const html = await res.text();
     const match = html.match(/<style>([\s\S]*?)<\/style>/i);
     return match ? match[1] : "";
   } catch {
-    return ""; // gracefully degrade
+    return "";
   }
 }
 
 /** ---------------------------------------------------------------
- * Core render function — returns a populated HTML string
+ * generatePdf — THE RELIABLE METHOD (Native Browser Print Engine)
  * --------------------------------------------------------------- */
-export function buildReportHtml(reportData: AmlReportJson): string {
+export async function generatePdf(
+  reportData: AmlReportJson,
+  onProgress?: (pct: number) => void
+): Promise<void> {
+  onProgress?.(10);
+  
+  const css = await fetchTemplateCSS();
   const r = { ...reportData };
-
-  // Inject passthrough meta fields from _input if AI didn't echo them
+  
   if (r._input) {
     r.meta.cbn_risk = r.meta.cbn_risk || r._input.cbn_risk || "—";
     r.meta.tx_vol = r.meta.tx_vol || txVolLabel(r._input.tx_vol ?? "");
     r.meta.geo = r.meta.geo || r._input.geo || "—";
   }
 
-  return `
-    <div class="report-wrapper">
-      ${buildCover(r)}
-      <div class="report-body">
-        ${buildSection1(r)}
-        ${buildSection2(r)}
-        ${buildSection3(r)}
-        ${buildSection4(r)}
-        ${buildSection5(r)}
-      </div>
-      ${buildFooter(r)}
-    </div>`;
-}
+  const reportHtml = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>CBN AML Gap Assessment - ${esc(r.meta.inst_name)}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <style>
+          ${css}
+          @media print {
+            @page { size: A4; margin: 15mm; }
+            body { margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="report-wrapper">
+          ${buildCover(r)}
+          <div class="report-body">
+            ${buildSection1(r)}
+            ${buildSection2(r)}
+            ${buildSection3(r)}
+            ${buildSection4(r)}
+            ${buildSection5(r)}
+          </div>
+          ${buildFooter(r)}
+        </div>
+      </body>
+    </html>
+  `;
 
-/** ---------------------------------------------------------------
- * generatePdf — renders report HTML off-screen and exports PDF
- *
- * @param reportData  Parsed AI output JSON
- * @param onProgress  Optional callback receiving progress 0–100
- * --------------------------------------------------------------- */
-export async function generatePdf(
-  reportData: AmlReportJson,
-  onProgress?: (pct: number) => void
-): Promise<void> {
-  onProgress?.(5);
+  // Create a clean print frame
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.right = "0";
+  iframe.style.bottom = "0";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "none";
+  document.body.appendChild(iframe);
 
-  // Fetch the CSS from the template
-  const css = await fetchTemplateCSS();
-  onProgress?.(10);
+  const doc = iframe.contentWindow?.document || iframe.contentDocument;
+  if (!doc) throw new Error("Could not create print frame.");
 
-  // Build report HTML
-  const reportHtml = buildReportHtml(reportData);
+  doc.open();
+  doc.write(reportHtml);
+  doc.close();
 
-  // Create an off-screen container with the full report HTML + CSS
-  const container = document.createElement("div");
-  container.style.cssText =
-    "position:fixed;top:0;left:0;width:900px;z-index:-9999;pointer-events:none;background:white;";
-  container.innerHTML = `<style>${css}</style>${reportHtml}`;
-  document.body.appendChild(container);
+  onProgress?.(50);
 
-  onProgress?.(20);
-
-  // Wait a frame for fonts/layout to settle
-  await new Promise((r) => setTimeout(r, 600));
-  onProgress?.(30);
-
-  try {
-    const canvas = await html2canvas(container, {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      width: 900,
-      windowWidth: 900,
-      onclone: (_doc, el) => {
-        el.style.position = "static";
-        el.style.zIndex = "auto";
-      },
-    });
-    onProgress?.(75);
-
-    const imgData = canvas.toDataURL("image/jpeg", 0.92);
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "pt",
-      format: "a4",
-    });
-
-    const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
-    const canvasW = canvas.width;
-    const canvasH = canvas.height;
-    const ratio = pdfW / canvasW;
-    const totalPdfH = canvasH * ratio;
-
-    let yOffset = 0;
-    let page = 0;
-
-    while (yOffset < totalPdfH) {
-      if (page > 0) pdf.addPage();
-
-      // Crop the segment for this page
-      const pageCanvas = document.createElement("canvas");
-      pageCanvas.width = canvasW;
-      pageCanvas.height = Math.min(pdfH / ratio, canvasH - yOffset / ratio);
-      const ctx = pageCanvas.getContext("2d")!;
-      ctx.drawImage(
-        canvas,
-        0,
-        (yOffset / ratio),
-        canvasW,
-        pageCanvas.height,
-        0,
-        0,
-        canvasW,
-        pageCanvas.height
-      );
-
-      const pageImg = pageCanvas.toDataURL("image/jpeg", 0.92);
-      pdf.addImage(pageImg, "JPEG", 0, 0, pdfW, pageCanvas.height * ratio);
-      yOffset += pdfH;
-      page++;
-    }
-
+  // Wait for fonts/images to be crystal clear
+  setTimeout(() => {
     onProgress?.(90);
-
-    // Build filename: CBN_AML_Gap_Assessment_InstitutionName_April2026.pdf
-    const safeName = (reportData.meta.inst_name || "Institution")
-      .replace(/[^a-zA-Z0-9]/g, "_")
-      .replace(/_+/g, "_")
-      .replace(/^_|_$/g, "");
-    const filename = `CBN_AML_Gap_Assessment_${safeName}_April2026.pdf`;
-
-    pdf.save(filename);
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
     onProgress?.(100);
-  } finally {
-    document.body.removeChild(container);
-  }
-}
-
-/** ---------------------------------------------------------------
- * openReportInTab — alternative to PDF: opens the rendered report
- * in a new browser tab (useful for debugging)
- * --------------------------------------------------------------- */
-export async function openReportInTab(reportData: AmlReportJson): Promise<void> {
-  const css = await fetchTemplateCSS();
-  const reportHtml = buildReportHtml(reportData);
-  const fullHtml = `<!DOCTYPE html><html lang="en"><head>
-    <meta charset="UTF-8">
-    <title>CBN AML Report — ${reportData.meta.inst_name}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>${css}</style>
-  </head><body>${reportHtml}</body></html>`;
-  const blob = new Blob([fullHtml], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank");
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 1000);
+  }, 1000);
 }

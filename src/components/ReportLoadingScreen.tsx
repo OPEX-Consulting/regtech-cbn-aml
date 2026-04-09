@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 interface ReportLoadingScreenProps {
   progress: number; // 0–100
   institutionName: string;
+  onDownload?: () => void;
 }
 
 const STAGES = [
@@ -34,6 +35,7 @@ const FACTS = [
 export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
   progress,
   institutionName,
+  onDownload,
 }) => {
   const [factIndex, setFactIndex] = useState(0);
   const [factVisible, setFactVisible] = useState(true);
@@ -86,20 +88,29 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
 
         {/* Headline */}
         <h2 className="rl-title">
-          Generating your gap assessment report
+          {progress < 100 ? "Generating your gap assessment report" : "Your gap assessment is ready!"}
         </h2>
         <p className="rl-subtitle">
           for <strong>{institutionName || "your institution"}</strong>
         </p>
 
-        {/* Current stage */}
-        <div className="rl-stage">
-          <span className="rl-stage-icon">{currentStage.icon}</span>
-          <span className="rl-stage-label">
-            {currentStage.label}
-            {"...".slice(0, dots)}
-          </span>
-        </div>
+        {/* Current stage or Download Button */}
+        {progress < 100 ? (
+          <div className="rl-stage">
+            <span className="rl-stage-icon">{currentStage.icon}</span>
+            <span className="rl-stage-label">
+              {currentStage.label}
+              {"...".slice(0, dots)}
+            </span>
+          </div>
+        ) : (
+          <button 
+            onClick={onDownload}
+            className="rl-download-btn"
+          >
+            <span>📥</span> Download PDF Report
+          </button>
+        )}
 
         {/* Progress bar */}
         <div className="rl-progress-track">
@@ -116,7 +127,9 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
         </div>
 
         <p className="rl-footer-note">
-          This typically takes 30–60 seconds. Please don't close this tab.
+          {progress < 100 
+            ? "This typically takes 30–60 seconds. Please don't close this tab." 
+            : "Your report is ready for review."}
         </p>
       </div>
 
@@ -246,6 +259,32 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
         }
         .rl-stage-icon { font-size: 16px; flex-shrink: 0; }
         .rl-stage-label { line-height: 1.4; }
+
+        .rl-download-btn {
+          width: 100%;
+          background: #1D9E75;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 16px 24px;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          margin-bottom: 20px;
+          transition: transform 0.2s ease, background 0.2s ease;
+          box-shadow: 0 4px 20px rgba(29, 158, 117, 0.4);
+        }
+        .rl-download-btn:hover {
+          background: #158562;
+          transform: translateY(-2px);
+        }
+        .rl-download-btn span {
+          font-size: 18px;
+        }
 
         /* Progress bar */
         .rl-progress-track {

@@ -297,6 +297,21 @@ const AssessmentForm: React.FC = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [reportProgress, setReportProgress] = useState<number | null>(null);
+  const [reportData, setReportData] = useState<AmlReportJson | null>(null);
+
+  const startDownload = async () => {
+    if (!reportData) return;
+    try {
+      await generatePdf(reportData, (pct) => {
+        // PDF progress runs from wherever we are to 100
+        setReportProgress(Math.min(100, 100)); // Just keep at 100 visual
+      });
+      toast.success(`Report downloaded successfully.`);
+    } catch (err: any) {
+      console.error("PDF generation failed:", err);
+      toast.error("PDF generation failed. Please try again.");
+    }
+  };
 
   const generateReport = async () => {
     setSubmitting(true);
@@ -346,7 +361,9 @@ const AssessmentForm: React.FC = () => {
     try {
       const { data: fnData, error: fnError } = await supabase.functions.invoke(
         "generate-aml-report",
-        { body: { inputJson } }
+        { 
+          body: { inputJson }
+        }
       );
 
       if (fnError) throw fnError;
@@ -362,28 +379,14 @@ const AssessmentForm: React.FC = () => {
         geo: data.geo,
       };
 
-      setReportProgress(30);
+      setReportData(reportJson);
+      setReportProgress(100);
     } catch (err: any) {
       console.error("Report generation failed:", err);
       toast.error(`Report generation failed: ${err.message ?? "Unknown error"}`);
       setSubmitting(false);
       setReportProgress(null);
       return;
-    }
-
-    // ── Step 4: Generate PDF with progress tracking ───────────────────────
-    try {
-      await generatePdf(reportJson, (pct) => {
-        // PDF progress runs 30→100; offset by 30 since API took us to 30
-        setReportProgress(30 + Math.round(pct * 0.7));
-      });
-      toast.success(`Report downloaded: CBN_AML_Gap_Assessment_${data.instName.replace(/\s+/g, "_")}_April2026.pdf`);
-    } catch (err: any) {
-      console.error("PDF generation failed:", err);
-      toast.error("PDF generation failed. Please try again.");
-    } finally {
-      setSubmitting(false);
-      setReportProgress(null);
     }
   };
 
@@ -393,6 +396,7 @@ const AssessmentForm: React.FC = () => {
       <ReportLoadingScreen
         progress={reportProgress}
         institutionName={data.instName}
+        onDownload={startDownload}
       />
     );
   }

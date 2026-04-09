@@ -47,7 +47,7 @@
     --font-body: 'DM Sans', system-ui, sans-serif;
 
     --page-max: 900px;
-    --section-gap: 56px;
+    --section-gap: 32px;
   }
 
   html { font-size: 15px; }
@@ -63,11 +63,28 @@
 
   /* ─── Print ─────────────────────────────────────── */
   @media print {
+    @page {
+      margin: 15mm;
+      size: A4;
+    }
     body { background: white; font-size: 11pt; }
     .no-print { display: none !important; }
-    .page-break { page-break-before: always; }
-    .avoid-break { page-break-inside: avoid; }
-    .report-cover { page-break-after: always; min-height: 100vh; }
+    .page-break { break-before: page; page-break-before: always; }
+    .avoid-break { break-inside: avoid; page-break-inside: avoid; }
+    .report-cover { break-after: page; page-break-after: always; min-height: 100vh; }
+    
+    /* Force specific blocks to never split */
+    .priority-box, .next-steps-box, .gap-card, .product-card, .rating-callout, .info-box, .data-table, .gov-table, .roadmap-table {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      display: block !important; /* Disabling flex/grid for print-safe pagination */
+      margin-bottom: 20px !important;
+    }
+
+    .gap-list, .product-grid, .advisory-list {
+      display: block !important; /* Disabling flex for reliable page breaks */
+    }
+    
     a { color: inherit; text-decoration: none; }
   }
 
@@ -139,7 +156,7 @@
 
   .cover-title {
     font-family: var(--font-display);
-    font-size: 42px;
+    font-size: 36px;
     font-weight: 500;
     color: #FFFFFF;
     line-height: 1.15;
@@ -215,7 +232,7 @@
 
   /* ─── Overall Rating Banner ─────────────────────── */
   .rating-banner {
-    padding: 32px 72px;
+    padding: 24px 72px;
     display: flex;
     align-items: center;
     gap: 24px;
@@ -281,8 +298,8 @@
     color: var(--navy-mid);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 16px;
-    margin-top: 32px;
+    margin-bottom: 12px;
+    margin-top: 20px;
   }
   .subsection-heading:first-child { margin-top: 0; }
 
@@ -310,6 +327,9 @@
     vertical-align: top;
     color: var(--text);
     line-height: 1.55;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
   }
   .data-table tr:last-child td { border-bottom: none; }
   .data-table tr:nth-child(even) td { background: #FAFBFD; }
@@ -323,6 +343,8 @@
     border-bottom: 1px solid var(--border-light);
     font-size: 13.5px;
     vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .profile-table tr:nth-child(even) td { background: #FAFBFD; }
   .profile-table .field { font-weight: 600; color: var(--navy-mid); width: 38%; }
@@ -428,38 +450,81 @@
     letter-spacing: 0.06em;
   }
 
-  /* ─── Section 2: Gap Analysis Table ──────────────── */
-  .gap-table { width: 100%; border-collapse: collapse; }
-  .gap-table th {
-    background: var(--navy);
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    padding: 11px 14px;
-    text-align: left;
-    border-right: 1px solid rgba(255,255,255,0.1);
-  }
-  .gap-table th:last-child { border-right: none; }
-  .gap-table td {
-    padding: 14px 14px;
-    border-bottom: 1px solid var(--border-light);
-    border-right: 1px solid var(--border-light);
-    vertical-align: top;
-    font-size: 13px;
-    line-height: 1.6;
-  }
-  .gap-table td:last-child { border-right: none; }
-  .gap-table tr:nth-child(even) td { background: #FAFBFD; }
-  .gap-table tr.row-critical td { border-left: 3px solid var(--red); }
-  .gap-table tr.row-gap td      { border-left: 3px solid var(--amber); }
-  .gap-table tr.row-compliant td { border-left: 3px solid var(--teal); }
+  /* ─── Section 2: Gap Analysis Cards ─────────────── */
+  .gap-list { display: flex; flex-direction: column; gap: 12px; }
 
-  .gap-section-ref { font-weight: 700; color: var(--navy); white-space: nowrap; font-size: 13px; }
-  .gap-std-title   { font-weight: 600; color: var(--navy-mid); font-size: 12.5px; }
-  .gap-finding     { color: var(--text); font-size: 13px; }
-  .gap-action      { color: var(--text-sec); font-size: 12.5px; }
+  .gap-card {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .gap-card.row-critical { border-left: 4px solid var(--red); }
+  .gap-card.row-gap      { border-left: 4px solid var(--amber); }
+  .gap-card.row-compliant { border-left: 4px solid var(--teal); }
+
+  .gap-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border-light);
+    flex-wrap: wrap;
+  }
+  .gap-card.row-critical .gap-card-header { background: #FEF7F7; }
+  .gap-card.row-gap      .gap-card-header { background: #FFFBF5; }
+  .gap-card.row-compliant .gap-card-header { background: #F4FBF8; }
+
+  .gap-ref-pill {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 9px;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .gap-card-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    flex: 1;
+    min-width: 0;
+  }
+  .gap-card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .gap-card-finding,
+  .gap-card-action {
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .gap-card-finding {
+    border-right: 1px solid var(--border-light);
+    color: var(--text);
+  }
+  .gap-card-action {
+    color: var(--text-sec);
+    background: #FAFBFD;
+  }
+  .gap-col-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 600px) {
+    .gap-card-body { grid-template-columns: 1fr; }
+    .gap-card-finding { border-right: none; border-bottom: 1px solid var(--border-light); }
+  }
 
   /* ─── Section 2.1: Governance Table ──────────────── */
   .gov-table { width: 100%; border-collapse: collapse; }
@@ -543,7 +608,7 @@
   }
 
   /* ─── Section 4: Roadmap Table ────────────────────── */
-  .roadmap-table { width: 100%; border-collapse: collapse; }
+  .roadmap-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
   .roadmap-table th {
     background: var(--navy);
     color: #FFFFFF;
@@ -554,6 +619,8 @@
     padding: 11px 14px;
     text-align: left;
     border-right: 1px solid rgba(255,255,255,0.1);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .roadmap-table th:last-child { border-right: none; }
   .roadmap-table td {
@@ -563,6 +630,9 @@
     vertical-align: top;
     font-size: 13px;
     line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
   }
   .roadmap-table td:last-child { border-right: none; }
   .roadmap-phase-header {
@@ -663,6 +733,20 @@
     font-weight: 600;
     color: var(--teal-mid);
     font-size: 13px;
+  }
+
+  /* ─── Responsive ─────────────────────────────────── */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  @media (max-width: 720px) {
+    .report-cover   { padding: 40px 24px 36px; }
+    .rating-banner  { padding: 24px 24px; }
+    .report-body    { padding: 0 24px; }
+    .report-disclaimer { padding: 24px 24px; }
+    .report-footer  { padding: 16px 24px; }
+    .cover-title    { font-size: 30px; }
+    .product-grid   { grid-template-columns: 1fr; }
+    .advisory-list  { grid-template-columns: 1fr; }
   }
 
   /* ─── Disclaimer ──────────────────────────────────── */
@@ -910,13 +994,23 @@ function buildSection1(r) {
 
 function buildSection2(r) {
   const standards = (r.standards || []).map(s => `
-    <tr class="${gapRowClass(s.status)}">
-      <td><span class="gap-section-ref">${esc(s.section)}</span></td>
-      <td><span class="gap-std-title">${esc(s.title)}</span></td>
-      <td>${statusBadge(s.status)}</td>
-      <td class="gap-finding">${esc(s.finding)}</td>
-      <td class="gap-action">${esc(s.required_action)}</td>
-    </tr>`).join('');
+    <div class="gap-card avoid-break ${gapRowClass(s.status)}">
+      <div class="gap-card-header">
+        <span class="gap-ref-pill">${esc(s.section)}</span>
+        <span class="gap-card-title">${esc(s.title)}</span>
+        ${statusBadge(s.status)}
+      </div>
+      <div class="gap-card-body">
+        <div class="gap-card-finding">
+          <div class="gap-col-label">Finding</div>
+          ${esc(s.finding)}
+        </div>
+        <div class="gap-card-action">
+          <div class="gap-col-label">Required Action</div>
+          ${esc(s.required_action)}
+        </div>
+      </div>
+    </div>`).join('');
 
   const ga = r.governance_assessment;
   const govRows = (ga.items || []).map(item => `
@@ -926,25 +1020,15 @@ function buildSection2(r) {
     </tr>`).join('');
 
   return `
-  <div class="report-section page-break">
+  <div class="report-section">
     <div class="section-heading">Section 2: Gap Analysis — 12 CBN Baseline Standards</div>
     <p class="section-intro">${esc(r.gap_analysis_intro)}</p>
 
-    <table class="gap-table">
-      <thead>
-        <tr>
-          <th style="width:6%">Std.</th>
-          <th style="width:16%">Standard</th>
-          <th style="width:12%">Status</th>
-          <th style="width:41%">Finding</th>
-          <th style="width:25%">Required Action</th>
-        </tr>
-      </thead>
-      <tbody>${standards}</tbody>
-    </table>
+    <div class="gap-list">${standards}</div>
 
     <div class="subsection-heading" style="margin-top:40px">2.1 Governance Assessment</div>
     <p class="section-intro">${esc(ga.intro)}</p>
+    <div class="table-wrap">
     <table class="gov-table">
       <thead>
         <tr>
@@ -960,6 +1044,7 @@ function buildSection2(r) {
         </tr>
       </tbody>
     </table>
+    </div>
   </div>`;
 }
 
@@ -977,7 +1062,7 @@ function buildSection3(r) {
     </div>`).join('');
 
   return `
-  <div class="report-section page-break">
+  <div class="report-section">
     <div class="section-heading">Section 3: Top 5 Priority Actions Before ${esc(r.meta.roadmap_deadline)}</div>
     <p class="section-intro">The following five actions are the minimum required for ${esc(r.meta.inst_name)} to submit a credible, CBN-compliant implementation roadmap by the ${esc(r.meta.roadmap_deadline)} deadline. The roadmap submission itself is mandatory under Circular ${esc(r.meta.circular_ref)}. Incomplete, inconsistent, or unsupported submissions may result in supervisory action.</p>
     ${actions}
@@ -997,9 +1082,10 @@ function buildSection4(r) {
     </tr>`).join('');
 
   return `
-  <div class="report-section page-break">
+  <div class="report-section">
     <div class="section-heading">Section 4: Recommended Implementation Roadmap</div>
     <p class="section-intro">${esc(r.roadmap.intro)}</p>
+    <div class="table-wrap">
     <table class="roadmap-table">
       <thead>
         <tr>
@@ -1011,6 +1097,7 @@ function buildSection4(r) {
       </thead>
       <tbody>${phases}</tbody>
     </table>
+    </div>
   </div>`;
 }
 
@@ -1041,7 +1128,7 @@ function buildSection5(r) {
     <div class="subsection-heading">5.3 OPEX Advisory Services</div>
     <ul class="advisory-list">${services}</ul>
 
-    <div class="next-steps-box">
+    <div class="next-steps-box avoid-break">
       <strong>Next Step</strong>
       ${esc(ss.next_steps_box)}
       <a class="next-steps-email" href="mailto:compliance@opexconsulting.ng">compliance@opexconsulting.ng</a>
