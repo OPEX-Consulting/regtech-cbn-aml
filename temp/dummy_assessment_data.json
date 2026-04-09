@@ -1,0 +1,47 @@
+{
+  "inst_name": "Sunrise Microfinance Bank Ltd",
+  "contact_name": "Amara Okonkwo",
+  "contact_email": "amara@sunrisemfb.ng",
+  "contact_role": "Chief Compliance Officer",
+  "inst_type": "MFB",
+  "tx_vol": "1K-50K",
+  "cust_base": "10K-100K",
+  "cbn_risk": "Medium",
+  "geo": "Multiple states",
+  "group_structure": "Standalone",
+  "products": [
+    "Retail deposits",
+    "Credit / loans",
+    "FX / remittance"
+  ],
+  "channels": [
+    "Branch network",
+    "Mobile app",
+    "USSD"
+  ],
+  "aml_status": "Partial",
+  "aml_functions": [
+    "CDD/KYC/KYB",
+    "Sanctions & PEP screening"
+  ],
+  "aiml": "No",
+  "auto_close": "No",
+  "risk_factors": [
+    "PEP exposure",
+    "Cross-border FX"
+  ],
+  "governance": {
+    "mlro": "Yes",
+    "board-policy": "Yes",
+    "aml-gov-framework": "No",
+    "change-control": "No",
+    "model-gov": "No",
+    "alert-sla": "No",
+    "vendor-policy": "No",
+    "data-retention": "No",
+    "bvn-nin": "Yes",
+    "training": "No"
+  },
+  "audit": "Annually",
+  "extra_context": "We are currently looking to automate our transaction monitoring and case management processes to meet the 10 June 2026 roadmap deadline."
+}
