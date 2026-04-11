@@ -4,6 +4,8 @@ interface ReportLoadingScreenProps {
   progress: number; // 0–100
   institutionName: string;
   onDownload?: () => void;
+  onGetFullReport?: () => void;
+  regwatchCtaStatus?: "idle" | "loading" | "sent" | "error";
 }
 
 const STAGES = [
@@ -36,6 +38,8 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
   progress,
   institutionName,
   onDownload,
+  onGetFullReport,
+  regwatchCtaStatus = "idle",
 }) => {
   const [factIndex, setFactIndex] = useState(0);
   const [factVisible, setFactVisible] = useState(true);
@@ -104,12 +108,39 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
             </span>
           </div>
         ) : (
-          <button 
-            onClick={onDownload}
-            className="rl-download-btn"
-          >
-            <span>📥</span> Download PDF Report
-          </button>
+          <>
+            <button
+              onClick={onDownload}
+              className="rl-download-btn"
+            >
+              <span>📥</span> Download PDF Report
+            </button>
+            {onGetFullReport && (
+              <div className="rl-cta-section">
+                {regwatchCtaStatus !== "sent" ? (
+                  <button
+                    onClick={onGetFullReport}
+                    disabled={regwatchCtaStatus === "loading"}
+                    className="rl-regwatch-btn"
+                  >
+                    {regwatchCtaStatus === "loading"
+                      ? "Sending…"
+                      : "🔗 Get Your Full Compliance Report on RegWatch"}
+                  </button>
+                ) : (
+                  <div className="rl-email-sent">
+                    ✅ Check your email for your personalised compliance assessment link.
+                  </div>
+                )}
+                {regwatchCtaStatus === "error" && (
+                  <p className="rl-cta-error">Something went wrong. Please try again.</p>
+                )}
+                <p className="rl-cta-subtext">
+                  Free · No account needed · Full CBN AML assessment on RegWatch
+                </p>
+              </div>
+            )}
+          </>
         )}
 
         {/* Progress bar */}
@@ -284,6 +315,61 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
         }
         .rl-download-btn span {
           font-size: 18px;
+        }
+
+        /* RegWatch CTA section */
+        .rl-cta-section {
+          margin-bottom: 20px;
+        }
+        .rl-regwatch-btn {
+          width: 100%;
+          background: transparent;
+          color: rgba(255,255,255,0.85);
+          border: 1px solid rgba(255,255,255,0.25);
+          border-radius: 8px;
+          padding: 14px 24px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          margin-bottom: 8px;
+          transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+          font-family: 'DM Sans', system-ui, sans-serif;
+        }
+        .rl-regwatch-btn:hover:not(:disabled) {
+          border-color: rgba(255,255,255,0.5);
+          background: rgba(255,255,255,0.06);
+          color: #fff;
+        }
+        .rl-regwatch-btn:disabled {
+          opacity: 0.55;
+          cursor: not-allowed;
+        }
+        .rl-email-sent {
+          background: rgba(29, 158, 117, 0.15);
+          border: 1px solid rgba(29, 158, 117, 0.4);
+          border-radius: 8px;
+          padding: 14px 20px;
+          font-size: 13.5px;
+          color: rgba(255,255,255,0.9);
+          text-align: center;
+          margin-bottom: 8px;
+          font-family: 'DM Sans', system-ui, sans-serif;
+        }
+        .rl-cta-error {
+          font-size: 12px;
+          color: #ff8080;
+          margin: 0 0 8px;
+          font-family: 'DM Sans', system-ui, sans-serif;
+        }
+        .rl-cta-subtext {
+          font-size: 11px;
+          color: rgba(255,255,255,0.3);
+          margin: 0;
+          font-family: 'DM Sans', system-ui, sans-serif;
         }
 
         /* Progress bar */

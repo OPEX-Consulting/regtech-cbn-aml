@@ -298,6 +298,10 @@ const AssessmentForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [reportProgress, setReportProgress] = useState<number | null>(null);
   const [reportData, setReportData] = useState<AmlReportJson | null>(null);
+  const assessmentIdRef = React.useRef<string | null>(null);
+  const [regwatchCtaStatus, setRegwatchCtaStatus] = useState<
+    "idle" | "loading" | "sent" | "error"
+  >("idle");
 
   const startDownload = async () => {
     if (!reportData) return;
@@ -342,8 +346,14 @@ const AssessmentForm: React.FC = () => {
     };
 
     // ── Step 2: Save assessment to Supabase ───────────────────────────────
+    // Generate the ID client-side so we have it available for the RegWatch CTA
+    // without needing a SELECT after the INSERT (anon role has no SELECT policy).
+    const assessmentId = crypto.randomUUID();
+    assessmentIdRef.current = assessmentId;
     try {
-      const { error } = await supabase.from("assessments").insert(inputJson);
+      const { error } = await supabase
+        .from("assessments")
+        .insert({ ...inputJson, id: assessmentId });
       if (error) throw error;
       localStorage.removeItem(STORAGE_KEY);
     } catch (err: any) {
@@ -390,6 +400,36 @@ const AssessmentForm: React.FC = () => {
     }
   };
 
+  const handleGetFullReport = async () => {
+    if (!reportData) return;
+    setRegwatchCtaStatus("loading");
+    try {
+      const gapAreas = reportData.standards
+        .filter((s) => s.status !== "Compliant")
+        .map((s) => s.section);
+      const score = Math.round(
+        ((reportData.scorecard.standards_compliant_count ?? 0) / 12) * 100
+      );
+      const { error } = await supabase.functions.invoke("aml-lead-notify", {
+        body: {
+          email: data.contactEmail,
+          fullName: data.contactName,
+          institutionName: data.instName,
+          institutionType: data.instType,
+          dailyTransactionVolume: data.txVol,
+          cbnRiskClassification: data.cbnRisk,
+          lovableAssessmentId: assessmentIdRef.current,
+          lovableScore: score,
+          lovableGapAreas: gapAreas,
+        },
+      });
+      if (error) throw error;
+      setRegwatchCtaStatus("sent");
+    } catch {
+      setRegwatchCtaStatus("error");
+    }
+  };
+
   // Show the full-screen loading overlay while generating
   if (reportProgress !== null) {
     return (
@@ -397,6 +437,8 @@ const AssessmentForm: React.FC = () => {
         progress={reportProgress}
         institutionName={data.instName}
         onDownload={startDownload}
+        onGetFullReport={handleGetFullReport}
+        regwatchCtaStatus={regwatchCtaStatus}
       />
     );
   }
