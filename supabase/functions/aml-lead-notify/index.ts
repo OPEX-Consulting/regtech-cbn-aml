@@ -52,7 +52,6 @@ serve(async (req) => {
       const text = await response.text();
       throw new Error(`RegWatch returned ${response.status}: ${text}`);
     }
-
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
