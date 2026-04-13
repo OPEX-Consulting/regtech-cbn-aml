@@ -251,11 +251,18 @@ overall_rating.summary_paragraph: MAX 50 words. Lead with rating. State worst ga
 overall_rating.sector_context_note: MAX 20 words
 scorecard fields (labels): MAX 8 words each
 scorecard.regulatory_context_box: MAX 35 words
+capability_snapshot[].function: exact function name from the 9 coverage areas
+capability_snapshot[].level: exactly one of None | Manual | Partial | Full
 gap_analysis_intro: MAX 25 words
 standards[].finding: MAX 30 words. State the gap. Cite the CBN requirement. Institution-specific.
 standards[].required_action: MAX 15 words. Directive. Start with a verb.
+standards[].detail_factors[].factor: MAX 5 words — the specific data point assessed
+standards[].detail_factors[].value: MAX 8 words — the institution's current state
+standards[].detail_factors[].impact: exactly one of Critical | Gap | Compliant
 governance_assessment.intro: MAX 15 words
 governance_assessment.overall_score_label: MAX 10 words
+security_posture.overall_label: MAX 8 words
+implementation_readiness.overall_label: MAX 8 words
 priority_actions[].title: MAX 8 words
 priority_actions[].deadline_label: MAX 5 words
 priority_actions[].body: MAX 50 words. State: (1) what, (2) consequence of not doing it, (3) OPEX/RegTech365 support.
@@ -272,6 +279,7 @@ products[].standards_addressed: section codes only
 products[].relevance_to_client: MAX 30 words
 advisory_services[]: MAX 8 words each, noun phrase only
 next_steps_box: MAX 35 words
+disclaimer: MAX 60 words. Reference the circular, self-assessment basis, and advisory-only nature.
 
 ---
 
@@ -315,20 +323,31 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     "risk_factors_rating": "Elevated | Standard | Critical",
     "regulatory_context_box": "string"
   },
+  "capability_snapshot": [
+    { "function": "CDD/KYC", "level": "None | Manual | Partial | Full" },
+    { "function": "Sanctions & PEP", "level": "None | Manual | Partial | Full" },
+    { "function": "Transaction Monitoring", "level": "None | Manual | Partial | Full" },
+    { "function": "Fraud Monitoring", "level": "None | Manual | Partial | Full" },
+    { "function": "Case Management", "level": "None | Manual | Partial | Full" },
+    { "function": "Regulatory Reporting", "level": "None | Manual | Partial | Full" },
+    { "function": "Customer Risk Assessment", "level": "None | Manual | Partial | Full" },
+    { "function": "Audit Trail", "level": "None | Manual | Partial | Full" },
+    { "function": "Data Security", "level": "None | Manual | Partial | Full" }
+  ],
   "gap_analysis_intro": "string",
   "standards": [
-    { "section": "5.1", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.2", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.3", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.4", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.5", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.6", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.7", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.8", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.9", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.10", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.11", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
-    { "section": "5.12", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" }
+    { "section": "5.1", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string", "detail_factors": [ { "factor": "string", "value": "string", "impact": "Critical | Gap | Compliant" } ] },
+    { "section": "5.2", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [ { "factor": "string", "value": "string", "impact": "Critical | Gap | Compliant" } ] },
+    { "section": "5.3", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.4", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.5", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.6", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.7", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.8", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.9", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.10", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.11", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] },
+    { "section": "5.12", "title": "string", "status": "...", "finding": "string", "required_action": "string", "detail_factors": [] }
   ],
   "governance_assessment": {
     "intro": "string",
@@ -347,6 +366,13 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     "overall_score_label": "string",
     "overall_score_rating": "Critical | Weak | Partial | Adequate | Strong"
   },
+  "security_posture": {
+    "encryption": "None | Partial | Full",
+    "mfa": "string",
+    "data_sovereignty": "string",
+    "bia_status": "string",
+    "overall_label": "string"
+  },
   "priority_actions": [
     { "number": 1, "title": "string", "deadline_label": "string", "body": "string" },
     { "number": 2, "title": "string", "deadline_label": "string", "body": "string" },
@@ -363,6 +389,13 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
       { "phase_number": 4, "title": "string", "timeline": "string", "objectives": "string", "key_deliverables": "string", "standards_addressed": "string" }
     ]
   },
+  "implementation_readiness": {
+    "approach": "string",
+    "vendor_status": "string",
+    "budget_status": "string",
+    "tech_capacity": "string",
+    "overall_label": "string"
+  },
   "support_section": {
     "intro_paragraph": "string",
     "advisory_intro": "string",
@@ -374,8 +407,28 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     ],
     "advisory_services": [ "string", "string", "string", "string", "string", "string" ],
     "next_steps_box": "string"
-  }
+  },
+  "disclaimer": "string"
 }
+
+---
+
+## GENERATION INSTRUCTIONS FOR NEW FIELDS
+
+### capability_snapshot
+Derive each level directly from the coverage matrix input. Map the cov_* values to the 9 function rows. This is a factual reflection of the input data, not an assessment.
+
+### standards[].detail_factors
+For each standard, include 2-4 detail_factors showing the specific input data points that drove the status rating. Each factor should reference a concrete capability (e.g., "BVN/NIN Integration", "Screening Lists", "Filing Method"). The impact should match the contribution to the overall standard status.
+
+### security_posture
+Derive directly from the Security Detail inputs (encryption, mfa, data_sov, bia_status). overall_label should summarize (e.g., "Significant gaps in security controls").
+
+### implementation_readiness
+Derive from Implementation Context inputs. overall_label summarizes readiness (e.g., "Early stage — no vendor selected").
+
+### disclaimer
+Standard legal disclaimer: reference Circular BSD/DIR/PUB/LAB/019/002, note self-assessment basis, state advisory-only (not legal advice), and note findings are point-in-time.
 
 ---
 
@@ -384,6 +437,11 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
 Verify each of the following before generating the JSON:
 - [ ] Overall rating derived from rating rules — not assumed
 - [ ] Exactly 12 entries in standards array (5.1 through 5.12, in order)
+- [ ] Each standard has 2-4 detail_factors with factor, value, and impact
+- [ ] Exactly 9 entries in capability_snapshot matching the 9 coverage areas
+- [ ] security_posture has all 5 fields populated
+- [ ] implementation_readiness has all 5 fields populated
+- [ ] disclaimer is present and within 60 words
 - [ ] Exactly 10 items in governance_assessment.items, in prescribed order, with correct status values
 - [ ] Exactly 5 priority_actions, Priority 1 is always roadmap submission
 - [ ] Exactly 4 roadmap phases

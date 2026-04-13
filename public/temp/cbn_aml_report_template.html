@@ -813,6 +813,147 @@
     margin-bottom: 12px;
   }
 
+  /* ─── Capability Snapshot Table ───────────────────── */
+  .capability-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  .capability-table th {
+    background: var(--navy);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .capability-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  .capability-table tr:nth-child(even) td { background: #FAFBFD; }
+  .cap-func { font-weight: 600; color: var(--navy-mid); }
+  .cap-level { text-align: right; }
+  .cap-pill {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .cap-none    { background: var(--gap-critical-bg); color: var(--gap-critical-text); border: 1px solid var(--gap-critical-border); }
+  .cap-manual  { background: var(--gap-identified-bg); color: var(--gap-identified-text); border: 1px solid var(--gap-identified-border); }
+  .cap-partial { background: var(--amber-bg); color: var(--amber); border: 1px solid #E8C882; }
+  .cap-full    { background: var(--compliant-bg); color: var(--compliant-text); border: 1px solid var(--compliant-border); }
+
+  /* ─── Detail Factors (per-standard evidence) ─────── */
+  .detail-factors {
+    border-top: 1px solid var(--border-light);
+    padding: 10px 18px 14px;
+    background: #FAFBFD;
+  }
+  .detail-factors-table { width: 100%; border-collapse: collapse; }
+  .detail-factors-table th {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 4px 8px 6px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .detail-factors-table td {
+    padding: 5px 8px;
+    font-size: 12px;
+    color: var(--text-sec);
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+  }
+  .detail-factors-table tr:last-child td { border-bottom: none; }
+  .df-factor { font-weight: 600; color: var(--navy-mid); width: 30%; }
+  .df-value { width: 40%; }
+  .df-impact { text-align: right; width: 30%; }
+
+  /* ─── Security Posture Block ─────────────────────── */
+  .security-block {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .security-block-header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .security-block-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .security-block-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+  }
+  .security-table { width: 100%; border-collapse: collapse; }
+  .security-table td {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  .security-table tr:last-child td { border-bottom: none; }
+  .security-table tr:nth-child(even) td { background: #FAFBFD; }
+  .security-table .field { font-weight: 600; color: var(--navy-mid); width: 45%; }
+
+  /* ─── Implementation Readiness Block ─────────────── */
+  .readiness-block {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .readiness-block-header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .readiness-block-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .readiness-block-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+  }
+  .readiness-table { width: 100%; border-collapse: collapse; }
+  .readiness-table td {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  .readiness-table tr:last-child td { border-bottom: none; }
+  .readiness-table tr:nth-child(even) td { background: #FAFBFD; }
+  .readiness-table .field { font-weight: 600; color: var(--navy-mid); width: 45%; }
+
 </style>
 </head>
 <body>
