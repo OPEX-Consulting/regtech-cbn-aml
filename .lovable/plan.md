@@ -1,39 +1,59 @@
 
 
-## Plan: Make Color Scheme Consistent Across the App
+## Plan: Replace Assessment Form with New 9-Section Version
 
-### Problem
-The `ReportLoadingScreen` component uses **hardcoded hex colors** and **inline `<style>` tags** instead of the Tailwind CSS variable-based design system used by every other component. This creates visual inconsistency and makes theme changes (e.g., dark mode) impossible for that screen.
+### What We're Doing
+Replace the current 7-step wizard form with the new 9-section single-page form from the uploaded HTML (`cbn-aml-download.html`), while adding back the 6 fields the AI prompt depends on so nothing breaks downstream.
 
-**Inconsistent colors found in `ReportLoadingScreen.tsx`:**
-- `#1D9E75` / `#0F6E56` (greens) -- should use `hsl(var(--primary))` / `hsl(var(--primary-dark))`
-- `#0D1F3C` / `#1A3560` (dark navy background) -- hardcoded gradient, no equivalent CSS variable
-- `rgba(255,255,255,...)` variants -- should use foreground/muted-foreground variables
-- `#ff8080` (error) -- should use `hsl(var(--destructive))`
+### Phase 1: Database Migration
+Add ~30 new columns to the `assessments` table for all new form fields:
+- Coverage matrix: `cov_cdd`, `cov_sanctions`, `cov_txmon`, `cov_fraud`, `cov_case`, `cov_reporting`, `cov_risk`, `cov_audit`, `cov_security`
+- KYC/Identity: `bvn_status`, `kyc_review`, `ubo_map`
+- Sanctions: `sanctions_capab`, `sanction_lists`
+- Fraud: `fraud_capab`, `fraud_feed`
+- Reporting: `reporting_method`, `report_approval`
+- Security: `encryption`, `mfa`, `data_sov`, `bia_status`
+- Implementation: `impl_approach`, `vendor_status`, `budget_status`, `tech_capacity`, `core_integ`, `roadmap_status`
+- Context: `biggest_concern`, `regulatory_context`, `support`, `contact_phone`
+- Governance granular: `gov_ia`, `gov_policy`, etc. (replaces boolean governance JSONB with richer select values)
 
-All other components (`AssessmentForm`, `FormFields`, `GovAndRiskFields`, `NotFound`) correctly use Tailwind utility classes with the CSS variable system.
+Existing columns remain unchanged -- no data loss.
 
-### Changes
+### Phase 2: Build New Form Component
+- Convert the 9-section HTML into a single-page React component with Tailwind styling matching the dark navy/gold design
+- Re-integrate the 6 missing fields into natural positions:
+  - `contact_role` → Section 1 (Institution Details)
+  - `cust_base` → Section 2 (Scale & Risk Profile)
+  - `products[]` → Section 2
+  - `channels[]` → Section 2
+  - `aiml` → Section 4 (Coverage Matrix)
+  - `auto_close` → Section 4
+- Implement sticky progress bar, radio/checkbox selection, coverage matrix rows
+- Keep localStorage draft persistence
+- Wire up existing Supabase insert + edge function call flow
 
-**1. Refactor `src/components/ReportLoadingScreen.tsx`**
-- Replace the inline `<style>` block with Tailwind utility classes
-- Map all hardcoded colors to the existing design token system:
-  - Green accents (`#1D9E75`) → `bg-primary`, `text-primary`, `border-primary`
-  - Dark greens (`#0F6E56`) → `bg-primary-dark`
-  - Error red (`#ff8080`) → `text-destructive`
-  - White text → `text-foreground`, `text-muted-foreground` with opacity
-  - Card backgrounds → `bg-card` with opacity or `bg-muted`
-- Keep the gradient overlay background but use CSS variables for the colors
-- Maintain all animations (spinner, card entrance, fact cycling) using Tailwind's `@keyframes` in `src/index.css`
+### Phase 3: Data Mapping Layer
+- Map renamed fields: `tx_volume` → `tx_vol`, `risk_class` → `cbn_risk`, `geo_reach` → `geo`, `group_struct` → `group_structure`
+- Normalize `aml_status` values: "Standalone" → "Partial", "FullyCompliant" → "Full"
+- Map granular governance selects back to Yes/No for existing prompt compatibility
+- Derive `aml_functions[]` from the `cov_*` coverage matrix fields
 
-**2. Add custom keyframes to `src/index.css`**
-- Move the `cardIn` animation keyframe into the global CSS or `tailwind.config.ts` so it follows the same pattern as `accordion-down`/`accordion-up`
+### Phase 4: Update AI Prompt (Edge Function)
+- Extend `generate-aml-report` SYSTEM_PROMPT to accept richer data (coverage matrix, KYC details, sanctions capability, fraud capability, security fields, implementation context)
+- Update per-standard rating rules to use granular coverage data
+- Update governance mapping for granular statuses
+- Keep backward compatibility with existing output JSON schema
 
-**3. Add overlay background gradient CSS variable to `src/index.css`**
-- Add a `--loading-bg` variable (or similar) for the dark navy-to-green gradient, scoped to both light and dark themes
+### Files Changed
+- `src/components/AssessmentForm.tsx` -- full rebuild
+- `src/components/FormFields.tsx` -- new field components for coverage matrix
+- `supabase/functions/generate-aml-report/index.ts` -- updated prompt
+- New database migration -- add columns
+- `src/index.css` / `tailwind.config.ts` -- ensure new form uses consistent design tokens
 
-### What Won't Change
-- Component logic, props, and behavior remain identical
-- The visual appearance stays the same (same green/navy palette)
-- All other components are already consistent -- no changes needed
+### What Won't Break
+- All 6 re-added fields keep the AI prompt working as-is
+- Edge function output JSON schema stays identical
+- Report PDF generation receives the same structure
+- Existing database records unaffected (new columns are nullable)
 
