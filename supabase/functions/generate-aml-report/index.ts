@@ -251,11 +251,18 @@ overall_rating.summary_paragraph: MAX 50 words. Lead with rating. State worst ga
 overall_rating.sector_context_note: MAX 20 words
 scorecard fields (labels): MAX 8 words each
 scorecard.regulatory_context_box: MAX 35 words
+capability_snapshot[].function: exact function name from the 9 coverage areas
+capability_snapshot[].level: exactly one of None | Manual | Partial | Full
 gap_analysis_intro: MAX 25 words
 standards[].finding: MAX 30 words. State the gap. Cite the CBN requirement. Institution-specific.
 standards[].required_action: MAX 15 words. Directive. Start with a verb.
+standards[].detail_factors[].factor: MAX 5 words — the specific data point assessed
+standards[].detail_factors[].value: MAX 8 words — the institution's current state
+standards[].detail_factors[].impact: exactly one of Critical | Gap | Compliant
 governance_assessment.intro: MAX 15 words
 governance_assessment.overall_score_label: MAX 10 words
+security_posture.overall_label: MAX 8 words
+implementation_readiness.overall_label: MAX 8 words
 priority_actions[].title: MAX 8 words
 priority_actions[].deadline_label: MAX 5 words
 priority_actions[].body: MAX 50 words. State: (1) what, (2) consequence of not doing it, (3) OPEX/RegTech365 support.
@@ -272,6 +279,7 @@ products[].standards_addressed: section codes only
 products[].relevance_to_client: MAX 30 words
 advisory_services[]: MAX 8 words each, noun phrase only
 next_steps_box: MAX 35 words
+disclaimer: MAX 60 words. Reference the circular, self-assessment basis, and advisory-only nature.
 
 ---
 
