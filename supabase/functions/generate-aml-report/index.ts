@@ -71,6 +71,49 @@ Governance Detail (per control): {{gov_detail}}
 Internal Audit Frequency: {{audit_freq}}
 Additional Context: {{extra_context}}
 
+## GRANULAR CAPABILITY DATA (use to refine per-standard ratings)
+
+Coverage Matrix (per function — None/Manual/Partial/Full):
+- CDD/KYC: {{cov_cdd}}
+- Sanctions & PEP: {{cov_sanctions}}
+- Transaction Monitoring: {{cov_txmon}}
+- Fraud Monitoring: {{cov_fraud}}
+- Case Management: {{cov_case}}
+- Regulatory Reporting: {{cov_reporting}}
+- Customer Risk Assessment: {{cov_risk}}
+- Audit Trail: {{cov_audit}}
+- Data Security: {{cov_security}}
+
+KYC Detail:
+- BVN/NIN Integration: {{bvn_status}}
+- KYC Review Process: {{kyc_review}}
+- UBO Mapping: {{ubo_map}}
+
+Sanctions Detail:
+- Screening Capability: {{sanctions_capab}}
+- Lists Screened: {{sanction_lists}}
+
+Fraud Detail:
+- Fraud Monitoring Capability: {{fraud_capab}}
+- Fraud-to-Risk Feed: {{fraud_feed}}
+
+Reporting Detail:
+- Filing Method: {{reporting_method}}
+- Approval Process: {{report_approval}}
+
+Security Detail:
+- Encryption: {{encryption}}
+- MFA: {{mfa}}
+- Data Sovereignty: {{data_sov}}
+- BIA Status: {{bia_status}}
+
+Implementation Context:
+- Approach: {{impl_approach}}
+- Vendor Status: {{vendor_status}}
+- Roadmap Preparation: {{roadmap_status}}
+- Biggest Concern: {{biggest_concern}}
+- Regulatory Context: {{regulatory_context}}
+
 ---
 
 ## COMPLIANCE DEADLINES
@@ -114,17 +157,17 @@ LOW — ALL of:
 ### Per-Standard Status
 
 5.1: Critical Gap if None/Manual. Gap Identified if Partial. Compliant only if Full and all 8 functions covered.
-5.2: Critical Gap if CDD/KYC not covered. Gap Identified if covered but BVN/NIN not confirmed or not automated. Compliant only if covered + BVN/NIN confirmed + full system.
-5.3: Critical Gap if sanctions/PEP not in covered functions. Gap Identified if covered but partial. Compliant only if full automated system.
-5.4: Critical Gap if risk assessment not covered. Gap Identified if covered but partial. Compliant only if full system with dynamic scoring.
-5.5: Critical Gap if transaction monitoring not covered or system is None/Manual. Gap Identified if covered but partial. Compliant only if full real-time system.
-5.6: Critical Gap if fraud monitoring not covered AND institution is high-fraud-risk (IMTO, PSP, MMO, card issuer) OR risk factors include material fraud exposure. Gap Identified if not covered but no elevated fraud risk. Compliant only if covered under full system.
-5.7: Critical Gap if case management not covered. Gap Identified if covered but partial. Compliant only if ECM with Maker-Checker and full audit trail confirmed.
-5.8: Critical Gap if regulatory reporting not covered. Gap Identified if covered but partial. Compliant only if automated STR/CTR/SAR/FTR generation confirmed.
-5.9: Critical Gap if audit trail not covered AND internal audit is Not covered. Gap Identified if audit trail covered but internal audit annual or less. Compliant only if immutable audit trail + AML internal audit at least twice yearly.
-5.10: Critical Gap if system is None. Gap Identified if partial system with no confirmed integration architecture. Compliant only if bidirectional real-time integration with core banking and KYC confirmed.
-5.11: Always at minimum Gap Identified — never auto-Compliant from questionnaire data alone. Compliant only if full system with confirmed MFA, encryption, and NDPA compliance evidenced.
-5.12: Gap Identified if system is partial or None. Compliant only if full system with real-time dashboards and documented customisation processes confirmed.
+5.2: Use cov_cdd + bvn_status + kyc_review + ubo_map. Critical Gap if cov_cdd is None/Manual OR bvn_status is "No integration". Gap Identified if partial or BVN is manual/batch. Compliant only if cov_cdd Full + bvn Real-time + KYC review automated.
+5.3: Use cov_sanctions + sanctions_capab + sanction_lists. Critical Gap if cov_sanctions None AND sanctions_capab None. Gap Identified if partial screening or limited lists. Compliant only if Real-time AI screening across domestic + international lists.
+5.4: Critical Gap if cov_risk None/Manual. Gap Identified if covered but partial. Compliant only if full system with dynamic scoring.
+5.5: Use cov_txmon. Critical Gap if cov_txmon None/Manual or system is None/Manual. Gap Identified if partial. Compliant only if full real-time system.
+5.6: Use cov_fraud + fraud_capab + fraud_feed. Critical Gap if cov_fraud None AND institution is high-fraud-risk (IMTO, PSP, MMO, card issuer) OR risk factors include material fraud exposure. Gap Identified if not covered but no elevated fraud risk. Compliant only if full real-time fraud monitoring with risk feed.
+5.7: Critical Gap if cov_case None. Gap Identified if partial. Compliant only if ECM with Maker-Checker and full audit trail.
+5.8: Use cov_reporting + reporting_method + report_approval. Critical Gap if cov_reporting None OR reporting_method is "Not filing". Gap Identified if partial or manual portal. Compliant only if fully automated with documented approval.
+5.9: Critical Gap if cov_audit None AND audit is "Not covered". Gap Identified if partial. Compliant only if immutable audit trail + AML internal audit at least twice yearly.
+5.10: Critical Gap if system is None. Gap Identified if partial with no confirmed integration. Compliant only if bidirectional real-time integration confirmed.
+5.11: Use cov_security + encryption + mfa + data_sov + bia_status. Always at minimum Gap Identified. Compliant only if encryption Full + MFA Full + data_sov Nigeria + BIA includes AML.
+5.12: Gap Identified if system is partial or None. Compliant only if full system with real-time dashboards and documented customisation.
 
 ### Governance Item Mapping
 Map each of the 10 controls to "In place", "Not confirmed", or "Not in place" using gov_detail:

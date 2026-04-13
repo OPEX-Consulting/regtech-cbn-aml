@@ -85,6 +85,17 @@ export const GovItem: React.FC<GovItemProps> = ({ label, value, onChange }) => (
       >
         No
       </button>
+      <button
+        type="button"
+        onClick={() => onChange("Not confirmed")}
+        className={`px-3 py-1 text-xs font-medium border rounded-full transition-all ${
+          value === "Not confirmed"
+            ? "bg-muted border-muted-foreground/40 text-muted-foreground"
+            : "bg-background border-border text-muted-foreground hover:border-muted-foreground/40"
+        }`}
+      >
+        Unsure
+      </button>
     </div>
   </div>
 );

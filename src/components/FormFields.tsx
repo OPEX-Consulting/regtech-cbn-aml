@@ -6,7 +6,7 @@ interface RadioGroupFieldProps {
   options: { id: string; value: string; label: string }[];
   value: string;
   onChange: (value: string) => void;
-  columns?: 2 | 3 | 4;
+  columns?: 1 | 2 | 3 | 4;
 }
 
 export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
@@ -18,7 +18,9 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
   columns = 2,
 }) => {
   const gridCols =
-    columns === 3
+    columns === 1
+      ? "grid-cols-1"
+      : columns === 3
       ? "grid-cols-3"
       : columns === 4
       ? "grid-cols-4"
@@ -26,9 +28,11 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
 
   return (
     <div className="mb-5">
-      <label className="block text-[13px] font-medium text-foreground mb-1.5">
-        {label}
-      </label>
+      {label && (
+        <label className="block text-[13px] font-medium text-foreground mb-1.5">
+          {label}
+        </label>
+      )}
       <div className={`grid ${gridCols} gap-2`}>
         {options.map((opt) => (
           <label
@@ -69,6 +73,7 @@ interface CheckboxGroupFieldProps {
   options: { id: string; value: string; label: string }[];
   values: string[];
   onChange: (values: string[]) => void;
+  columns?: 1 | 2 | 3;
 }
 
 export const CheckboxGroupField: React.FC<CheckboxGroupFieldProps> = ({
@@ -76,6 +81,7 @@ export const CheckboxGroupField: React.FC<CheckboxGroupFieldProps> = ({
   options,
   values,
   onChange,
+  columns = 2,
 }) => {
   const toggle = (val: string) => {
     onChange(
@@ -83,12 +89,21 @@ export const CheckboxGroupField: React.FC<CheckboxGroupFieldProps> = ({
     );
   };
 
+  const gridCols =
+    columns === 1
+      ? "grid-cols-1"
+      : columns === 3
+      ? "grid-cols-3"
+      : "grid-cols-2";
+
   return (
     <div className="mb-5">
-      <label className="block text-[13px] font-medium text-foreground mb-1.5">
-        {label}
-      </label>
-      <div className="grid grid-cols-2 gap-2">
+      {label && (
+        <label className="block text-[13px] font-medium text-foreground mb-1.5">
+          {label}
+        </label>
+      )}
+      <div className={`grid ${gridCols} gap-2`}>
         {options.map((opt) => {
           const checked = values.includes(opt.value);
           return (
@@ -228,5 +243,66 @@ export const TextAreaField: React.FC<TextAreaFieldProps> = ({
       placeholder={placeholder}
       className="w-full px-3 py-2.5 text-sm border border-border rounded-md bg-background text-foreground transition-colors focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10 min-h-[80px] resize-y"
     />
+  </div>
+);
+
+/* ── Coverage Matrix Row ────────────────────────────────────────────── */
+interface CoverageRowProps {
+  functionName: string;
+  description: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const coverageLevels = [
+  { value: "", label: "Select…" },
+  { value: "none", label: "Not covered" },
+  { value: "manual", label: "Manual / spreadsheet" },
+  { value: "partial", label: "Partial automation" },
+  { value: "full", label: "Fully automated" },
+];
+
+export const CoverageRow: React.FC<CoverageRowProps> = ({
+  functionName,
+  description,
+  value,
+  onChange,
+}) => (
+  <div className="flex items-center justify-between py-3 border-b border-border-light gap-4 last:border-b-0">
+    <div className="flex-1 min-w-0">
+      <div className="text-[13px] font-medium text-foreground">{functionName}</div>
+      <div className="text-[11px] text-muted-foreground leading-snug">{description}</div>
+    </div>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`w-[180px] flex-shrink-0 px-2.5 py-2 text-[12px] border rounded-md transition-colors focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10 ${
+        value === "full"
+          ? "border-primary bg-secondary text-primary-dark"
+          : value === "partial"
+          ? "border-primary/50 bg-secondary/50 text-foreground"
+          : value === "manual" || value === "none"
+          ? "border-warning/50 bg-warning-light text-warning-foreground"
+          : "border-border bg-background text-muted-foreground"
+      }`}
+    >
+      {coverageLevels.map((lvl) => (
+        <option key={lvl.value} value={lvl.value}>
+          {lvl.label}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+/* ── Info Box ───────────────────────────────────────────────────────── */
+interface InfoBoxProps {
+  children: React.ReactNode;
+}
+
+export const InfoBox: React.FC<InfoBoxProps> = ({ children }) => (
+  <div className="bg-secondary border border-primary/20 rounded-md px-4 py-3 mb-5 text-[13px] text-primary-dark leading-relaxed">
+    <span className="mr-1.5">ℹ</span>
+    {children}
   </div>
 );
