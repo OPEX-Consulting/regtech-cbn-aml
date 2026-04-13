@@ -21,23 +21,65 @@ export type Database = {
           aml_status: string | null
           audit: string | null
           auto_close: string | null
+          bia_status: string | null
+          biggest_concern: string | null
+          budget_status: string | null
+          bvn_status: string | null
           cbn_risk: string | null
           channels: string[] | null
           contact_email: string
           contact_name: string
+          contact_phone: string | null
           contact_role: string
+          core_integ: string | null
+          cov_audit: string | null
+          cov_case: string | null
+          cov_cdd: string | null
+          cov_fraud: string | null
+          cov_reporting: string | null
+          cov_risk: string | null
+          cov_sanctions: string | null
+          cov_security: string | null
+          cov_txmon: string | null
           created_at: string
           cust_base: string | null
+          data_sov: string | null
+          encryption: string | null
           extra_context: string | null
+          fraud_capab: string | null
+          fraud_feed: string | null
           geo: string | null
+          gov_bvn: string | null
+          gov_change: string | null
+          gov_framework: string | null
+          gov_mlro: string | null
+          gov_model: string | null
+          gov_policy: string | null
+          gov_retention: string | null
+          gov_sla: string | null
+          gov_training: string | null
+          gov_vendor: string | null
           governance: Json | null
           group_structure: string | null
           id: string
+          impl_approach: string | null
           inst_name: string
           inst_type: string
+          kyc_review: string | null
+          mfa: string | null
           products: string[] | null
+          regulatory_context: string | null
+          report_approval: string | null
+          reporting_method: string | null
           risk_factors: string[] | null
+          roadmap_status: string | null
+          sanction_lists: string[] | null
+          sanctions_capab: string | null
+          support: string[] | null
+          tech_capacity: string | null
           tx_vol: string | null
+          ubo_map: string | null
+          vendor_status: string | null
         }
         Insert: {
           aiml?: string | null
@@ -45,23 +87,65 @@ export type Database = {
           aml_status?: string | null
           audit?: string | null
           auto_close?: string | null
+          bia_status?: string | null
+          biggest_concern?: string | null
+          budget_status?: string | null
+          bvn_status?: string | null
           cbn_risk?: string | null
           channels?: string[] | null
           contact_email: string
           contact_name: string
+          contact_phone?: string | null
           contact_role: string
+          core_integ?: string | null
+          cov_audit?: string | null
+          cov_case?: string | null
+          cov_cdd?: string | null
+          cov_fraud?: string | null
+          cov_reporting?: string | null
+          cov_risk?: string | null
+          cov_sanctions?: string | null
+          cov_security?: string | null
+          cov_txmon?: string | null
           created_at?: string
           cust_base?: string | null
+          data_sov?: string | null
+          encryption?: string | null
           extra_context?: string | null
+          fraud_capab?: string | null
+          fraud_feed?: string | null
           geo?: string | null
+          gov_bvn?: string | null
+          gov_change?: string | null
+          gov_framework?: string | null
+          gov_mlro?: string | null
+          gov_model?: string | null
+          gov_policy?: string | null
+          gov_retention?: string | null
+          gov_sla?: string | null
+          gov_training?: string | null
+          gov_vendor?: string | null
           governance?: Json | null
           group_structure?: string | null
           id?: string
+          impl_approach?: string | null
           inst_name: string
           inst_type: string
+          kyc_review?: string | null
+          mfa?: string | null
           products?: string[] | null
+          regulatory_context?: string | null
+          report_approval?: string | null
+          reporting_method?: string | null
           risk_factors?: string[] | null
+          roadmap_status?: string | null
+          sanction_lists?: string[] | null
+          sanctions_capab?: string | null
+          support?: string[] | null
+          tech_capacity?: string | null
           tx_vol?: string | null
+          ubo_map?: string | null
+          vendor_status?: string | null
         }
         Update: {
           aiml?: string | null
@@ -69,23 +153,65 @@ export type Database = {
           aml_status?: string | null
           audit?: string | null
           auto_close?: string | null
+          bia_status?: string | null
+          biggest_concern?: string | null
+          budget_status?: string | null
+          bvn_status?: string | null
           cbn_risk?: string | null
           channels?: string[] | null
           contact_email?: string
           contact_name?: string
+          contact_phone?: string | null
           contact_role?: string
+          core_integ?: string | null
+          cov_audit?: string | null
+          cov_case?: string | null
+          cov_cdd?: string | null
+          cov_fraud?: string | null
+          cov_reporting?: string | null
+          cov_risk?: string | null
+          cov_sanctions?: string | null
+          cov_security?: string | null
+          cov_txmon?: string | null
           created_at?: string
           cust_base?: string | null
+          data_sov?: string | null
+          encryption?: string | null
           extra_context?: string | null
+          fraud_capab?: string | null
+          fraud_feed?: string | null
           geo?: string | null
+          gov_bvn?: string | null
+          gov_change?: string | null
+          gov_framework?: string | null
+          gov_mlro?: string | null
+          gov_model?: string | null
+          gov_policy?: string | null
+          gov_retention?: string | null
+          gov_sla?: string | null
+          gov_training?: string | null
+          gov_vendor?: string | null
           governance?: Json | null
           group_structure?: string | null
           id?: string
+          impl_approach?: string | null
           inst_name?: string
           inst_type?: string
+          kyc_review?: string | null
+          mfa?: string | null
           products?: string[] | null
+          regulatory_context?: string | null
+          report_approval?: string | null
+          reporting_method?: string | null
           risk_factors?: string[] | null
+          roadmap_status?: string | null
+          sanction_lists?: string[] | null
+          sanctions_capab?: string | null
+          support?: string[] | null
+          tech_capacity?: string | null
           tx_vol?: string | null
+          ubo_map?: string | null
+          vendor_status?: string | null
         }
         Relationships: []
       }
