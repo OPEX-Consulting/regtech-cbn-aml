@@ -436,7 +436,6 @@ function buildInputJson(d: FormData) {
     biggest_concern: d.biggestConcern,
     regulatory_context: d.regulatoryContext,
     support: d.supportNeeds,
-    contact_phone: d.contactPhone,
   };
 }
 
