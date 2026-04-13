@@ -1,59 +1,105 @@
 
 
-## Plan: Replace Assessment Form with New 9-Section Version
+## Plan: Enrich Report Output Schema and Template with Granular Data
 
-### What We're Doing
-Replace the current 7-step wizard form with the new 9-section single-page form from the uploaded HTML (`cbn-aml-download.html`), while adding back the 6 fields the AI prompt depends on so nothing breaks downstream.
+### Problem
+The AI prompt now ingests ~30 granular capability fields from the new form, but the output JSON schema is unchanged. The report still only shows a one-line finding per standard with no breakdown of the specific capabilities assessed. The new data is used for rating accuracy but is invisible to the reader.
 
-### Phase 1: Database Migration
-Add ~30 new columns to the `assessments` table for all new form fields:
-- Coverage matrix: `cov_cdd`, `cov_sanctions`, `cov_txmon`, `cov_fraud`, `cov_case`, `cov_reporting`, `cov_risk`, `cov_audit`, `cov_security`
-- KYC/Identity: `bvn_status`, `kyc_review`, `ubo_map`
-- Sanctions: `sanctions_capab`, `sanction_lists`
-- Fraud: `fraud_capab`, `fraud_feed`
-- Reporting: `reporting_method`, `report_approval`
-- Security: `encryption`, `mfa`, `data_sov`, `bia_status`
-- Implementation: `impl_approach`, `vendor_status`, `budget_status`, `tech_capacity`, `core_integ`, `roadmap_status`
-- Context: `biggest_concern`, `regulatory_context`, `support`, `contact_phone`
-- Governance granular: `gov_ia`, `gov_policy`, etc. (replaces boolean governance JSONB with richer select values)
+### What to Add
 
-Existing columns remain unchanged -- no data loss.
+**1. New output field: `capability_snapshot` (Section 1 addition)**
 
-### Phase 2: Build New Form Component
-- Convert the 9-section HTML into a single-page React component with Tailwind styling matching the dark navy/gold design
-- Re-integrate the 6 missing fields into natural positions:
-  - `contact_role` → Section 1 (Institution Details)
-  - `cust_base` → Section 2 (Scale & Risk Profile)
-  - `products[]` → Section 2
-  - `channels[]` → Section 2
-  - `aiml` → Section 4 (Coverage Matrix)
-  - `auto_close` → Section 4
-- Implement sticky progress bar, radio/checkbox selection, coverage matrix rows
-- Keep localStorage draft persistence
-- Wire up existing Supabase insert + edge function call flow
+A visual summary table showing the institution's capability across the 9 coverage areas. This gives the reader an at-a-glance view before diving into the gap analysis.
 
-### Phase 3: Data Mapping Layer
-- Map renamed fields: `tx_volume` → `tx_vol`, `risk_class` → `cbn_risk`, `geo_reach` → `geo`, `group_struct` → `group_structure`
-- Normalize `aml_status` values: "Standalone" → "Partial", "FullyCompliant" → "Full"
-- Map granular governance selects back to Yes/No for existing prompt compatibility
-- Derive `aml_functions[]` from the `cov_*` coverage matrix fields
+```text
++---------------------------+---------+
+| Function                  | Level   |
++---------------------------+---------+
+| CDD/KYC                  | Partial |
+| Sanctions & PEP          | None    |
+| Transaction Monitoring    | None    |
+| ...                       | ...     |
++---------------------------+---------+
+```
 
-### Phase 4: Update AI Prompt (Edge Function)
-- Extend `generate-aml-report` SYSTEM_PROMPT to accept richer data (coverage matrix, KYC details, sanctions capability, fraud capability, security fields, implementation context)
-- Update per-standard rating rules to use granular coverage data
-- Update governance mapping for granular statuses
-- Keep backward compatibility with existing output JSON schema
+Add to output schema:
+```json
+"capability_snapshot": [
+  { "function": "string", "level": "None | Manual | Partial | Full" }
+]
+```
 
-### Files Changed
-- `src/components/AssessmentForm.tsx` -- full rebuild
-- `src/components/FormFields.tsx` -- new field components for coverage matrix
-- `supabase/functions/generate-aml-report/index.ts` -- updated prompt
-- New database migration -- add columns
-- `src/index.css` / `tailwind.config.ts` -- ensure new form uses consistent design tokens
+**2. New output field: `standards[].detail_factors` (per-standard sub-evidence)**
+
+Each standard already has `finding` and `required_action`. Add an optional array showing the specific data points that drove the rating:
+
+```json
+"detail_factors": [
+  { "factor": "BVN/NIN Integration", "value": "No integration", "impact": "Critical" },
+  { "factor": "KYC Review Process", "value": "Manual", "impact": "Gap" }
+]
+```
+
+This makes the report defensible and transparent -- the reader sees exactly which inputs drove the assessment.
+
+**3. New output field: `security_posture` (Section 2 addition)**
+
+A compact block after the governance assessment showing security readiness:
+
+```json
+"security_posture": {
+  "encryption": "string (None|Partial|Full)",
+  "mfa": "string",
+  "data_sovereignty": "string",
+  "bia_status": "string",
+  "overall_label": "string (MAX 8 words)"
+}
+```
+
+**4. New output field: `implementation_readiness` (Section 4 addition)**
+
+Context block before the roadmap showing where the institution stands on implementation:
+
+```json
+"implementation_readiness": {
+  "approach": "string",
+  "vendor_status": "string",
+  "budget_status": "string",
+  "tech_capacity": "string",
+  "overall_label": "string (MAX 8 words)"
+}
+```
+
+**5. Add `disclaimer` field (already missing)**
+
+```json
+"disclaimer": "string (MAX 60 words)"
+```
+
+### Changes Required
+
+**`supabase/functions/generate-aml-report/index.ts`**
+- Add 4 new blocks to OUTPUT SCHEMA: `capability_snapshot`, `standards[].detail_factors`, `security_posture`, `implementation_readiness`, `disclaimer`
+- Add word limits for new fields
+- Add generation instructions for each new block
+
+**`src/lib/reportGenerator.ts`**
+- Add `capability_snapshot` table render in Section 1 (after scorecard)
+- Add `detail_factors` sub-rows inside each gap card in Section 2
+- Add `security_posture` block after governance assessment in Section 2
+- Add `implementation_readiness` block before roadmap table in Section 4
+- Add `disclaimer` to footer
+- Update TypeScript interfaces for new fields
+- Sync section headings with template (Section 3 title, Section 5 subsections)
+- Add `table-wrap` divs for responsive tables
+
+**`public/temp/cbn_aml_report_template.html`**
+- Add CSS styles for new blocks (capability-table, detail-factors, security-block, readiness-block)
+- Add corresponding HTML structure in the template body
 
 ### What Won't Break
-- All 6 re-added fields keep the AI prompt working as-is
-- Edge function output JSON schema stays identical
-- Report PDF generation receives the same structure
-- Existing database records unaffected (new columns are nullable)
+- All existing output fields remain unchanged
+- New fields are additive -- old reports without them still render (guard with `|| []` / `|| {}`)
+- Report PDF generation flow unchanged
+- Database schema unchanged (these are AI output fields, not form fields)
 
