@@ -41,6 +41,10 @@
 
     --radius: 0.5rem;
 
+    --loading-bg-start: 220 40% 15%;
+    --loading-bg-mid: 220 35% 23%;
+    --loading-bg-end: 158 75% 24%;
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -85,7 +89,10 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-}
+    --loading-bg-start: 220 40% 10%;
+    --loading-bg-mid: 220 35% 18%;
+    --loading-bg-end: 158 75% 20%;
+  }
 
 @layer base {
   * {
