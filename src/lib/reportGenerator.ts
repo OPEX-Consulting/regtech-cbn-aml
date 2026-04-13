@@ -22,6 +22,33 @@ export interface ReportMeta {
   geo?: string;
 }
 
+export interface DetailFactor {
+  factor: string;
+  value: string;
+  impact: string; // "Critical" | "Gap" | "Compliant"
+}
+
+export interface CapabilitySnapshotItem {
+  function: string;
+  level: string; // "None" | "Manual" | "Partial" | "Full"
+}
+
+export interface SecurityPosture {
+  encryption: string;
+  mfa: string;
+  data_sovereignty: string;
+  bia_status: string;
+  overall_label: string;
+}
+
+export interface ImplementationReadiness {
+  approach: string;
+  vendor_status: string;
+  budget_status: string;
+  tech_capacity: string;
+  overall_label: string;
+}
+
 export interface AmlReportJson {
   meta: ReportMeta;
   overall_rating: {
@@ -46,6 +73,7 @@ export interface AmlReportJson {
     risk_factors_rating: string;
     regulatory_context_box: string;
   };
+  capability_snapshot?: CapabilitySnapshotItem[];
   gap_analysis_intro: string;
   standards: Array<{
     section: string;
@@ -53,6 +81,7 @@ export interface AmlReportJson {
     status: string;
     finding: string;
     required_action: string;
+    detail_factors?: DetailFactor[];
   }>;
   governance_assessment: {
     intro: string;
@@ -60,6 +89,7 @@ export interface AmlReportJson {
     overall_score_label: string;
     overall_score_rating: string;
   };
+  security_posture?: SecurityPosture;
   priority_actions: Array<{
     number: number;
     title: string;
@@ -77,6 +107,7 @@ export interface AmlReportJson {
       standards_addressed: string;
     }>;
   };
+  implementation_readiness?: ImplementationReadiness;
   support_section: {
     intro_paragraph: string;
     advisory_intro: string;
@@ -89,7 +120,7 @@ export interface AmlReportJson {
     advisory_services: string[];
     next_steps_box: string;
   };
-  disclaimer: string;
+  disclaimer?: string;
   _input?: {
     cbn_risk?: string;
     tx_vol?: string;
@@ -160,6 +191,23 @@ function gapRowClass(status: string): string {
   return "";
 }
 
+function capabilityLevelClass(level: string): string {
+  const l = String(level).toLowerCase();
+  if (l === "none") return "cap-none";
+  if (l === "manual") return "cap-manual";
+  if (l === "partial") return "cap-partial";
+  if (l === "full") return "cap-full";
+  return "cap-none";
+}
+
+function detailImpactBadge(impact: string): string {
+  const i = String(impact).toLowerCase();
+  if (i === "critical") return `<span class="badge badge-critical">${esc(impact)}</span>`;
+  if (i === "gap") return `<span class="badge badge-gap">${esc(impact)}</span>`;
+  if (i === "compliant") return `<span class="badge badge-compliant">${esc(impact)}</span>`;
+  return `<span class="badge badge-notconf">${esc(impact)}</span>`;
+}
+
 /** ---------------------------------------------------------------
  * Section builders
  * --------------------------------------------------------------- */
@@ -205,6 +253,35 @@ function buildCover(r: AmlReportJson): string {
   </div>`;
 }
 
+function buildCapabilitySnapshot(r: AmlReportJson): string {
+  const items = r.capability_snapshot || [];
+  if (items.length === 0) return "";
+
+  const rows = items
+    .map(
+      (item) => `
+    <tr>
+      <td class="cap-func">${esc(item.function)}</td>
+      <td class="cap-level"><span class="cap-pill ${capabilityLevelClass(item.level)}">${esc(item.level)}</span></td>
+    </tr>`
+    )
+    .join("");
+
+  return `
+    <div class="subsection-heading">1.4 Capability Snapshot</div>
+    <div class="table-wrap">
+      <table class="capability-table avoid-break">
+        <thead>
+          <tr>
+            <th>AML Function</th>
+            <th style="text-align:right;width:140px">Current Level</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
 function buildSection1(r: AmlReportJson): string {
   const sc = r.scorecard;
   const rc = ratingClass(r.overall_rating.rating);
@@ -225,7 +302,7 @@ function buildSection1(r: AmlReportJson): string {
     </table>
 
     <div class="subsection-heading">1.2 Overall Compliance Risk Rating</div>
-    <div class="rating-callout ${rc} avoid-break">
+    <div class="rating-callout ${rc}">
       <div class="rating-callout-title">${esc(r.overall_rating.rating)}</div>
       <div class="rating-callout-body">${esc(r.overall_rating.summary_paragraph)}</div>
       <div class="rating-callout-note">${esc(r.overall_rating.sector_context_note)}</div>
@@ -282,7 +359,57 @@ function buildSection1(r: AmlReportJson): string {
       <strong>Regulatory Context</strong>
       ${esc(sc.regulatory_context_box)}
     </div>
+
+    ${buildCapabilitySnapshot(r)}
   </div>`;
+}
+
+function buildDetailFactors(factors: DetailFactor[] | undefined): string {
+  if (!factors || factors.length === 0) return "";
+  const rows = factors
+    .map(
+      (f) => `
+      <tr class="detail-factor-row">
+        <td class="df-factor">${esc(f.factor)}</td>
+        <td class="df-value">${esc(f.value)}</td>
+        <td class="df-impact">${detailImpactBadge(f.impact)}</td>
+      </tr>`
+    )
+    .join("");
+
+  return `
+    <div class="detail-factors">
+      <table class="detail-factors-table">
+        <thead>
+          <tr>
+            <th>Factor</th>
+            <th>Current State</th>
+            <th style="text-align:right">Impact</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function buildSecurityPosture(r: AmlReportJson): string {
+  const sp = r.security_posture;
+  if (!sp) return "";
+
+  return `
+    <div class="subsection-heading" style="margin-top:40px">2.2 Security Posture</div>
+    <div class="security-block avoid-break">
+      <div class="security-block-header">
+        <span class="security-block-title">Security Readiness</span>
+        <span class="security-block-label">${esc(sp.overall_label)}</span>
+      </div>
+      <table class="security-table">
+        <tr><td class="field">Encryption</td><td>${statusBadge(sp.encryption)}</td></tr>
+        <tr><td class="field">Multi-Factor Authentication</td><td>${statusBadge(sp.mfa)}</td></tr>
+        <tr><td class="field">Data Sovereignty</td><td>${esc(sp.data_sovereignty)}</td></tr>
+        <tr><td class="field">Business Impact Assessment</td><td>${esc(sp.bia_status)}</td></tr>
+      </table>
+    </div>`;
 }
 
 function buildSection2(r: AmlReportJson): string {
@@ -305,6 +432,7 @@ function buildSection2(r: AmlReportJson): string {
           ${esc(s.required_action)}
         </div>
       </div>
+      ${buildDetailFactors(s.detail_factors)}
     </div>`
     )
     .join("");
@@ -331,21 +459,25 @@ function buildSection2(r: AmlReportJson): string {
 
     <div class="subsection-heading" style="margin-top:40px">2.1 Governance Assessment</div>
     <p class="section-intro">${esc(ga.intro)}</p>
-    <table class="gov-table avoid-break">
-      <thead>
-        <tr>
-          <th>Governance Control</th>
-          <th style="text-align:right;width:180px">Current Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${govRows}
-        <tr class="gov-total">
-          <td>Overall Governance Score</td>
-          <td style="text-align:right">${esc(ga.overall_score_label)}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-wrap">
+      <table class="gov-table avoid-break">
+        <thead>
+          <tr>
+            <th>Governance Control</th>
+            <th style="text-align:right;width:180px">Current Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${govRows}
+          <tr class="gov-total">
+            <td>Overall Governance Score</td>
+            <td style="text-align:right">${esc(ga.overall_score_label)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    ${buildSecurityPosture(r)}
   </div>`;
 }
 
@@ -368,10 +500,29 @@ function buildSection3(r: AmlReportJson): string {
 
   return `
   <div class="report-section">
-    <div class="section-heading">Section 3: Top 5 Priority Actions</div>
-    <p class="section-intro">Essential actions for ${esc(r.meta.inst_name)} to achieve CBN compliance.</p>
+    <div class="section-heading">Section 3: Top 5 Priority Actions Before ${esc(r.meta.roadmap_deadline)}</div>
+    <p class="section-intro">Essential actions for ${esc(r.meta.inst_name)} to achieve compliance with Circular ${esc(r.meta.circular_ref)} before the roadmap submission deadline.</p>
     ${actions}
   </div>`;
+}
+
+function buildImplementationReadiness(r: AmlReportJson): string {
+  const ir = r.implementation_readiness;
+  if (!ir) return "";
+
+  return `
+    <div class="readiness-block avoid-break">
+      <div class="readiness-block-header">
+        <span class="readiness-block-title">Implementation Readiness</span>
+        <span class="readiness-block-label">${esc(ir.overall_label)}</span>
+      </div>
+      <table class="readiness-table">
+        <tr><td class="field">Approach</td><td>${esc(ir.approach)}</td></tr>
+        <tr><td class="field">Vendor Status</td><td>${esc(ir.vendor_status)}</td></tr>
+        <tr><td class="field">Budget Status</td><td>${esc(ir.budget_status)}</td></tr>
+        <tr><td class="field">Technical Capacity</td><td>${esc(ir.tech_capacity)}</td></tr>
+      </table>
+    </div>`;
 }
 
 function buildSection4(r: AmlReportJson): string {
@@ -394,17 +545,22 @@ function buildSection4(r: AmlReportJson): string {
   <div class="report-section">
     <div class="section-heading">Section 4: Recommended Implementation Roadmap</div>
     <p class="section-intro">${esc(r.roadmap.intro)}</p>
-    <table class="roadmap-table avoid-break">
-      <thead>
-        <tr>
-          <th style="width:20%">Phase</th>
-          <th style="width:22%">Objectives</th>
-          <th style="width:35%">Key Deliverables</th>
-          <th style="width:23%">CBN Standards Addressed</th>
-        </tr>
-      </thead>
-      <tbody>${phases}</tbody>
-    </table>
+
+    ${buildImplementationReadiness(r)}
+
+    <div class="table-wrap">
+      <table class="roadmap-table avoid-break">
+        <thead>
+          <tr>
+            <th style="width:20%">Phase</th>
+            <th style="width:22%">Objectives</th>
+            <th style="width:35%">Key Deliverables</th>
+            <th style="width:23%">CBN Standards Addressed</th>
+          </tr>
+        </thead>
+        <tbody>${phases}</tbody>
+      </table>
+    </div>
   </div>`;
 }
 
@@ -427,14 +583,14 @@ function buildSection5(r: AmlReportJson): string {
     .join("");
 
   return `
-  <div class="report-section">
+  <div class="report-section page-break">
     <div class="section-heading">Section 5: How RegTech365 and OPEX Consulting Can Support</div>
     <p class="section-intro">${esc(ss.intro_paragraph)}</p>
 
-    <div class="subsection-heading">5.1 Immediate Advisory Support</div>
+    <div class="subsection-heading">5.1 Immediate Advisory Support — Roadmap Submission</div>
     <p class="section-intro">${esc(ss.advisory_intro)}</p>
 
-    <div class="subsection-heading">5.2 RegTech365 Product Suite</div>
+    <div class="subsection-heading">5.2 RegTech365 Product Suite — Mapped to Your Gaps</div>
     <div class="product-grid">${products}</div>
 
     <div class="subsection-heading">5.3 OPEX Advisory Services</div>
@@ -449,9 +605,10 @@ function buildSection5(r: AmlReportJson): string {
 }
 
 function buildFooter(r: AmlReportJson): string {
+  const disclaimerText = r.disclaimer || "This report is based on self-assessment data provided by the institution in response to Circular BSD/DIR/PUB/LAB/019/002. Findings are advisory only, not legal advice, and represent a point-in-time assessment. Independent verification is recommended.";
   return `
   <div class="report-disclaimer">
-    <p class="disclaimer-text"><strong>Disclaimer</strong>${esc(r.disclaimer)}</p>
+    <p class="disclaimer-text"><strong>Disclaimer</strong>${esc(disclaimerText)}</p>
   </div>
   <div class="report-footer">
     <span class="footer-brand">OPEX Consulting Limited &nbsp;|&nbsp; RegTech365</span>
