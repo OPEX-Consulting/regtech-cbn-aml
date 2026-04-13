@@ -71,6 +71,49 @@ Governance Detail (per control): {{gov_detail}}
 Internal Audit Frequency: {{audit_freq}}
 Additional Context: {{extra_context}}
 
+## GRANULAR CAPABILITY DATA (use to refine per-standard ratings)
+
+Coverage Matrix (per function — None/Manual/Partial/Full):
+- CDD/KYC: {{cov_cdd}}
+- Sanctions & PEP: {{cov_sanctions}}
+- Transaction Monitoring: {{cov_txmon}}
+- Fraud Monitoring: {{cov_fraud}}
+- Case Management: {{cov_case}}
+- Regulatory Reporting: {{cov_reporting}}
+- Customer Risk Assessment: {{cov_risk}}
+- Audit Trail: {{cov_audit}}
+- Data Security: {{cov_security}}
+
+KYC Detail:
+- BVN/NIN Integration: {{bvn_status}}
+- KYC Review Process: {{kyc_review}}
+- UBO Mapping: {{ubo_map}}
+
+Sanctions Detail:
+- Screening Capability: {{sanctions_capab}}
+- Lists Screened: {{sanction_lists}}
+
+Fraud Detail:
+- Fraud Monitoring Capability: {{fraud_capab}}
+- Fraud-to-Risk Feed: {{fraud_feed}}
+
+Reporting Detail:
+- Filing Method: {{reporting_method}}
+- Approval Process: {{report_approval}}
+
+Security Detail:
+- Encryption: {{encryption}}
+- MFA: {{mfa}}
+- Data Sovereignty: {{data_sov}}
+- BIA Status: {{bia_status}}
+
+Implementation Context:
+- Approach: {{impl_approach}}
+- Vendor Status: {{vendor_status}}
+- Roadmap Preparation: {{roadmap_status}}
+- Biggest Concern: {{biggest_concern}}
+- Regulatory Context: {{regulatory_context}}
+
 ---
 
 ## COMPLIANCE DEADLINES
