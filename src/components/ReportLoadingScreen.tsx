@@ -44,7 +44,6 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
   const [factIndex, setFactIndex] = useState(0);
   const [factVisible, setFactVisible] = useState(true);
 
-  // Cycle through did-you-know facts every 5s
   useEffect(() => {
     const interval = setInterval(() => {
       setFactVisible(false);
@@ -56,86 +55,90 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Determine current stage label
   const currentStage = [...STAGES]
     .reverse()
     .find((s) => progress >= s.at) ?? STAGES[0];
 
-  const dots = Math.floor((Date.now() / 500) % 4);
+  const circumference = 2 * Math.PI * 44;
 
   return (
-    <div className="report-loading-overlay">
-      <div className="report-loading-card">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6"
+         style={{ background: "linear-gradient(135deg, hsl(var(--loading-bg-start)) 0%, hsl(var(--loading-bg-mid)) 60%, hsl(var(--loading-bg-end)) 100%)" }}>
+      <div className="bg-card/5 backdrop-blur-2xl border border-primary-foreground/10 rounded-2xl py-12 px-11 max-w-[520px] w-full text-center text-primary-foreground shadow-[0_32px_80px_rgba(0,0,0,0.5)] animate-card-in">
+
         {/* Brand */}
-        <div className="rl-brand">
-          <div className="rl-brand-dot" />
-          <span className="rl-brand-name">RegTech365 · OPEX Consulting</span>
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-[7px] h-[7px] rounded-full bg-primary" />
+          <span className="text-[10px] font-semibold text-primary-foreground/40 tracking-[0.14em] uppercase font-sans">
+            RegTech365 · OPEX Consulting
+          </span>
         </div>
 
-        {/* Animated spinner ring */}
-        <div className="rl-spinner-wrap">
-          <svg className="rl-spinner-ring" viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="50" cy="50" r="44" className="rl-ring-track" />
+        {/* Spinner ring */}
+        <div className="relative w-[120px] h-[120px] mx-auto mb-6">
+          <svg className="w-[120px] h-[120px] -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="hsl(var(--primary-foreground) / 0.08)" strokeWidth="8" />
             <circle
-              cx="50"
-              cy="50"
-              r="44"
-              className="rl-ring-fill"
+              cx="50" cy="50" r="44"
+              fill="none"
+              className="stroke-primary"
+              strokeWidth="8"
+              strokeLinecap="round"
               style={{
-                strokeDasharray: `${2 * Math.PI * 44}`,
-                strokeDashoffset: `${2 * Math.PI * 44 * (1 - progress / 100)}`,
+                strokeDasharray: `${circumference}`,
+                strokeDashoffset: `${circumference * (1 - progress / 100)}`,
+                transition: "stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             />
           </svg>
-          <div className="rl-spinner-pct">{Math.round(progress)}%</div>
+          <div className="absolute inset-0 flex items-center justify-center text-[22px] font-bold text-primary-foreground font-sans">
+            {Math.round(progress)}%
+          </div>
         </div>
 
         {/* Headline */}
-        <h2 className="rl-title">
+        <h2 className="text-xl font-semibold text-primary-foreground mb-1.5 font-sans leading-snug">
           {progress < 100 ? "Generating your gap assessment report" : "Your gap assessment is ready!"}
         </h2>
-        <p className="rl-subtitle">
-          for <strong>{institutionName || "your institution"}</strong>
+        <p className="text-[13.5px] text-primary-foreground/55 mb-7 font-sans">
+          for <strong className="text-primary-foreground/90 font-semibold">{institutionName || "your institution"}</strong>
         </p>
 
-        {/* Current stage or Download Button */}
+        {/* Current stage or Download */}
         {progress < 100 ? (
-          <div className="rl-stage">
-            <span className="rl-stage-icon">{currentStage.icon}</span>
-            <span className="rl-stage-label">
-              {currentStage.label}
-              {"...".slice(0, dots)}
-            </span>
+          <div className="flex items-center justify-center gap-2 bg-primary-foreground/[0.06] border border-primary-foreground/10 rounded-lg px-5 py-3 mb-5 text-[13px] text-primary-foreground/80 font-sans min-h-[46px]">
+            <span className="text-base flex-shrink-0">{currentStage.icon}</span>
+            <span className="leading-snug">{currentStage.label}</span>
           </div>
         ) : (
           <>
             <button
               onClick={onDownload}
-              className="rl-download-btn"
+              className="w-full bg-primary text-primary-foreground border-none rounded-lg py-4 px-6 text-[15px] font-semibold cursor-pointer flex items-center justify-center gap-3 mb-5 transition-all duration-200 shadow-[0_4px_20px_hsl(var(--primary)/0.4)] hover:bg-primary-dark hover:-translate-y-0.5"
             >
-              <span>📥</span> Download PDF Report
+              <span className="text-lg">📥</span> Download PDF Report
             </button>
             {onGetFullReport && (
-              <div className="rl-cta-section">
+              <div className="mb-5">
                 {regwatchCtaStatus !== "sent" ? (
                   <button
                     onClick={onGetFullReport}
                     disabled={regwatchCtaStatus === "loading"}
-                    className="rl-regwatch-btn"
+                    className="w-full bg-transparent text-primary-foreground/85 border border-primary-foreground/25 rounded-lg py-3.5 px-6 text-sm font-medium cursor-pointer flex items-center justify-center gap-2.5 mb-2 transition-all duration-200 font-sans hover:border-primary-foreground/50 hover:bg-primary-foreground/[0.06] hover:text-primary-foreground disabled:opacity-55 disabled:cursor-not-allowed"
                   >
                     {regwatchCtaStatus === "loading"
                       ? "Sending…"
                       : "🔗 Get Your Full Compliance Report on RegWatch"}
                   </button>
                 ) : (
-                  <div className="rl-email-sent">
+                  <div className="bg-primary/15 border border-primary/40 rounded-lg py-3.5 px-5 text-[13.5px] text-primary-foreground/90 text-center mb-2 font-sans">
                     ✅ Check your email for your personalised compliance assessment link.
                   </div>
                 )}
                 {regwatchCtaStatus === "error" && (
-                  <p className="rl-cta-error">Something went wrong. Please try again.</p>
+                  <p className="text-xs text-destructive mb-2 font-sans">Something went wrong. Please try again.</p>
                 )}
-                <p className="rl-cta-subtext">
+                <p className="text-[11px] text-primary-foreground/30 m-0 font-sans">
                   Free · No account needed · Full CBN AML assessment on RegWatch
                 </p>
               </div>
@@ -144,281 +147,31 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
         )}
 
         {/* Progress bar */}
-        <div className="rl-progress-track">
+        <div className="bg-primary-foreground/10 rounded-full h-[5px] overflow-hidden mb-7">
           <div
-            className="rl-progress-fill"
-            style={{ width: `${progress}%` }}
+            className="h-full rounded-full bg-gradient-to-r from-primary to-primary-dark transition-all duration-600"
+            style={{ width: `${progress}%`, transition: "width 0.6s cubic-bezier(0.4, 0, 0.2, 1)" }}
           />
         </div>
 
         {/* Did you know */}
-        <div className={`rl-fact ${factVisible ? "rl-fact-in" : "rl-fact-out"}`}>
-          <span className="rl-fact-label">Did you know?</span>
+        <div
+          className={`bg-primary-foreground/5 border-l-[3px] border-l-primary rounded text-left px-4 py-3.5 text-[12.5px] text-primary-foreground/60 leading-relaxed mb-6 font-sans transition-all duration-400 ${
+            factVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"
+          }`}
+        >
+          <span className="block text-[9px] font-bold tracking-[0.1em] uppercase text-primary mb-1">
+            Did you know?
+          </span>
           {FACTS[factIndex]}
         </div>
 
-        <p className="rl-footer-note">
-          {progress < 100 
-            ? "This typically takes 30–60 seconds. Please don't close this tab." 
+        <p className="text-[11.5px] text-primary-foreground/30 font-sans">
+          {progress < 100
+            ? "This typically takes 30–60 seconds. Please don't close this tab."
             : "Your report is ready for review."}
         </p>
       </div>
-
-      <style>{`
-        .report-loading-overlay {
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          background: linear-gradient(135deg, #0D1F3C 0%, #1A3560 60%, #0F6E56 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px;
-        }
-
-        .report-loading-card {
-          background: rgba(255,255,255,0.05);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(255,255,255,0.12);
-          border-radius: 16px;
-          padding: 48px 44px;
-          max-width: 520px;
-          width: 100%;
-          text-align: center;
-          color: #fff;
-          box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-          animation: cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-        }
-
-        @keyframes cardIn {
-          from { opacity: 0; transform: scale(0.94) translateY(16px); }
-          to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .rl-brand {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          margin-bottom: 32px;
-        }
-        .rl-brand-dot {
-          width: 7px; height: 7px;
-          border-radius: 50%;
-          background: #1D9E75;
-        }
-        .rl-brand-name {
-          font-size: 10px;
-          font-weight: 600;
-          color: rgba(255,255,255,0.4);
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-
-        /* Spinner ring */
-        .rl-spinner-wrap {
-          position: relative;
-          width: 120px;
-          height: 120px;
-          margin: 0 auto 24px;
-        }
-        .rl-spinner-ring {
-          width: 120px;
-          height: 120px;
-          transform: rotate(-90deg);
-        }
-        .rl-ring-track {
-          fill: none;
-          stroke: rgba(255,255,255,0.08);
-          stroke-width: 8;
-        }
-        .rl-ring-fill {
-          fill: none;
-          stroke: #1D9E75;
-          stroke-width: 8;
-          stroke-linecap: round;
-          transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .rl-spinner-pct {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 22px;
-          font-weight: 700;
-          color: #fff;
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-
-        .rl-title {
-          font-size: 20px;
-          font-weight: 600;
-          color: #fff;
-          margin-bottom: 6px;
-          font-family: 'DM Sans', system-ui, sans-serif;
-          line-height: 1.3;
-        }
-        .rl-subtitle {
-          font-size: 13.5px;
-          color: rgba(255,255,255,0.55);
-          margin-bottom: 28px;
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-        .rl-subtitle strong {
-          color: rgba(255,255,255,0.9);
-          font-weight: 600;
-        }
-
-        /* Current stage */
-        .rl-stage {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 8px;
-          padding: 12px 20px;
-          margin-bottom: 20px;
-          font-size: 13px;
-          color: rgba(255,255,255,0.8);
-          font-family: 'DM Sans', system-ui, sans-serif;
-          min-height: 46px;
-        }
-        .rl-stage-icon { font-size: 16px; flex-shrink: 0; }
-        .rl-stage-label { line-height: 1.4; }
-
-        .rl-download-btn {
-          width: 100%;
-          background: #1D9E75;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          padding: 16px 24px;
-          font-size: 15px;
-          font-weight: 600;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          margin-bottom: 20px;
-          transition: transform 0.2s ease, background 0.2s ease;
-          box-shadow: 0 4px 20px rgba(29, 158, 117, 0.4);
-        }
-        .rl-download-btn:hover {
-          background: #158562;
-          transform: translateY(-2px);
-        }
-        .rl-download-btn span {
-          font-size: 18px;
-        }
-
-        /* RegWatch CTA section */
-        .rl-cta-section {
-          margin-bottom: 20px;
-        }
-        .rl-regwatch-btn {
-          width: 100%;
-          background: transparent;
-          color: rgba(255,255,255,0.85);
-          border: 1px solid rgba(255,255,255,0.25);
-          border-radius: 8px;
-          padding: 14px 24px;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          margin-bottom: 8px;
-          transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-        .rl-regwatch-btn:hover:not(:disabled) {
-          border-color: rgba(255,255,255,0.5);
-          background: rgba(255,255,255,0.06);
-          color: #fff;
-        }
-        .rl-regwatch-btn:disabled {
-          opacity: 0.55;
-          cursor: not-allowed;
-        }
-        .rl-email-sent {
-          background: rgba(29, 158, 117, 0.15);
-          border: 1px solid rgba(29, 158, 117, 0.4);
-          border-radius: 8px;
-          padding: 14px 20px;
-          font-size: 13.5px;
-          color: rgba(255,255,255,0.9);
-          text-align: center;
-          margin-bottom: 8px;
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-        .rl-cta-error {
-          font-size: 12px;
-          color: #ff8080;
-          margin: 0 0 8px;
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-        .rl-cta-subtext {
-          font-size: 11px;
-          color: rgba(255,255,255,0.3);
-          margin: 0;
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-
-        /* Progress bar */
-        .rl-progress-track {
-          background: rgba(255,255,255,0.1);
-          border-radius: 99px;
-          height: 5px;
-          overflow: hidden;
-          margin-bottom: 28px;
-        }
-        .rl-progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #1D9E75, #0F6E56);
-          border-radius: 99px;
-          transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Did you know */
-        .rl-fact {
-          background: rgba(255,255,255,0.05);
-          border-left: 3px solid #1D9E75;
-          border-radius: 4px;
-          padding: 14px 16px;
-          font-size: 12.5px;
-          color: rgba(255,255,255,0.6);
-          text-align: left;
-          line-height: 1.6;
-          margin-bottom: 24px;
-          font-family: 'DM Sans', system-ui, sans-serif;
-          transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        .rl-fact-in  { opacity: 1; transform: translateY(0); }
-        .rl-fact-out { opacity: 0; transform: translateY(4px); }
-        .rl-fact-label {
-          display: block;
-          font-size: 9px;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: #1D9E75;
-          margin-bottom: 5px;
-        }
-
-        .rl-footer-note {
-          font-size: 11.5px;
-          color: rgba(255,255,255,0.3);
-          font-family: 'DM Sans', system-ui, sans-serif;
-        }
-      `}</style>
     </div>
   );
 };

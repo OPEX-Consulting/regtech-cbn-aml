@@ -80,10 +80,15 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "card-in": {
+          from: { opacity: "0", transform: "scale(0.94) translateY(16px)" },
+          to: { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "card-in": "card-in 0.4s cubic-bezier(0.34,1.56,0.64,1) both",
       },
     },
   },
