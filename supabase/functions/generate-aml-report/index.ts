@@ -519,21 +519,29 @@ serve(async (req) => {
 
     if (!apiKey || !baseURL) throw new Error("Azure credentials missing.");
 
+    const userMessage = `You are generating a CBN AML gap assessment report. Below is the institution's self-assessment data. Apply all scoring logic, regulatory context, and output schema from your instructions to produce the report JSON.
+
+ASSESSMENT DATA:
+${JSON.stringify(inputJson)}
+
+Return ONLY the JSON object. No preamble, no explanation, no markdown code fences.`;
+
+    // Log the full prompt sent to Claude
+    console.log("═══════════════ FULL PROMPT SENT TO CLAUDE ═══════════════");
+    console.log("SYSTEM PROMPT LENGTH:", SYSTEM_PROMPT.length, "chars");
+    console.log("SYSTEM PROMPT:\n", SYSTEM_PROMPT);
+    console.log("═══════════════ USER MESSAGE ═══════════════");
+    console.log("USER MESSAGE LENGTH:", userMessage.length, "chars");
+    console.log("USER MESSAGE:\n", userMessage);
+    console.log("═══════════════ END PROMPT LOG ═══════════════");
+
     const client = new AnthropicFoundry({ apiKey, baseURL });
     
     const stream = client.messages.stream({
         model: deployment,
         max_tokens: 32000,
         system: SYSTEM_PROMPT,
-        messages: [{ 
-            role: "user", 
-            content: `You are generating a CBN AML gap assessment report. Below is the institution's self-assessment data. Apply all scoring logic, regulatory context, and output schema from your instructions to produce the report JSON.
-
-ASSESSMENT DATA:
-${JSON.stringify(inputJson)}
-
-Return ONLY the JSON object. No preamble, no explanation, no markdown code fences.` 
-        }],
+        messages: [{ role: "user", content: userMessage }],
         temperature: 0.1,
     });
 
