@@ -23,31 +23,31 @@ The user message contains the institution's self-assessment data as a JSON objec
 
 ### Identity & Contact
 - inst_name: string — institution's legal name
-- inst_type: string — institution type code. One of: "DMB", "MFB", "PSP", "IMTO", "MMO", "FC", "PMI", "OFI"
+- inst_type: string — institution type code. One of: "DMB", "MFB", "IMTO", "PSP", "MMO", "Fintech"
 - contact_name: string — primary contact full name
 - contact_email: string — primary contact email
 - contact_phone: string — primary contact phone number
 - contact_role: string — contact's role/title (e.g., "MLRO / CCO", "Head of Compliance", "CEO / MD")
 
 ### Scale, Risk & Profile
-- tx_vol: string — monthly transaction volume. One of: "under_1b", "1b_10b", "10b_50b", "over_50b"
-- cust_base: string — customer base size. One of: "under_50k", "50k_500k", "500k_2m", "over_2m"
-- cbn_risk: string — CBN risk classification. One of: "low", "medium", "high"
-- geo: string — geographic footprint. One of: "single_state", "multi_state", "national", "international"
-- group_structure: string — group membership. One of: "standalone", "subsidiary", "holding"
-- products: string[] — products and services offered (e.g., "savings", "loans", "fx", "cards", "insurance", "investments", "remittance", "agency_banking", "mobile_money", "crypto")
-- channels: string[] — delivery channels (e.g., "branch", "internet", "mobile_app", "ussd", "agent", "atm", "pos")
+- tx_vol: string — daily transaction volume. One of: "<1K", "1K-50K", "50K-500K", ">500K"
+- cust_base: string — customer base size. One of: "<10K", "10K-100K", "100K-500K", ">500K"
+- cbn_risk: string — CBN risk classification. One of: "Low", "Medium", "High", "Not assessed"
+- geo: string — geographic footprint. Free text or empty string.
+- group_structure: string — group membership. One of: "standalone", "subsidiary", "holding" (or free text)
+- products: string[] — products and services offered. Values from: "Retail deposits", "Trade finance", "Virtual assets / crypto", "Agent banking", "FX / remittance", "Credit / loans", "Card issuance", "Mobile money", "Insurance / bancassurance", "Payment processing", "Corporate banking"
+- channels: string[] — delivery channels. Values from: "Branch network", "Mobile app", "USSD", "Internet banking", "API / open banking", "SWIFT", "ATM / POS", "Agent network", "NIP / NCS", "Third-party integrations"
 
 ### Risk Factors
-- risk_factors: string[] — applicable risk factors (e.g., "crossborder", "cash_intensive", "pep_exposure", "high_volume_remittance", "virtual_assets", "trade_finance", "correspondent_banking", "agent_network", "third_party_reliance", "fraud_exposure")
+- risk_factors: string[] — applicable risk factors. Values from: "PEP exposure", "Cross-border FX", "Agent banking network", "Card products", "Material fraud exposure", "High-volume cash", "Virtual assets"
 
 ### AML System Status & Coverage Matrix
-- aml_status: string — current AML system status. One of: "none", "manual", "partial", "full"
-- aml_functions: string[] — derived list of AML functions currently covered (e.g., "CDD / KYC", "Sanctions / PEP Screening", "Transaction Monitoring", etc.)
-- aiml: string — AI/ML usage in AML. One of: "none", "exploring", "pilot", "production"
-- auto_close: string — automated alert closure. One of: "none", "partial", "full"
+- aml_status: string — current AML system status. One of: "None", "Manual", "Partial", "Full"
+- aml_functions: string[] — derived list of AML functions currently covered. Values from: "CDD/KYC/KYB", "Sanctions & PEP screening", "Customer risk assessment", "Transaction monitoring", "Fraud monitoring", "Case management", "Regulatory reporting (STR/CTR)", "Audit trail"
+- aiml: string — AI/ML usage in AML. One of: "Yes - in use", "Yes - planned", "No", "Unknown"
+- auto_close: string — automated alert closure. One of: "Yes", "No"
 
-### Coverage Matrix (per function — values: "none", "manual", "partial", "full")
+### Coverage Matrix (per function — values: "none", "manual", "partial", "full", or empty string if not answered)
 - cov_cdd: string — CDD/KYC coverage
 - cov_sanctions: string — Sanctions & PEP screening coverage
 - cov_txmon: string — Transaction monitoring coverage
@@ -59,45 +59,45 @@ The user message contains the institution's self-assessment data as a JSON objec
 - cov_security: string — Data security coverage
 
 ### KYC / Identity Detail
-- bvn_status: string — BVN/NIN integration. One of: "none", "manual_batch", "real_time"
-- kyc_review: string — KYC review process. One of: "none", "manual", "automated", "hybrid"
-- ubo_map: string — UBO mapping. One of: "none", "manual", "partial", "automated"
+- bvn_status: string — BVN/NIN integration. One of: "No integration", "Manual", "Batch", "Real-time"
+- kyc_review: string — KYC review process. One of: "No review", "Manual", "Partial", "Full"
+- ubo_map: string — UBO mapping. One of: "None", "Manual", "Partial", "Full"
 
 ### Sanctions & Fraud Detail
-- sanctions_capab: string — sanctions screening capability. One of: "none", "manual", "batch", "real_time_rules", "real_time_ai"
-- sanction_lists: string[] — lists screened (e.g., "ofac", "un", "eu", "nfiu", "local_pep", "adverse_media")
-- fraud_capab: string — fraud monitoring capability. One of: "none", "manual", "rules_based", "ai_ml", "hybrid"
-- fraud_feed: string — fraud-to-risk feed. One of: "none", "manual", "automated"
+- sanctions_capab: string — sanctions screening capability. One of: "None", "Manual", "Batch", "Real-time basic", "Real-time AI"
+- sanction_lists: string[] — lists screened. Values from: "CBN / EFCC domestic lists", "OFAC (US Treasury)", "UN Security Council list", "EU sanctions list", "UK HMT sanctions list"
+- fraud_capab: string — fraud monitoring capability. One of: "None", "Manual", "Partial", "Full"
+- fraud_feed: string — fraud-to-risk feed. One of: "No", "Partial", "Yes"
 
 ### Reporting & Security Detail
-- reporting_method: string — regulatory filing method. One of: "not_filing", "manual_portal", "semi_automated", "fully_automated"
-- report_approval: string — report approval process. One of: "none", "informal", "documented"
-- encryption: string — encryption status. One of: "none", "partial", "full"
-- mfa: string — MFA status. One of: "none", "partial", "full"
-- data_sov: string — data sovereignty. One of: "nigeria", "offshore", "hybrid", "unknown"
-- bia_status: string — BIA status for AML. One of: "none", "general_only", "includes_aml"
+- reporting_method: string — regulatory filing method. One of: "Not filing", "Manual email", "goAML portal", "Partial auto", "Fully automated"
+- report_approval: string — report approval process. One of: "No process", "Informal", "Documented"
+- encryption: string — encryption status. One of: "None", "Partial", "At rest only", "Full"
+- mfa: string — MFA status. One of: "Not enforced", "Partial", "Full"
+- data_sov: string — data sovereignty. One of: "Offshore", "Not confirmed", "Nigeria"
+- bia_status: string — BIA status for AML. One of: "No BIA", "BIA no AML", "BIA with AML"
 
 ### Governance Controls (10 items)
-- governance: object — keys are control identifiers, values are "yes" or "no". The 10 controls:
+- governance: object — keys are control identifiers, values are "yes" or "no". The 10 control keys:
   - "mlro": Formally designated MLRO or CCO
-  - "policy": Board-approved AML/CFT/CPF policy
-  - "framework": Documented AML Solution Governance Framework
-  - "change": Formal Change Control for AML Configurations
-  - "model": Model Governance Committee for AI/ML
-  - "sla": Documented Alert Review SLAs
-  - "vendor": Vendor/Third-Party Management Policy
-  - "retention": Data Retention and Destruction Policy
-  - "bvn": BVN/NIN Integration confirmed
+  - "board-policy": Board-approved AML/CFT/CPF policy
+  - "aml-gov-framework": Documented AML Solution Governance Framework
+  - "change-control": Formal Change Control for AML Configurations
+  - "model-gov": Model Governance Committee for AI/ML
+  - "alert-sla": Documented Alert Review SLAs
+  - "vendor-policy": Vendor/Third-Party Management Policy
+  - "data-retention": Data Retention and Destruction Policy
+  - "bvn-nin": BVN/NIN Integration confirmed
   - "training": AML Training Programme with Documented Records
-- audit: string — internal audit frequency. One of: "not_covered", "annual", "biannual", "quarterly"
+- audit: string — internal audit frequency. One of: "Not covered", "Annually", "Twice a year", "Quarterly"
 
 ### Implementation Context
-- impl_approach: string — implementation approach. One of: "build", "buy", "hybrid", "undecided"
-- vendor_status: string — vendor engagement status. One of: "not_started", "shortlisting", "evaluating", "selected", "contracted"
-- roadmap_status: string — roadmap preparation status. One of: "not_started", "drafting", "ready"
+- impl_approach: string — implementation approach. One of: "New platform", "Upgrade existing", "Hybrid", "Undecided"
+- vendor_status: string — vendor engagement status. One of: "Not started", "Researching", "Demos seen", "Vendor selected", "Contracted"
+- roadmap_status: string — roadmap preparation status. One of: "Not started", "Aware", "In progress", "Engaging consultant", "Submitted"
 - biggest_concern: string — free text describing top concern
 - regulatory_context: string — free text describing any recent CBN interactions or regulatory context
-- support: string[] — support needs (e.g., "roadmap_help", "vendor_selection", "policy_drafting", "training", "board_presentation", "gap_assessment", "goaml_support")
+- support: string[] — support needs. Values from: "CBN Roadmap Template completion", "AML/CFT/CPF policy drafting", "Vendor evaluation support", "RegTech365 product demo", "End-to-end implementation", "Internal audit co-sourcing", "Staff AML training", "ISO alignment advisory"
 - extra_context: string — any additional context provided by the institution
 
 ---
@@ -519,21 +519,29 @@ serve(async (req) => {
 
     if (!apiKey || !baseURL) throw new Error("Azure credentials missing.");
 
+    const userMessage = `You are generating a CBN AML gap assessment report. Below is the institution's self-assessment data. Apply all scoring logic, regulatory context, and output schema from your instructions to produce the report JSON.
+
+ASSESSMENT DATA:
+${JSON.stringify(inputJson)}
+
+Return ONLY the JSON object. No preamble, no explanation, no markdown code fences.`;
+
+    // Log the full prompt sent to Claude
+    console.log("═══════════════ FULL PROMPT SENT TO CLAUDE ═══════════════");
+    console.log("SYSTEM PROMPT LENGTH:", SYSTEM_PROMPT.length, "chars");
+    console.log("SYSTEM PROMPT:\n", SYSTEM_PROMPT);
+    console.log("═══════════════ USER MESSAGE ═══════════════");
+    console.log("USER MESSAGE LENGTH:", userMessage.length, "chars");
+    console.log("USER MESSAGE:\n", userMessage);
+    console.log("═══════════════ END PROMPT LOG ═══════════════");
+
     const client = new AnthropicFoundry({ apiKey, baseURL });
     
     const stream = client.messages.stream({
         model: deployment,
         max_tokens: 32000,
         system: SYSTEM_PROMPT,
-        messages: [{ 
-            role: "user", 
-            content: `You are generating a CBN AML gap assessment report. Below is the institution's self-assessment data. Apply all scoring logic, regulatory context, and output schema from your instructions to produce the report JSON.
-
-ASSESSMENT DATA:
-${JSON.stringify(inputJson)}
-
-Return ONLY the JSON object. No preamble, no explanation, no markdown code fences.` 
-        }],
+        messages: [{ role: "user", content: userMessage }],
         temperature: 0.1,
     });
 
