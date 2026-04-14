@@ -17,72 +17,88 @@ const SYSTEM_PROMPT = `You are a regulatory compliance analyst specialising in N
 
 ---
 
-## INSTITUTION DATA
+## INPUT JSON SCHEMA
 
-Institution Name: {{inst_name}}
-Institution Type: {{inst_type}} ({{inst_type_full}})
-Contact Name: {{contact_name}}
-Contact Email: {{contact_email}}
-Contact Role: {{contact_role}}
-Transaction Volume: {{tx_volume}}
-Customer Base: {{customer_base}}
-CBN Risk Classification: {{cbn_risk}}
-Geographic Footprint: {{geo_footprint}}
-Group Structure: {{group_structure}}
-Products & Services: {{products}}
-Delivery Channels: {{channels}}
-AML System Status: {{aml_status}}
-AML Functions Currently Covered: {{aml_functions}}
-AI/ML Usage: {{aiml_usage}}
-Automated Alert Closure: {{auto_closure}}
-Risk Factors: {{risk_factors}}
-Governance Controls in Place (of 10): {{gov_score}}
-Governance Detail (per control): {{gov_detail}}
-Internal Audit Frequency: {{audit_freq}}
-Additional Context: {{extra_context}}
+The user message contains the institution's self-assessment data as a JSON object. Use the exact field names below to read input values. Do NOT rely on any other naming convention.
 
-## GRANULAR CAPABILITY DATA (use to refine per-standard ratings)
+### Identity & Contact
+- inst_name: string — institution's legal name
+- inst_type: string — institution type code. One of: "DMB", "MFB", "PSP", "IMTO", "MMO", "FC", "PMI", "OFI"
+- contact_name: string — primary contact full name
+- contact_email: string — primary contact email
+- contact_phone: string — primary contact phone number
+- contact_role: string — contact's role/title (e.g., "MLRO / CCO", "Head of Compliance", "CEO / MD")
 
-Coverage Matrix (per function — None/Manual/Partial/Full):
-- CDD/KYC: {{cov_cdd}}
-- Sanctions & PEP: {{cov_sanctions}}
-- Transaction Monitoring: {{cov_txmon}}
-- Fraud Monitoring: {{cov_fraud}}
-- Case Management: {{cov_case}}
-- Regulatory Reporting: {{cov_reporting}}
-- Customer Risk Assessment: {{cov_risk}}
-- Audit Trail: {{cov_audit}}
-- Data Security: {{cov_security}}
+### Scale, Risk & Profile
+- tx_vol: string — monthly transaction volume. One of: "under_1b", "1b_10b", "10b_50b", "over_50b"
+- cust_base: string — customer base size. One of: "under_50k", "50k_500k", "500k_2m", "over_2m"
+- cbn_risk: string — CBN risk classification. One of: "low", "medium", "high"
+- geo: string — geographic footprint. One of: "single_state", "multi_state", "national", "international"
+- group_structure: string — group membership. One of: "standalone", "subsidiary", "holding"
+- products: string[] — products and services offered (e.g., "savings", "loans", "fx", "cards", "insurance", "investments", "remittance", "agency_banking", "mobile_money", "crypto")
+- channels: string[] — delivery channels (e.g., "branch", "internet", "mobile_app", "ussd", "agent", "atm", "pos")
 
-KYC Detail:
-- BVN/NIN Integration: {{bvn_status}}
-- KYC Review Process: {{kyc_review}}
-- UBO Mapping: {{ubo_map}}
+### Risk Factors
+- risk_factors: string[] — applicable risk factors (e.g., "crossborder", "cash_intensive", "pep_exposure", "high_volume_remittance", "virtual_assets", "trade_finance", "correspondent_banking", "agent_network", "third_party_reliance", "fraud_exposure")
 
-Sanctions Detail:
-- Screening Capability: {{sanctions_capab}}
-- Lists Screened: {{sanction_lists}}
+### AML System Status & Coverage Matrix
+- aml_status: string — current AML system status. One of: "none", "manual", "partial", "full"
+- aml_functions: string[] — derived list of AML functions currently covered (e.g., "CDD / KYC", "Sanctions / PEP Screening", "Transaction Monitoring", etc.)
+- aiml: string — AI/ML usage in AML. One of: "none", "exploring", "pilot", "production"
+- auto_close: string — automated alert closure. One of: "none", "partial", "full"
 
-Fraud Detail:
-- Fraud Monitoring Capability: {{fraud_capab}}
-- Fraud-to-Risk Feed: {{fraud_feed}}
+### Coverage Matrix (per function — values: "none", "manual", "partial", "full")
+- cov_cdd: string — CDD/KYC coverage
+- cov_sanctions: string — Sanctions & PEP screening coverage
+- cov_txmon: string — Transaction monitoring coverage
+- cov_fraud: string — Fraud monitoring coverage
+- cov_case: string — Case management coverage
+- cov_reporting: string — Regulatory reporting coverage
+- cov_risk: string — Customer risk assessment coverage
+- cov_audit: string — Audit trail coverage
+- cov_security: string — Data security coverage
 
-Reporting Detail:
-- Filing Method: {{reporting_method}}
-- Approval Process: {{report_approval}}
+### KYC / Identity Detail
+- bvn_status: string — BVN/NIN integration. One of: "none", "manual_batch", "real_time"
+- kyc_review: string — KYC review process. One of: "none", "manual", "automated", "hybrid"
+- ubo_map: string — UBO mapping. One of: "none", "manual", "partial", "automated"
 
-Security Detail:
-- Encryption: {{encryption}}
-- MFA: {{mfa}}
-- Data Sovereignty: {{data_sov}}
-- BIA Status: {{bia_status}}
+### Sanctions & Fraud Detail
+- sanctions_capab: string — sanctions screening capability. One of: "none", "manual", "batch", "real_time_rules", "real_time_ai"
+- sanction_lists: string[] — lists screened (e.g., "ofac", "un", "eu", "nfiu", "local_pep", "adverse_media")
+- fraud_capab: string — fraud monitoring capability. One of: "none", "manual", "rules_based", "ai_ml", "hybrid"
+- fraud_feed: string — fraud-to-risk feed. One of: "none", "manual", "automated"
 
-Implementation Context:
-- Approach: {{impl_approach}}
-- Vendor Status: {{vendor_status}}
-- Roadmap Preparation: {{roadmap_status}}
-- Biggest Concern: {{biggest_concern}}
-- Regulatory Context: {{regulatory_context}}
+### Reporting & Security Detail
+- reporting_method: string — regulatory filing method. One of: "not_filing", "manual_portal", "semi_automated", "fully_automated"
+- report_approval: string — report approval process. One of: "none", "informal", "documented"
+- encryption: string — encryption status. One of: "none", "partial", "full"
+- mfa: string — MFA status. One of: "none", "partial", "full"
+- data_sov: string — data sovereignty. One of: "nigeria", "offshore", "hybrid", "unknown"
+- bia_status: string — BIA status for AML. One of: "none", "general_only", "includes_aml"
+
+### Governance Controls (10 items)
+- governance: object — keys are control identifiers, values are "yes" or "no". The 10 controls:
+  - "mlro": Formally designated MLRO or CCO
+  - "policy": Board-approved AML/CFT/CPF policy
+  - "framework": Documented AML Solution Governance Framework
+  - "change": Formal Change Control for AML Configurations
+  - "model": Model Governance Committee for AI/ML
+  - "sla": Documented Alert Review SLAs
+  - "vendor": Vendor/Third-Party Management Policy
+  - "retention": Data Retention and Destruction Policy
+  - "bvn": BVN/NIN Integration confirmed
+  - "training": AML Training Programme with Documented Records
+- audit: string — internal audit frequency. One of: "not_covered", "annual", "biannual", "quarterly"
+
+### Implementation Context
+- impl_approach: string — implementation approach. One of: "build", "buy", "hybrid", "undecided"
+- vendor_status: string — vendor engagement status. One of: "not_started", "shortlisting", "evaluating", "selected", "contracted"
+- roadmap_status: string — roadmap preparation status. One of: "not_started", "drafting", "ready"
+- biggest_concern: string — free text describing top concern
+- regulatory_context: string — free text describing any recent CBN interactions or regulatory context
+- support: string[] — support needs (e.g., "roadmap_help", "vendor_selection", "policy_drafting", "training", "board_presentation", "gap_assessment", "goaml_support")
+- extra_context: string — any additional context provided by the institution
 
 ---
 
