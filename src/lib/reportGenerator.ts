@@ -1,9 +1,9 @@
 /** ---------------------------------------------------------------
- * reportGenerator.ts — Native High-Fidelity Version
+ * reportGenerator.ts — v2 High-Fidelity Report (matches sample)
  * --------------------------------------------------------------- */
 
 /** ---------------------------------------------------------------
- * Type definitions mirroring the AI output JSON schema
+ * Type definitions mirroring the v2 AI output JSON schema
  * --------------------------------------------------------------- */
 export interface ReportMeta {
   inst_name: string;
@@ -20,41 +20,80 @@ export interface ReportMeta {
   cbn_risk?: string;
   tx_vol?: string;
   geo?: string;
+  group_structure?: string;
+  risk_factors_display?: string;
 }
 
-export interface DetailFactor {
-  factor: string;
-  value: string;
-  impact: string; // "Critical" | "Gap" | "Compliant"
+export interface ReqTag {
+  label: string;
+  type: string; // "mandatory" | "conditional"
 }
 
-export interface CapabilitySnapshotItem {
-  function: string;
-  level: string; // "None" | "Manual" | "Partial" | "Full"
+export interface RequirementCategory {
+  area: string;
+  cbn_ref: string;
+  category: string;
+  trigger: string;
 }
 
-export interface SecurityPosture {
-  encryption: string;
-  mfa: string;
-  data_sovereignty: string;
-  bia_status: string;
-  overall_label: string;
+export interface GovernanceItem {
+  control: string;
+  status: string;
+  cbn_ref?: string;
+  category?: string;
+  action_required?: string;
 }
 
-export interface ImplementationReadiness {
-  approach: string;
-  vendor_status: string;
-  budget_status: string;
-  tech_capacity: string;
-  overall_label: string;
+export interface RoadmapPhase {
+  phase_number: number;
+  title: string;
+  timeline: string;
+  description?: string;
+  objectives?: string;
+  deliverables?: string[];
+  key_deliverables?: string;
+  standards_addressed: string;
+}
+
+export interface Milestone {
+  milestone: string;
+  target_date: string;
+  owner: string;
+}
+
+export interface Product {
+  name: string;
+  tagline?: string;
+  gaps_closed?: string[];
+  description?: string;
+  function?: string;
+  standards_addressed: string;
+  relevance_to_client?: string;
+}
+
+export interface AdvisoryService {
+  title: string;
+  description: string;
+}
+
+export interface CTA {
+  title: string;
+  subtitle: string;
+  primary_button_label: string;
+  secondary_button_label: string;
 }
 
 export interface AmlReportJson {
   meta: ReportMeta;
+  executive_summary?: {
+    lead: string;
+    body_paragraphs: string[];
+    inline_alert: string;
+  };
   overall_rating: {
     rating: string;
     rating_label: string;
-    summary_paragraph: string;
+    summary_paragraph?: string;
     sector_context_note: string;
   };
   scorecard: {
@@ -73,23 +112,32 @@ export interface AmlReportJson {
     risk_factors_rating: string;
     regulatory_context_box: string;
   };
-  capability_snapshot?: CapabilitySnapshotItem[];
+  profile?: {
+    sector_context_box?: string;
+  };
+  requirement_categories_intro?: string;
+  requirement_categories_alert?: string;
+  requirement_categories?: RequirementCategory[];
   gap_analysis_intro: string;
   standards: Array<{
     section: string;
     title: string;
     status: string;
+    req_tags?: ReqTag[];
     finding: string;
     required_action: string;
-    detail_factors?: DetailFactor[];
+    regtech_solution?: string;
+    regtech_products?: string[];
+    detail_factors?: Array<{ factor: string; value: string; impact: string }>;
   }>;
   governance_assessment: {
     intro: string;
-    items: Array<{ control: string; status: string }>;
+    score_percentage?: number;
+    score_context?: string;
+    items: GovernanceItem[];
     overall_score_label: string;
     overall_score_rating: string;
   };
-  security_posture?: SecurityPosture;
   priority_actions: Array<{
     number: number;
     title: string;
@@ -98,34 +146,24 @@ export interface AmlReportJson {
   }>;
   roadmap: {
     intro: string;
-    phases: Array<{
-      phase_number: number;
-      title: string;
-      timeline: string;
-      objectives: string;
-      key_deliverables: string;
-      standards_addressed: string;
-    }>;
+    phases: RoadmapPhase[];
+    milestones?: Milestone[];
   };
-  implementation_readiness?: ImplementationReadiness;
   support_section: {
     intro_paragraph: string;
-    advisory_intro: string;
-    products: Array<{
-      name: string;
-      function: string;
-      standards_addressed: string;
-      relevance_to_client: string;
-    }>;
-    advisory_services: string[];
-    next_steps_box: string;
+    differentiator?: string;
+    advisory_intro?: string;
+    products: Product[];
+    advisory_services: (string | AdvisoryService)[];
+    cta?: CTA;
+    next_steps_box?: string;
   };
   disclaimer?: string;
-  _input?: {
-    cbn_risk?: string;
-    tx_vol?: string;
-    geo?: string;
-  };
+  // Legacy fields (backward compat)
+  capability_snapshot?: Array<{ function: string; level: string }>;
+  security_posture?: { encryption: string; mfa: string; data_sovereignty: string; bia_status: string; overall_label: string };
+  implementation_readiness?: { approach: string; vendor_status: string; budget_status: string; tech_capacity: string; overall_label: string };
+  _input?: { cbn_risk?: string; tx_vol?: string; geo?: string };
 }
 
 /** ---------------------------------------------------------------
@@ -167,6 +205,8 @@ function statusBadge(status: string): string {
     return `<span class="badge badge-notconf">Not Confirmed</span>`;
   if (s === "not in place")
     return `<span class="badge badge-notinplace">Not In Place</span>`;
+  if (s === "not applicable yet")
+    return `<span class="badge badge-notconf">Not Applicable Yet</span>`;
   if (s === "weak" || s === "partial")
     return `<span class="badge badge-gap">${esc(status)}</span>`;
   if (s === "adequate" || s === "strong")
@@ -191,51 +231,63 @@ function gapRowClass(status: string): string {
   return "";
 }
 
-function capabilityLevelClass(level: string): string {
-  const l = String(level).toLowerCase();
-  if (l === "none") return "cap-none";
-  if (l === "manual") return "cap-manual";
-  if (l === "partial") return "cap-partial";
-  if (l === "full") return "cap-full";
-  return "cap-none";
+function reqTagBadge(tag: ReqTag): string {
+  const cls = tag.type === "mandatory" ? "req-tag-mandatory" : "req-tag-conditional";
+  return `<span class="req-tag ${cls}">${esc(tag.label)}</span>`;
 }
 
-function detailImpactBadge(impact: string): string {
-  const i = String(impact).toLowerCase();
-  if (i === "critical") return `<span class="badge badge-critical">${esc(impact)}</span>`;
-  if (i === "gap") return `<span class="badge badge-gap">${esc(impact)}</span>`;
-  if (i === "compliant") return `<span class="badge badge-compliant">${esc(impact)}</span>`;
-  return `<span class="badge badge-notconf">${esc(impact)}</span>`;
+function catBadge(cat: string): string {
+  const c = String(cat).toLowerCase();
+  if (c === "mandatory") return `<span class="badge badge-cat-mandatory">MANDATORY</span>`;
+  return `<span class="badge badge-cat-conditional">CONDITIONAL</span>`;
+}
+
+function govStatusDisplay(status: string): string {
+  const s = String(status).toLowerCase();
+  if (s === "in place") return `<span class="gov-status gov-in-place">✓ In Place</span>`;
+  if (s === "not in place") return `<span class="gov-status gov-not-in-place">✗ Not In Place</span>`;
+  if (s === "not confirmed") return `<span class="gov-status gov-not-confirmed">✗ Not Confirmed</span>`;
+  if (s.includes("not applicable")) return `<span class="gov-status gov-not-confirmed">— Not Applicable Yet</span>`;
+  return `<span class="gov-status gov-not-confirmed">${esc(status)}</span>`;
 }
 
 /** ---------------------------------------------------------------
  * Section builders
  * --------------------------------------------------------------- */
+
 function buildCover(r: AmlReportJson): string {
   const rc = ratingClass(r.overall_rating.rating);
+  const ratingText = `${r.scorecard.standards_critical_gap_count} of 12 standards carry a Critical Gap. ${r.scorecard.standards_compliant_count === 0 ? 'No standard is currently assessed as Compliant.' : `${r.scorecard.standards_compliant_count} standard(s) assessed as Compliant.`} Immediate action required before ${r.meta.roadmap_deadline}.`;
+  
   return `
   <div class="report-cover">
     <div class="cover-brand">
       <div class="cover-brand-dot"></div>
-      <span class="cover-brand-name">OPEX Consulting &nbsp;|&nbsp; RegTech365</span>
+      <span class="cover-brand-name">OPEX Consulting &nbsp;·&nbsp; RegTech365</span>
     </div>
+    <div class="cover-sub-brand">Compliance Advisory & Regulatory Technology · Lagos, Nigeria</div>
     <div class="cover-eyebrow">CBN AML Baseline Standards</div>
     <div class="cover-title">Gap Assessment<br>Report</div>
-    <div class="cover-subtitle">Baseline Standards for Automated AML Solutions</div>
-    <div class="cover-prepared">Prepared for:</div>
-    <div class="cover-institution">${esc(r.meta.inst_name)}</div>
-    <div class="cover-inst-type">${esc(r.meta.inst_type_full)}</div>
+    <div class="cover-subtitle">Circular ${esc(r.meta.circular_ref)} — ${esc(r.meta.report_date)}</div>
     <div class="cover-meta-grid">
       <div class="cover-meta-cell">
-        <div class="cover-meta-label">Circular Reference</div>
-        <div class="cover-meta-value">${esc(r.meta.circular_ref)}</div>
+        <div class="cover-meta-label">Institution</div>
+        <div class="cover-meta-value">${esc(r.meta.inst_name)}</div>
+      </div>
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">Institution Type</div>
+        <div class="cover-meta-value">${esc(r.meta.inst_type_full)}</div>
+      </div>
+      <div class="cover-meta-cell">
+        <div class="cover-meta-label">CBN Risk Classification</div>
+        <div class="cover-meta-value">${esc(r.meta.cbn_risk ?? "—")}</div>
       </div>
       <div class="cover-meta-cell">
         <div class="cover-meta-label">Report Date</div>
         <div class="cover-meta-value">${esc(r.meta.report_date)}</div>
       </div>
       <div class="cover-meta-cell">
-        <div class="cover-meta-label">Roadmap Deadline</div>
+        <div class="cover-meta-label">Roadmap Submission Deadline</div>
         <div class="cover-meta-value">${esc(r.meta.roadmap_deadline)}</div>
       </div>
       <div class="cover-meta-cell">
@@ -243,248 +295,251 @@ function buildCover(r: AmlReportJson): string {
         <div class="cover-meta-value">${esc(r.meta.compliance_deadline)}</div>
       </div>
     </div>
-  </div>
-  <div class="rating-banner ${rc}">
-    <div class="rating-banner-left">
-      <div class="rating-banner-eyebrow">Overall Compliance Risk Rating</div>
-      <div class="rating-banner-value">${esc(r.overall_rating.rating)}</div>
-      <div class="rating-banner-note">${esc(r.overall_rating.rating_label)}</div>
+    <div class="cover-rating-strip ${rc}">
+      <span class="cover-rating-icon">⚠</span>
+      <div class="cover-rating-text">
+        <strong>${esc(r.overall_rating.rating)} RISK RATING</strong>
+        <span>${esc(ratingText)}</span>
+      </div>
+    </div>
+    <div class="cover-footer">
+      <div>Prepared by OPEX Consulting / RegTech365</div>
+      <div>compliance@opexconsulting.ng</div>
+      <div class="cover-footer-note">Confidential — for internal compliance planning only<br>Not legal advice</div>
     </div>
   </div>`;
 }
 
-function buildCapabilitySnapshot(r: AmlReportJson): string {
-  const items = r.capability_snapshot || [];
-  if (items.length === 0) return "";
-
-  const rows = items
-    .map(
-      (item) => `
-    <tr>
-      <td class="cap-func">${esc(item.function)}</td>
-      <td class="cap-level"><span class="cap-pill ${capabilityLevelClass(item.level)}">${esc(item.level)}</span></td>
-    </tr>`
-    )
-    .join("");
-
+function buildTOC(r: AmlReportJson): string {
   return `
-    <div class="subsection-heading">1.4 Capability Snapshot</div>
-    <div class="table-wrap">
-      <table class="capability-table avoid-break">
-        <thead>
-          <tr>
-            <th>AML Function</th>
-            <th style="text-align:right;width:140px">Current Level</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
+  <div class="toc-page page-break">
+    <div class="toc-title">Contents</div>
+    <div class="toc-list">
+      <a href="#section-1" class="toc-item"><span class="toc-num">01</span><span class="toc-label">Executive Summary</span></a>
+      <a href="#section-2" class="toc-item"><span class="toc-num">02</span><span class="toc-label">Institution Profile & Assessment Scorecard</span></a>
+      <a href="#section-3" class="toc-item"><span class="toc-num">03</span><span class="toc-label">CBN Requirement Categories — Mandatory vs Conditional</span></a>
+      <a href="#section-4" class="toc-item"><span class="toc-num">04</span><span class="toc-label">Gap Analysis — 12 CBN Baseline Standards</span></a>
+      <a href="#section-5" class="toc-item"><span class="toc-num">05</span><span class="toc-label">Governance Assessment — Section 6 Controls</span></a>
+      <a href="#section-6" class="toc-item"><span class="toc-num">06</span><span class="toc-label">Top 5 Priority Actions Before ${esc(r.meta.roadmap_deadline)}</span></a>
+      <a href="#section-7" class="toc-item"><span class="toc-num">07</span><span class="toc-label">Recommended Implementation Roadmap</span></a>
+      <a href="#section-8" class="toc-item"><span class="toc-num">08</span><span class="toc-label">How RegTech365 & OPEX Consulting Can Help</span></a>
+      <a href="#section-disclaimer" class="toc-item toc-item-last"><span class="toc-num">—</span><span class="toc-label">Disclaimer</span></a>
+    </div>
+  </div>`;
 }
 
 function buildSection1(r: AmlReportJson): string {
-  const sc = r.scorecard;
-  const rc = ratingClass(r.overall_rating.rating);
+  const es = r.executive_summary;
+  const bodyParas = es?.body_paragraphs || [];
+  const lead = es?.lead || r.overall_rating.summary_paragraph || "";
+  const inlineAlert = es?.inline_alert || "";
+
+  const scoreRing = `
+    <div class="score-ring-block">
+      <div class="score-ring">
+        <div class="score-ring-value">${esc(r.scorecard.standards_compliant_count)}<span class="score-ring-denom">/₁₂</span></div>
+      </div>
+      <div class="score-ring-labels">
+        <div class="score-ring-item"><span class="sr-dot sr-dot-green"></span>Standards Compliant</div>
+        <div class="score-ring-item"><span class="sr-dot sr-dot-red"></span>Critical Gap Ratings</div>
+        <div class="score-ring-item"><span class="sr-dot sr-dot-amber"></span>Gap Identified Ratings</div>
+      </div>
+    </div>`;
+
   return `
-  <div class="report-section avoid-break">
-    <div class="section-heading">Section 1: Executive Summary</div>
-
-    <div class="subsection-heading">1.1 Institution Profile</div>
-    <table class="profile-table">
-      <tr><td class="field">Institution</td><td>${esc(r.meta.inst_name)}</td></tr>
-      <tr><td class="field">Institution Type</td><td>${esc(r.meta.inst_type_full)}</td></tr>
-      <tr><td class="field">CBN Risk Classification</td><td>${esc(r.meta.cbn_risk ?? "—")}</td></tr>
-      <tr><td class="field">Transaction Volume</td><td>${esc(r.meta.tx_vol ?? "—")}</td></tr>
-      <tr><td class="field">Geographic Footprint</td><td>${esc(r.meta.geo ?? "—")}</td></tr>
-      <tr><td class="field">Compliance Deadline (Roadmap)</td><td class="deadline-val">${esc(r.meta.roadmap_deadline)}</td></tr>
-      <tr><td class="field">Full Compliance Deadline</td><td class="deadline-val">${esc(r.meta.compliance_deadline)} (${esc(r.meta.compliance_deadline_basis)})</td></tr>
-      <tr><td class="field">Circular Reference</td><td>${esc(r.meta.circular_ref)} — issued 10 March 2026</td></tr>
-    </table>
-
-    <div class="subsection-heading">1.2 Overall Compliance Risk Rating</div>
-    <div class="rating-callout ${rc}">
-      <div class="rating-callout-title">${esc(r.overall_rating.rating)}</div>
-      <div class="rating-callout-body">${esc(r.overall_rating.summary_paragraph)}</div>
-      <div class="rating-callout-note">${esc(r.overall_rating.sector_context_note)}</div>
-    </div>
-
-    <div class="subsection-heading">1.3 Assessment Scorecard</div>
-    <table class="scorecard-table avoid-break">
-      <thead>
-        <tr>
-          <th>Assessment Dimension</th>
-          <th>Score</th>
-          <th style="text-align:right">Rating</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="sc-label">AML System Status</td>
-          <td class="sc-score">${esc(sc.aml_system_status_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.aml_system_status_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Standards Compliant (of 12)</td>
-          <td class="sc-score">${esc(sc.standards_compliant_count)} / 12</td>
-          <td class="sc-rating">${statusBadge(sc.standards_compliant_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Standards with Critical Gap</td>
-          <td class="sc-score">${esc(sc.standards_critical_gap_count)} / 12</td>
-          <td class="sc-rating">${statusBadge(sc.standards_critical_gap_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Standards with Gap Identified</td>
-          <td class="sc-score">${esc(sc.standards_gap_identified_count)} / 12</td>
-          <td class="sc-rating">${statusBadge("Gap Identified")}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Governance Controls in Place</td>
-          <td class="sc-score">${esc(sc.governance_score_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.governance_score_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Internal Audit Coverage of AML</td>
-          <td class="sc-score">${esc(sc.internal_audit_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.internal_audit_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Risk Factors Identified</td>
-          <td class="sc-score">${esc(sc.risk_factors_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.risk_factors_rating)}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="info-box avoid-break">
-      <strong>Regulatory Context</strong>
-      ${esc(sc.regulatory_context_box)}
-    </div>
-
-    ${buildCapabilitySnapshot(r)}
+  <div class="report-section page-break" id="section-1">
+    <div class="section-eyebrow">SECTION ONE</div>
+    <div class="section-heading">01 Executive Summary</div>
+    <p class="section-prose">${esc(lead)}</p>
+    ${bodyParas.map(p => `<p class="section-prose">${esc(p)}</p>`).join("")}
+    ${inlineAlert ? `<div class="inline-alert avoid-break"><span class="inline-alert-icon">⚠</span><div>${esc(inlineAlert)}</div></div>` : ""}
+    ${scoreRing}
   </div>`;
 }
 
-function buildDetailFactors(factors: DetailFactor[] | undefined): string {
-  if (!factors || factors.length === 0) return "";
-  const rows = factors
-    .map(
-      (f) => `
-      <tr class="detail-factor-row">
-        <td class="df-factor">${esc(f.factor)}</td>
-        <td class="df-value">${esc(f.value)}</td>
-        <td class="df-impact">${detailImpactBadge(f.impact)}</td>
-      </tr>`
-    )
-    .join("");
-
-  return `
-    <div class="detail-factors">
-      <table class="detail-factors-table">
-        <thead>
-          <tr>
-            <th>Factor</th>
-            <th>Current State</th>
-            <th style="text-align:right">Impact</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
-}
-
-function buildSecurityPosture(r: AmlReportJson): string {
-  const sp = r.security_posture;
-  if (!sp) return "";
-
-  return `
-    <div class="subsection-heading" style="margin-top:40px">2.2 Security Posture</div>
-    <div class="security-block avoid-break">
-      <div class="security-block-header">
-        <span class="security-block-title">Security Readiness</span>
-        <span class="security-block-label">${esc(sp.overall_label)}</span>
-      </div>
-      <table class="security-table">
-        <tr><td class="field">Encryption</td><td>${statusBadge(sp.encryption)}</td></tr>
-        <tr><td class="field">Multi-Factor Authentication</td><td>${statusBadge(sp.mfa)}</td></tr>
-        <tr><td class="field">Data Sovereignty</td><td>${esc(sp.data_sovereignty)}</td></tr>
-        <tr><td class="field">Business Impact Assessment</td><td>${esc(sp.bia_status)}</td></tr>
-      </table>
-    </div>`;
-}
-
 function buildSection2(r: AmlReportJson): string {
-  const standards = (r.standards || [])
-    .map(
-      (s) => `
-    <div class="gap-card avoid-break ${gapRowClass(s.status)}">
-      <div class="gap-card-header">
-        <span class="gap-ref-pill">${esc(s.section)}</span>
-        <span class="gap-card-title">${esc(s.title)}</span>
-        ${statusBadge(s.status)}
-      </div>
-      <div class="gap-card-body">
-        <div class="gap-card-finding">
-          <div class="gap-col-label">Finding</div>
-          ${esc(s.finding)}
-        </div>
-        <div class="gap-card-action">
-          <div class="gap-col-label">Required Action</div>
-          ${esc(s.required_action)}
-        </div>
-      </div>
-      ${buildDetailFactors(s.detail_factors)}
-    </div>`
-    )
-    .join("");
-
-  const ga = r.governance_assessment;
-  const govRows = (ga.items || [])
-    .map(
-      (item) => `
-    <tr>
-      <td>${esc(item.control)}</td>
-      <td style="text-align:right">${statusBadge(item.status)}</td>
-    </tr>`
-    )
-    .join("");
-
+  const sc = r.scorecard;
+  const sectorBox = r.profile?.sector_context_box || r.overall_rating.sector_context_note || "";
+  
   return `
-  <div class="report-section">
-    <div class="section-heading">Section 2: Gap Analysis — 12 CBN Baseline Standards</div>
-    <p class="section-intro">${esc(r.gap_analysis_intro)}</p>
-
-    <div class="gap-list">
-      ${standards}
-    </div>
-
-    <div class="subsection-heading" style="margin-top:40px">2.1 Governance Assessment</div>
-    <p class="section-intro">${esc(ga.intro)}</p>
+  <div class="report-section page-break" id="section-2">
+    <div class="section-eyebrow">SECTION TWO</div>
+    <div class="section-heading">02 Institution Profile & Assessment Scorecard</div>
     <div class="table-wrap">
-      <table class="gov-table avoid-break">
-        <thead>
-          <tr>
-            <th>Governance Control</th>
-            <th style="text-align:right;width:180px">Current Status</th>
-          </tr>
-        </thead>
+      <table class="data-table">
         <tbody>
-          ${govRows}
-          <tr class="gov-total">
-            <td>Overall Governance Score</td>
-            <td style="text-align:right">${esc(ga.overall_score_label)}</td>
-          </tr>
+          <tr><td class="field-label">Institution</td><td>${esc(r.meta.inst_name)}</td></tr>
+          <tr><td class="field-label">Institution Type</td><td>${esc(r.meta.inst_type_full)}</td></tr>
+          <tr><td class="field-label">CBN Risk Classification</td><td>${esc(r.meta.cbn_risk ?? "—")}</td></tr>
+          <tr><td class="field-label">Daily Transaction Volume</td><td>${esc(r.meta.tx_vol ?? "—")}</td></tr>
+          <tr><td class="field-label">Geographic Footprint</td><td>${esc(r.meta.geo ?? "—")}</td></tr>
+          <tr><td class="field-label">Group / Holding Structure</td><td>${esc(r.meta.group_structure ?? "Standalone entity")}</td></tr>
+          <tr><td class="field-label">Elevated Risk Indicators</td><td>${esc(r.meta.risk_factors_display ?? "—")}</td></tr>
+          <tr><td class="field-label">Circular Reference</td><td>${esc(r.meta.circular_ref)} — issued 10 March 2026</td></tr>
+          <tr><td class="field-label">Roadmap Submission Deadline</td><td class="bold">${esc(r.meta.roadmap_deadline)}</td></tr>
+          <tr><td class="field-label">Full Compliance Deadline</td><td>${esc(r.meta.compliance_deadline)} (${esc(r.meta.compliance_deadline_basis)})</td></tr>
+          <tr><td class="field-label">Report Prepared By</td><td>OPEX Consulting / RegTech365</td></tr>
+          <tr><td class="field-label">Report Date</td><td>${esc(r.meta.report_date)}</td></tr>
         </tbody>
       </table>
     </div>
+    ${sectorBox ? `<div class="info-box avoid-break"><strong>ℹ Why ${esc(r.meta.inst_name)}'s ${esc(r.meta.inst_type)} status matters.</strong> ${esc(sectorBox)}</div>` : ""}
 
-    ${buildSecurityPosture(r)}
+    <div class="scorecard-stats avoid-break">
+      <div class="stat-card">
+        <div class="stat-value">${esc(sc.governance_score_label)}</div>
+        <div class="stat-label">Governance Controls Confirmed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${esc(sc.aml_system_status_label)}</div>
+        <div class="stat-label">AML System Status</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${esc(sc.risk_factors_label)}</div>
+        <div class="stat-label">Fraud Exposure Risk Level</div>
+      </div>
+    </div>
   </div>`;
 }
 
 function buildSection3(r: AmlReportJson): string {
-  const actions = (r.priority_actions || [])
-    .map(
-      (a) => `
+  const cats = r.requirement_categories || [];
+  if (cats.length === 0) return "";
+
+  const intro = r.requirement_categories_intro || "";
+  const alert = r.requirement_categories_alert || "";
+
+  const rows = cats.map(c => `
+    <tr>
+      <td class="bold">${esc(c.area)}</td>
+      <td><span class="cbn-ref-pill">${esc(c.cbn_ref)}</span></td>
+      <td>${catBadge(c.category)}</td>
+      <td>${esc(c.trigger)}</td>
+    </tr>`).join("");
+
+  return `
+  <div class="report-section page-break" id="section-3">
+    <div class="section-eyebrow">SECTION THREE</div>
+    <div class="section-heading">03 CBN Requirement Categories — Mandatory vs Conditional</div>
+    <p class="section-prose">${esc(intro)}</p>
+    <div class="cat-legend avoid-break">
+      <div class="cat-legend-item"><span class="badge badge-cat-mandatory">MANDATORY</span> Applies to all covered institutions without exception</div>
+      <div class="cat-legend-item"><span class="badge badge-cat-conditional">CONDITIONAL</span> Activated by institution type, risk class, or product profile &nbsp; <span class="cbn-ref-pill">5.X</span> CBN circular section reference</div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table avoid-break">
+        <thead>
+          <tr>
+            <th>Requirement Area</th>
+            <th>CBN Ref</th>
+            <th>Category</th>
+            <th>Trigger for ${esc(r.meta.inst_name)}</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    ${alert ? `<div class="inline-alert avoid-break"><span class="inline-alert-icon">⚡</span><div><strong>${esc(r.meta.inst_name)}'s position on conditional requirements.</strong> ${esc(alert)}</div></div>` : ""}
+  </div>`;
+}
+
+function buildSection4(r: AmlReportJson): string {
+  const standards = (r.standards || []).map(s => {
+    const tags = (s.req_tags || []).map(t => reqTagBadge(t)).join(" ");
+    const products = (s.regtech_products || []).map(p => `<span class="product-pill">→ ${esc(p)}</span>`).join(" ");
+    
+    return `
+    <div class="std-card avoid-break ${gapRowClass(s.status)}">
+      <div class="std-card-header">
+        <div class="std-card-title-row">
+          <span class="std-card-title">${esc(s.title)}</span>
+        </div>
+        <div class="std-card-meta">
+          <span class="gap-ref-pill">${esc(s.section)}</span>
+          ${tags}
+          ${statusBadge(s.status)}
+        </div>
+      </div>
+      <div class="std-card-body">
+        <p class="std-finding">${esc(s.finding)}</p>
+        <div class="std-action-block">
+          <div class="std-action-label">REQUIRED ACTION</div>
+          <p class="std-action-text">${esc(s.required_action)}</p>
+        </div>
+        ${s.regtech_solution ? `
+        <div class="std-regtech-block">
+          <div class="std-regtech-label">REGTECH365 SOLUTION</div>
+          <p class="std-regtech-text">${esc(s.regtech_solution)}</p>
+          ${products ? `<div class="std-product-pills">${products}</div>` : ""}
+        </div>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+
+  return `
+  <div class="report-section page-break" id="section-4">
+    <div class="section-eyebrow">SECTION FOUR</div>
+    <div class="section-heading">04 Gap Analysis — 12 CBN Baseline Standards</div>
+    <p class="section-prose">${esc(r.gap_analysis_intro)}</p>
+    <div class="std-list">${standards}</div>
+  </div>`;
+}
+
+function buildSection5(r: AmlReportJson): string {
+  const ga = r.governance_assessment;
+  const scorePct = ga.score_percentage ?? 0;
+  const scoreCtx = ga.score_context || "";
+  const inPlaceCount = (ga.items || []).filter(i => String(i.status).toLowerCase() === "in place").length;
+
+  const govRows = (ga.items || []).map(item => `
+    <tr>
+      <td class="bold">${esc(item.control)}</td>
+      <td>${esc(item.cbn_ref || "—")}</td>
+      <td>${item.category ? catBadge(item.category) : "—"}</td>
+      <td>${govStatusDisplay(item.status)}</td>
+      <td>${esc(item.action_required || "—")}</td>
+    </tr>`).join("");
+
+  return `
+  <div class="report-section page-break" id="section-5">
+    <div class="section-eyebrow">SECTION FIVE</div>
+    <div class="section-heading">05 Governance Assessment — Section 6 Controls</div>
+    <p class="section-prose">${esc(ga.intro)}</p>
+
+    <div class="gov-score-block avoid-break">
+      <div class="gov-score-title">Governance Score — ${esc(ga.overall_score_rating)}</div>
+      <div class="gov-score-ring">
+        <div class="gov-ring-visual">
+          <svg viewBox="0 0 120 120" class="gov-ring-svg">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#EDF0F5" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="${scorePct <= 30 ? '#A32D2D' : scorePct <= 60 ? '#B06200' : '#0F6E56'}" stroke-width="10" stroke-dasharray="${(scorePct / 100) * 314} 314" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text x="60" y="55" text-anchor="middle" font-size="24" font-weight="700" fill="#0D1F3C">${scorePct}%</text>
+            <text x="60" y="72" text-anchor="middle" font-size="11" fill="#6B7A94">${inPlaceCount} of 10</text>
+          </svg>
+        </div>
+        <p class="gov-score-context">${esc(scoreCtx)}</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table gov-table avoid-break">
+        <thead>
+          <tr>
+            <th>Governance Control</th>
+            <th>CBN Ref</th>
+            <th>Category</th>
+            <th>${esc(r.meta.inst_name)} Status</th>
+            <th>Action Required</th>
+          </tr>
+        </thead>
+        <tbody>${govRows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function buildSection6(r: AmlReportJson): string {
+  const actions = (r.priority_actions || []).map(a => `
     <div class="priority-box avoid-break">
       <div class="priority-header">
         <div class="priority-number">${esc(a.number)}</div>
@@ -494,128 +549,449 @@ function buildSection3(r: AmlReportJson): string {
         </div>
       </div>
       <div class="priority-body">${esc(a.body)}</div>
-    </div>`
-    )
-    .join("");
+    </div>`).join("");
 
   return `
-  <div class="report-section">
-    <div class="section-heading">Section 3: Top 5 Priority Actions Before ${esc(r.meta.roadmap_deadline)}</div>
-    <p class="section-intro">Essential actions for ${esc(r.meta.inst_name)} to achieve compliance with Circular ${esc(r.meta.circular_ref)} before the roadmap submission deadline.</p>
+  <div class="report-section page-break" id="section-6">
+    <div class="section-eyebrow">SECTION SIX</div>
+    <div class="section-heading">06 Top 5 Priority Actions Before ${esc(r.meta.roadmap_deadline)}</div>
     ${actions}
   </div>`;
 }
 
-function buildImplementationReadiness(r: AmlReportJson): string {
-  const ir = r.implementation_readiness;
-  if (!ir) return "";
+function buildSection7(r: AmlReportJson): string {
+  const phases = (r.roadmap.phases || []).map(p => {
+    const desc = p.description || p.objectives || "";
+    const deliverables = p.deliverables || (p.key_deliverables ? p.key_deliverables.split(",").map(d => d.trim()) : []);
+    const delivTags = deliverables.map(d => `<span class="deliv-tag">${esc(d)}</span>`).join("");
 
-  return `
-    <div class="readiness-block avoid-break">
-      <div class="readiness-block-header">
-        <span class="readiness-block-title">Implementation Readiness</span>
-        <span class="readiness-block-label">${esc(ir.overall_label)}</span>
+    return `
+    <div class="phase-card avoid-break">
+      <div class="phase-header">
+        <div class="phase-dot"></div>
+        <div class="phase-title-block">
+          <div class="phase-timeline">${esc(p.timeline)}</div>
+          <div class="phase-title">${esc(p.title)}</div>
+        </div>
       </div>
-      <table class="readiness-table">
-        <tr><td class="field">Approach</td><td>${esc(ir.approach)}</td></tr>
-        <tr><td class="field">Vendor Status</td><td>${esc(ir.vendor_status)}</td></tr>
-        <tr><td class="field">Budget Status</td><td>${esc(ir.budget_status)}</td></tr>
-        <tr><td class="field">Technical Capacity</td><td>${esc(ir.tech_capacity)}</td></tr>
-      </table>
+      <p class="phase-desc">${esc(desc)}</p>
+      ${delivTags ? `<div class="phase-deliverables">${delivTags}</div>` : ""}
     </div>`;
-}
+  }).join("");
 
-function buildSection4(r: AmlReportJson): string {
-  const phases = (r.roadmap.phases || [])
-    .map(
-      (p) => `
+  const milestones = (r.roadmap.milestones || []);
+  const milestoneRows = milestones.map(m => `
     <tr>
-      <td>
-        <span class="roadmap-phase-header">${esc(p.title)}</span>
-        <span class="roadmap-phase-timeline">${esc(p.timeline)}</span>
-      </td>
-      <td>${esc(p.objectives)}</td>
-      <td>${esc(p.key_deliverables)}</td>
-      <td>${esc(p.standards_addressed)}</td>
-    </tr>`
-    )
-    .join("");
+      <td>${esc(m.milestone)}</td>
+      <td class="bold">${esc(m.target_date)}</td>
+      <td>${esc(m.owner)}</td>
+    </tr>`).join("");
+
+  const milestoneTable = milestones.length > 0 ? `
+    <div class="table-wrap" style="margin-top:32px">
+      <table class="data-table avoid-break">
+        <thead>
+          <tr><th>Milestone</th><th>Target Date</th><th>Owner</th></tr>
+        </thead>
+        <tbody>${milestoneRows}</tbody>
+      </table>
+    </div>` : "";
 
   return `
-  <div class="report-section">
-    <div class="section-heading">Section 4: Recommended Implementation Roadmap</div>
-    <p class="section-intro">${esc(r.roadmap.intro)}</p>
-
-    ${buildImplementationReadiness(r)}
-
-    <div class="table-wrap">
-      <table class="roadmap-table avoid-break">
-        <thead>
-          <tr>
-            <th style="width:20%">Phase</th>
-            <th style="width:22%">Objectives</th>
-            <th style="width:35%">Key Deliverables</th>
-            <th style="width:23%">CBN Standards Addressed</th>
-          </tr>
-        </thead>
-        <tbody>${phases}</tbody>
-      </table>
-    </div>
+  <div class="report-section page-break" id="section-7">
+    <div class="section-eyebrow">SECTION SEVEN</div>
+    <div class="section-heading">07 Recommended Implementation Roadmap</div>
+    <p class="section-prose">${esc(r.roadmap.intro)}</p>
+    <div class="phase-timeline-list">${phases}</div>
+    ${milestoneTable}
   </div>`;
 }
 
-function buildSection5(r: AmlReportJson): string {
+function buildSection8(r: AmlReportJson): string {
   const ss = r.support_section;
-  const products = (ss.products || [])
-    .map(
-      (p) => `
-    <div class="product-card avoid-break">
-      <div class="product-card-name">${esc(p.name)}</div>
-      <div class="product-card-function">${esc(p.function)}</div>
-      <div class="product-card-standards">${esc(p.standards_addressed)}</div>
-      <div class="product-card-relevance">${esc(p.relevance_to_client)}</div>
-    </div>`
-    )
-    .join("");
+  const diffText = ss.differentiator || "";
 
-  const services = (ss.advisory_services || [])
-    .map((s) => `<li>${esc(s)}</li>`)
-    .join("");
+  const products = (ss.products || []).map(p => {
+    const tagline = p.tagline || p.function || "";
+    const gapsClosed = (p.gaps_closed || []).map(g => `<span class="gap-closed-tag">${esc(g)}</span>`).join("");
+    const desc = p.description || p.relevance_to_client || "";
+    
+    return `
+    <div class="product-card-v2 avoid-break">
+      <div class="product-card-header-v2">
+        <span class="product-icon">${esc(p.name.substring(0, 2).toUpperCase())}</span>
+        <div>
+          <div class="product-name-v2">${esc(p.name)}</div>
+          <div class="product-tagline">${esc(tagline)}</div>
+        </div>
+      </div>
+      ${gapsClosed ? `<div class="product-gaps-closed">${gapsClosed}</div>` : ""}
+      <p class="product-desc-v2">${esc(desc)}</p>
+    </div>`;
+  }).join("");
+
+  const services = (ss.advisory_services || []).map(s => {
+    if (typeof s === "string") {
+      return `<div class="advisory-item"><span class="advisory-arrow">→</span><span>${esc(s)}</span></div>`;
+    }
+    return `<div class="advisory-item-v2"><strong>${esc(s.title)}</strong> — ${esc(s.description)}</div>`;
+  }).join("");
+
+  const cta = ss.cta;
+  const ctaHtml = cta ? `
+    <div class="cta-box avoid-break">
+      <div class="cta-title">${esc(cta.title)}</div>
+      <p class="cta-subtitle">${esc(cta.subtitle)}</p>
+      <div class="cta-buttons">
+        <a class="cta-btn cta-btn-primary" href="mailto:compliance@opexconsulting.ng">${esc(cta.primary_button_label)} →</a>
+        <a class="cta-btn cta-btn-secondary" href="mailto:compliance@opexconsulting.ng">${esc(cta.secondary_button_label)}</a>
+      </div>
+    </div>` : `
+    <div class="cta-box avoid-break">
+      <div class="cta-title">The next step is straightforward</div>
+      <p class="cta-subtitle">${esc(ss.next_steps_box || "Contact us for a complimentary advisory session.")}</p>
+      <div class="cta-buttons">
+        <a class="cta-btn cta-btn-primary" href="mailto:compliance@opexconsulting.ng">Book Advisory Session →</a>
+        <a class="cta-btn cta-btn-secondary" href="mailto:compliance@opexconsulting.ng">Request RegPort Demo</a>
+      </div>
+    </div>`;
 
   return `
-  <div class="report-section page-break">
-    <div class="section-heading">Section 5: How RegTech365 and OPEX Consulting Can Support</div>
-    <p class="section-intro">${esc(ss.intro_paragraph)}</p>
+  <div class="report-section page-break" id="section-8">
+    <div class="section-eyebrow">SECTION EIGHT</div>
+    <div class="section-heading">08 How RegTech365 & OPEX Consulting Can Support ${esc(r.meta.inst_name)}</div>
+    <p class="section-prose">${esc(ss.intro_paragraph)}</p>
+    ${diffText ? `<div class="diff-callout avoid-break"><span class="diff-icon">💡</span><div><strong>What makes this different.</strong> ${esc(diffText)}</div></div>` : ""}
 
-    <div class="subsection-heading">5.1 Immediate Advisory Support — Roadmap Submission</div>
-    <p class="section-intro">${esc(ss.advisory_intro)}</p>
+    <div class="subsection-heading">RegTech365 Product Suite — Mapped to ${esc(r.meta.inst_name)}'s Gaps</div>
+    <div class="product-grid-v2">${products}</div>
 
-    <div class="subsection-heading">5.2 RegTech365 Product Suite — Mapped to Your Gaps</div>
-    <div class="product-grid">${products}</div>
+    <div class="subsection-heading">OPEX Consulting Advisory Services</div>
+    <div class="advisory-grid">${services}</div>
 
-    <div class="subsection-heading">5.3 OPEX Advisory Services</div>
-    <ul class="advisory-list avoid-break">${services}</ul>
-
-    <div class="next-steps-box avoid-break">
-      <strong>Next Step</strong>
-      ${esc(ss.next_steps_box)}
-      <a class="next-steps-email" href="mailto:compliance@opexconsulting.ng">compliance@opexconsulting.ng</a>
-    </div>
+    ${ctaHtml}
   </div>`;
 }
 
 function buildFooter(r: AmlReportJson): string {
   const disclaimerText = r.disclaimer || "This report is based on self-assessment data provided by the institution in response to Circular BSD/DIR/PUB/LAB/019/002. Findings are advisory only, not legal advice, and represent a point-in-time assessment. Independent verification is recommended.";
   return `
-  <div class="report-disclaimer">
+  <div class="report-disclaimer" id="section-disclaimer">
     <p class="disclaimer-text"><strong>Disclaimer</strong>${esc(disclaimerText)}</p>
   </div>
   <div class="report-footer">
-    <span class="footer-brand">OPEX Consulting Limited &nbsp;|&nbsp; RegTech365</span>
-    <span class="footer-ref">Circular ${esc(r.meta.circular_ref)} &nbsp;·&nbsp; ${esc(r.meta.report_date)}</span>
+    <span class="footer-brand">OPEX Consulting Limited &nbsp;·&nbsp; RegTech365 &nbsp;·&nbsp; compliance@opexconsulting.ng</span>
   </div>`;
 }
 
+/** ---------------------------------------------------------------
+ * CSS — high-fidelity matching the sample report
+ * --------------------------------------------------------------- */
+function getReportCSS(): string {
+  return `
+  /* ─── Reset & Base ─────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:       #0D1F3C;
+    --navy-mid:   #1A3560;
+    --navy-light: #2A4A7F;
+    --teal:       #0F6E56;
+    --teal-mid:   #1D9E75;
+    --teal-light: #E1F5EE;
+    --amber:      #B06200;
+    --amber-bg:   #FDF3E3;
+    --red:        #A32D2D;
+    --red-bg:     #FCEBEB;
+    --orange:     #C85000;
+    --orange-bg:  #FEF0E6;
+    --slate:      #3D4F6B;
+    --muted:      #6B7A94;
+    --border:     #D8DFE9;
+    --border-light: #EDF0F5;
+    --bg:         #F7F9FC;
+    --white:      #FFFFFF;
+    --text:       #0D1F3C;
+    --text-sec:   #3D4F6B;
+
+    --gap-critical-bg:   #FCEBEB;
+    --gap-critical-text: #7A1F1F;
+    --gap-critical-border: #E07070;
+    --gap-identified-bg:   #FDF3E3;
+    --gap-identified-text: #6B3A00;
+    --gap-identified-border: #D4943A;
+    --compliant-bg:   #E1F5EE;
+    --compliant-text: #085041;
+    --compliant-border: #3BAB82;
+
+    --font-display: 'EB Garamond', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --page-max: 900px;
+    --section-gap: 32px;
+  }
+
+  html { font-size: 15px; scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ─── Print ─────────────────────────────────────── */
+  @media print {
+    @page { margin: 15mm; size: A4; }
+    body { background: white; font-size: 11pt; }
+    .no-print { display: none !important; }
+    .page-break { break-before: page; page-break-before: always; }
+    .avoid-break { break-inside: avoid; page-break-inside: avoid; }
+    .report-cover { break-after: page; page-break-after: always; min-height: 100vh; }
+    .toc-page { break-after: page; page-break-after: always; }
+    .priority-box, .std-card, .product-card-v2, .phase-card, .cta-box, .info-box, .data-table, .gov-table, .inline-alert, .diff-callout, .gov-score-block {
+      break-inside: avoid !important; page-break-inside: avoid !important;
+    }
+    a { color: inherit; text-decoration: none; }
+  }
+
+  /* ─── Layout ─────────────────────────────────────── */
+  .report-wrapper { max-width: var(--page-max); margin: 0 auto; background: var(--white); box-shadow: 0 0 40px rgba(13,31,60,0.08); }
+
+  /* ─── Cover ──────────────────────────────────────── */
+  .report-cover {
+    background: var(--navy);
+    padding: 72px 72px 48px;
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+  }
+  .report-cover::before { content: ''; position: absolute; top: -120px; right: -120px; width: 500px; height: 500px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); }
+  .report-cover::after { content: ''; position: absolute; bottom: -80px; left: -80px; width: 340px; height: 340px; border-radius: 50%; border: 1px solid rgba(29,158,117,0.15); }
+  .cover-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .cover-brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal-mid); }
+  .cover-brand-name { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); letter-spacing: 0.12em; text-transform: uppercase; }
+  .cover-sub-brand { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 48px; }
+  .cover-eyebrow { font-size: 11px; font-weight: 600; color: var(--teal-mid); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .cover-title { font-family: var(--font-display); font-size: 36px; font-weight: 500; color: #FFFFFF; line-height: 1.15; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .cover-subtitle { font-family: var(--font-display); font-size: 18px; font-weight: 400; font-style: italic; color: rgba(255,255,255,0.45); margin-bottom: 40px; }
+  .cover-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; max-width: 560px; position: relative; z-index: 1; margin-bottom: 28px; }
+  .cover-meta-cell { background: rgba(255,255,255,0.04); padding: 14px 18px; }
+  .cover-meta-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .cover-meta-value { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+
+  .cover-rating-strip { padding: 16px 20px; border-radius: 6px; display: flex; align-items: flex-start; gap: 12px; position: relative; z-index: 1; margin-bottom: 28px; }
+  .cover-rating-strip.critical { background: rgba(163,45,45,0.2); border: 1px solid rgba(163,45,45,0.4); }
+  .cover-rating-strip.high { background: rgba(200,80,0,0.2); border: 1px solid rgba(200,80,0,0.4); }
+  .cover-rating-strip.medium { background: rgba(176,98,0,0.2); border: 1px solid rgba(176,98,0,0.4); }
+  .cover-rating-strip.low { background: rgba(15,110,86,0.2); border: 1px solid rgba(15,110,86,0.4); }
+  .cover-rating-icon { font-size: 18px; margin-top: 2px; }
+  .cover-rating-text { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.6; }
+  .cover-rating-text strong { display: block; font-size: 14px; color: #FFFFFF; margin-bottom: 4px; }
+
+  .cover-footer { margin-top: auto; position: relative; z-index: 1; font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.7; }
+  .cover-footer-note { margin-top: 8px; font-size: 11px; font-style: italic; color: rgba(255,255,255,0.3); }
+
+  /* ─── TOC ────────────────────────────────────────── */
+  .toc-page { padding: 72px; }
+  .toc-title { font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--navy); margin-bottom: 32px; }
+  .toc-list { display: flex; flex-direction: column; gap: 0; }
+  .toc-item { display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border-light); text-decoration: none; color: var(--text); transition: background 0.15s; }
+  .toc-item:hover { background: var(--bg); }
+  .toc-num { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--navy-mid); min-width: 32px; }
+  .toc-label { font-size: 15px; color: var(--text); }
+  .toc-item-last { border-bottom: none; }
+
+  /* ─── Report Body ────────────────────────────────── */
+  .report-body { padding: 0 72px; }
+  .report-section { padding-top: var(--section-gap); padding-bottom: var(--section-gap); border-bottom: 1px solid var(--border-light); }
+  .report-section:last-child { border-bottom: none; }
+
+  .section-eyebrow { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+  .section-heading { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--navy); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--navy); letter-spacing: -0.01em; }
+  .subsection-heading { font-size: 13px; font-weight: 600; color: var(--navy-mid); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; margin-top: 28px; }
+  .section-prose { font-size: 13.5px; color: var(--text-sec); line-height: 1.75; margin-bottom: 18px; }
+
+  /* ─── Tables ─────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th { background: var(--navy); color: #FFFFFF; font-weight: 600; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; padding: 11px 14px; text-align: left; }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-light); vertical-align: top; color: var(--text); line-height: 1.55; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:nth-child(even) td { background: #FAFBFD; }
+  .data-table .bold, .bold { font-weight: 600; }
+  .data-table .field-label { font-weight: 600; color: var(--navy-mid); width: 35%; }
+
+  /* ─── Badges ─────────────────────────────────────── */
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; white-space: nowrap; }
+  .badge-critical   { background: var(--gap-critical-bg); color: var(--gap-critical-text); border: 1px solid var(--gap-critical-border); }
+  .badge-gap        { background: var(--gap-identified-bg); color: var(--gap-identified-text); border: 1px solid var(--gap-identified-border); }
+  .badge-compliant  { background: var(--compliant-bg); color: var(--compliant-text); border: 1px solid var(--compliant-border); }
+  .badge-high       { background: var(--orange-bg); color: var(--orange); border: 1px solid #F0C8A0; }
+  .badge-elevated   { background: var(--amber-bg); color: var(--amber); border: 1px solid #E8C882; }
+  .badge-inplace    { background: var(--compliant-bg); color: var(--compliant-text); border: 1px solid var(--compliant-border); }
+  .badge-notconf    { background: #F3F5F9; color: var(--muted); border: 1px solid var(--border); }
+  .badge-notinplace { background: var(--gap-critical-bg); color: var(--gap-critical-text); border: 1px solid var(--gap-critical-border); }
+  .badge-cat-mandatory { background: var(--navy); color: #FFFFFF; border: none; }
+  .badge-cat-conditional { background: var(--amber-bg); color: var(--amber); border: 1px solid #E8C882; }
+
+  .req-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+  .req-tag-mandatory { background: var(--navy); color: #FFFFFF; }
+  .req-tag-conditional { background: var(--amber-bg); color: var(--amber); border: 1px solid #E8C882; }
+
+  .cbn-ref-pill { display: inline-block; font-size: 10px; font-weight: 700; color: var(--navy-mid); background: var(--bg); border: 1px solid var(--border); border-radius: 3px; padding: 2px 7px; white-space: nowrap; }
+
+  /* ─── Info / Alert Boxes ──────────────────────────── */
+  .info-box { background: #EEF2FB; border: 1px solid #BCC8E3; border-left: 4px solid var(--navy-mid); border-radius: 5px; padding: 18px 22px; font-size: 13px; color: var(--text-sec); line-height: 1.65; margin-top: 20px; margin-bottom: 20px; }
+  .info-box strong { font-weight: 700; color: var(--navy); }
+
+  .inline-alert { background: var(--amber-bg); border: 1px solid #E8C882; border-left: 4px solid var(--amber); border-radius: 5px; padding: 18px 22px; font-size: 13px; color: var(--gap-identified-text); line-height: 1.65; margin: 20px 0; display: flex; gap: 12px; align-items: flex-start; }
+  .inline-alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .inline-alert strong { font-weight: 700; }
+
+  .diff-callout { background: #EEF2FB; border: 1px solid #BCC8E3; border-radius: 6px; padding: 18px 22px; font-size: 13px; color: var(--text-sec); line-height: 1.65; margin: 20px 0; display: flex; gap: 12px; align-items: flex-start; }
+  .diff-icon { font-size: 16px; flex-shrink: 0; }
+
+  /* ─── Score Ring (Section 1) ──────────────────────── */
+  .score-ring-block { display: flex; align-items: center; gap: 32px; padding: 24px 0; }
+  .score-ring { width: 80px; height: 80px; border-radius: 50%; border: 6px solid var(--border-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .score-ring-value { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--navy); }
+  .score-ring-denom { font-size: 14px; color: var(--muted); }
+  .score-ring-labels { display: flex; flex-direction: column; gap: 6px; }
+  .score-ring-item { font-size: 12px; color: var(--text-sec); display: flex; align-items: center; gap: 8px; }
+  .sr-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .sr-dot-green { background: var(--teal); }
+  .sr-dot-red { background: var(--red); }
+  .sr-dot-amber { background: var(--amber); }
+
+  /* ─── Scorecard Stats (Section 2) ────────────────── */
+  .scorecard-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .stat-card { background: var(--bg); border: 1px solid var(--border-light); border-radius: 6px; padding: 20px; text-align: center; }
+  .stat-value { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .stat-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ─── Req Categories Legend ──────────────────────── */
+  .cat-legend { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .cat-legend-item { font-size: 12px; color: var(--text-sec); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  /* ─── Gap Analysis Cards (Section 4) ─────────────── */
+  .std-list { display: flex; flex-direction: column; gap: 20px; }
+  .std-card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--white); }
+  .std-card.row-critical { border-left: 5px solid var(--red); }
+  .std-card.row-gap      { border-left: 5px solid var(--amber); }
+  .std-card.row-compliant { border-left: 5px solid var(--teal); }
+  .std-card-header { padding: 18px 22px; border-bottom: 1px solid var(--border-light); }
+  .std-card.row-critical .std-card-header { background: #FEF7F7; }
+  .std-card.row-gap .std-card-header      { background: #FFFBF5; }
+  .std-card.row-compliant .std-card-header { background: #F4FBF8; }
+  .std-card-title-row { margin-bottom: 10px; }
+  .std-card-title { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--navy); }
+  .std-card-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .std-card-body { padding: 22px; }
+  .std-finding { font-size: 13.5px; color: var(--text); line-height: 1.75; margin-bottom: 18px; }
+  .std-action-block { margin-bottom: 18px; }
+  .std-action-label, .std-regtech-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+  .std-action-text { font-size: 13.5px; color: var(--text-sec); line-height: 1.7; }
+  .std-regtech-block { background: var(--teal-light); border-radius: 5px; padding: 16px 18px; }
+  .std-regtech-label { color: var(--teal); }
+  .std-regtech-text { font-size: 13px; color: var(--text-sec); line-height: 1.7; margin-bottom: 10px; }
+  .std-product-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .product-pill { font-size: 11px; font-weight: 700; color: var(--teal); background: var(--white); border: 1px solid var(--teal); border-radius: 4px; padding: 3px 10px; }
+
+  /* ─── Governance (Section 5) ─────────────────────── */
+  .gov-score-block { margin-bottom: 28px; }
+  .gov-score-title { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--navy); margin-bottom: 16px; }
+  .gov-score-ring { display: flex; align-items: center; gap: 24px; }
+  .gov-ring-visual { width: 120px; height: 120px; flex-shrink: 0; }
+  .gov-ring-svg { width: 100%; height: 100%; }
+  .gov-score-context { font-size: 13px; color: var(--text-sec); line-height: 1.7; }
+
+  .gov-status { font-size: 12px; font-weight: 600; }
+  .gov-in-place { color: var(--teal); }
+  .gov-not-in-place { color: var(--red); }
+  .gov-not-confirmed { color: var(--muted); }
+
+  .gov-table th:nth-child(4), .gov-table td:nth-child(4) { white-space: nowrap; }
+
+  /* ─── Priority Actions (Section 6) ───────────────── */
+  .priority-box { border: 1px solid var(--border); border-left: 4px solid var(--navy-mid); border-radius: 5px; padding: 22px 26px; margin-bottom: 20px; background: var(--white); }
+  .priority-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+  .priority-number { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; min-width: 32px; border-radius: 50%; background: var(--navy); color: #FFFFFF; font-weight: 700; font-size: 14px; margin-top: 2px; }
+  .priority-titles { flex: 1; }
+  .priority-title { font-weight: 700; font-size: 15px; color: var(--navy); line-height: 1.3; margin-bottom: 4px; }
+  .priority-deadline { font-size: 11px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.06em; }
+  .priority-body { font-size: 13.5px; color: var(--text-sec); line-height: 1.75; padding-left: 48px; }
+
+  /* ─── Roadmap (Section 7) ────────────────────────── */
+  .phase-timeline-list { display: flex; flex-direction: column; gap: 0; margin: 24px 0; border-left: 3px solid var(--navy-mid); padding-left: 28px; }
+  .phase-card { padding: 20px 0; border-bottom: 1px solid var(--border-light); position: relative; }
+  .phase-card:last-child { border-bottom: none; }
+  .phase-card::before { content: ''; position: absolute; left: -34px; top: 24px; width: 12px; height: 12px; border-radius: 50%; background: var(--navy-mid); border: 3px solid var(--white); }
+  .phase-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .phase-dot { display: none; }
+  .phase-timeline { font-size: 11px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .phase-title { font-family: var(--font-display); font-size: 17px; font-weight: 500; color: var(--navy); }
+  .phase-desc { font-size: 13.5px; color: var(--text-sec); line-height: 1.75; margin-bottom: 12px; }
+  .phase-deliverables { display: flex; flex-wrap: wrap; gap: 6px; }
+  .deliv-tag { font-size: 11px; font-weight: 600; color: var(--navy-mid); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px; }
+
+  /* ─── Products (Section 8) ───────────────────────── */
+  .product-grid-v2 { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 32px; }
+  .product-card-v2 { border: 1px solid var(--border); border-radius: 8px; padding: 24px; background: var(--white); }
+  .product-card-header-v2 { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .product-icon { width: 40px; height: 40px; border-radius: 8px; background: var(--navy); color: #FFFFFF; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .product-name-v2 { font-weight: 700; font-size: 16px; color: var(--navy); }
+  .product-tagline { font-size: 12px; color: var(--muted); }
+  .product-gaps-closed { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .gap-closed-tag { font-size: 10px; font-weight: 600; color: var(--teal); background: var(--teal-light); border: 1px solid #9FD4BC; border-radius: 3px; padding: 3px 8px; }
+  .product-desc-v2 { font-size: 13px; color: var(--text-sec); line-height: 1.7; }
+
+  /* ─── Advisory Services ──────────────────────────── */
+  .advisory-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 28px; }
+  .advisory-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-sec); line-height: 1.5; }
+  .advisory-arrow { color: var(--teal-mid); font-weight: 700; flex-shrink: 0; }
+  .advisory-item-v2 { font-size: 13px; color: var(--text-sec); line-height: 1.6; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
+  .advisory-item-v2 strong { color: var(--navy); }
+  .advisory-item-v2:last-child { border-bottom: none; }
+
+  /* ─── CTA Box ────────────────────────────────────── */
+  .cta-box { background: var(--navy); border-radius: 8px; padding: 32px; text-align: center; margin-top: 28px; }
+  .cta-title { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: #FFFFFF; margin-bottom: 12px; }
+  .cta-subtitle { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.65; margin-bottom: 20px; }
+  .cta-buttons { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .cta-btn { display: inline-block; padding: 10px 24px; border-radius: 5px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .cta-btn-primary { background: var(--teal-mid); color: #FFFFFF; }
+  .cta-btn-secondary { background: transparent; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.3); }
+
+  /* ─── Footer / Disclaimer ────────────────────────── */
+  .report-disclaimer { padding: 32px 72px; border-top: 1px solid var(--border-light); background: #F7F9FC; }
+  .disclaimer-text { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.7; }
+  .disclaimer-text strong { font-style: normal; color: var(--text-sec); display: block; margin-bottom: 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .report-footer { background: var(--navy); padding: 20px 72px; text-align: center; }
+  .footer-brand { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ─── Responsive ─────────────────────────────────── */
+  @media (max-width: 720px) {
+    .report-cover, .toc-page { padding: 40px 24px 36px; }
+    .report-body { padding: 0 24px; }
+    .report-disclaimer { padding: 24px; }
+    .report-footer { padding: 16px 24px; }
+    .cover-title { font-size: 28px; }
+    .cover-meta-grid { grid-template-columns: 1fr; }
+    .scorecard-stats { grid-template-columns: 1fr; }
+    .std-card-body { padding: 16px; }
+    .priority-body { padding-left: 0; }
+    .phase-timeline-list { padding-left: 20px; }
+  }
+  `;
+}
+
+/** ---------------------------------------------------------------
+ * Fetch template CSS (fallback if inline CSS fails)
+ * --------------------------------------------------------------- */
 async function fetchTemplateCSS(): Promise<string> {
   try {
     const res = await fetch("/temp/cbn_aml_report_template.html");
@@ -628,7 +1004,7 @@ async function fetchTemplateCSS(): Promise<string> {
 }
 
 /** ---------------------------------------------------------------
- * generatePdf — THE RELIABLE METHOD (Native Browser Print Engine)
+ * generatePdf — Native Browser Print Engine
  * --------------------------------------------------------------- */
 export async function generatePdf(
   reportData: AmlReportJson,
@@ -636,7 +1012,7 @@ export async function generatePdf(
 ): Promise<void> {
   onProgress?.(10);
   
-  const css = await fetchTemplateCSS();
+  const css = getReportCSS();
   const r = { ...reportData };
   
   if (r._input) {
@@ -653,24 +1029,21 @@ export async function generatePdf(
         <title>CBN AML Gap Assessment - ${esc(r.meta.inst_name)}</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-        <style>
-          ${css}
-          @media print {
-            @page { size: A4; margin: 15mm; }
-            body { margin: 0; padding: 0; }
-            .no-print { display: none !important; }
-          }
-        </style>
+        <style>${css}</style>
       </head>
       <body>
         <div class="report-wrapper">
           ${buildCover(r)}
+          ${buildTOC(r)}
           <div class="report-body">
             ${buildSection1(r)}
             ${buildSection2(r)}
             ${buildSection3(r)}
             ${buildSection4(r)}
             ${buildSection5(r)}
+            ${buildSection6(r)}
+            ${buildSection7(r)}
+            ${buildSection8(r)}
           </div>
           ${buildFooter(r)}
         </div>
@@ -678,7 +1051,6 @@ export async function generatePdf(
     </html>
   `;
 
-  // Create a clean print frame
   const iframe = document.createElement("iframe");
   iframe.style.position = "fixed";
   iframe.style.right = "0";
@@ -697,14 +1069,12 @@ export async function generatePdf(
 
   onProgress?.(50);
 
-  // Wait for fonts/images to be crystal clear
   setTimeout(() => {
     onProgress?.(90);
     iframe.contentWindow?.focus();
     iframe.contentWindow?.print();
     onProgress?.(100);
     
-    // Clean up
     setTimeout(() => {
       document.body.removeChild(iframe);
     }, 1000);
