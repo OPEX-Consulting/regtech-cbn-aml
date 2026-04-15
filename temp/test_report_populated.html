@@ -3,1203 +3,899 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBN AML Gap Assessment Report</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>CBN AML Gap Assessment Report | OPEX Consulting & RegTech365</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ─── Reset & Base ─────────────────────────────── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0B1D35;
+  --navy-mid: #132642;
+  --navy-light: #1C3560;
+  --gold: #C9A84C;
+  --gold-light: #E2C06A;
+  --gold-pale: #F6EDD3;
+  --white: #FDFCF9;
+  --off-white: #F4F1EA;
+  --ink: #1A1A2E;
+  --muted: #7A8FA8;
+  --border: rgba(201,168,76,0.18);
+  --border-light: rgba(201,168,76,0.1);
+  --critical: #C0392B;
+  --critical-bg: #FDF0EE;
+  --critical-border: rgba(192,57,43,0.2);
+  --high: #D35400;
+  --high-bg: #FEF5EE;
+  --high-border: rgba(211,84,0,0.2);
+  --medium: #D4AC0D;
+  --medium-bg: #FEFDF0;
+  --medium-border: rgba(212,172,13,0.25);
+  --good: #1E8449;
+  --good-bg: #EEF7F1;
+  --good-border: rgba(30,132,73,0.2);
+  --mandatory: #8E44AD;
+  --mandatory-bg: #F9F0FF;
+  --mandatory-border: rgba(142,68,173,0.2);
+  --conditional: #2471A3;
+  --conditional-bg: #EEF4FF;
+  --conditional-border: rgba(36,113,163,0.2);
+}
 
-  :root {
-    --navy:       #0D1F3C;
-    --navy-mid:   #1A3560;
-    --navy-light: #2A4A7F;
-    --teal:       #0F6E56;
-    --teal-mid:   #1D9E75;
-    --teal-light: #E1F5EE;
-    --amber:      #B06200;
-    --amber-bg:   #FDF3E3;
-    --red:        #A32D2D;
-    --red-bg:     #FCEBEB;
-    --orange:     #C85000;
-    --orange-bg:  #FEF0E6;
-    --slate:      #3D4F6B;
-    --muted:      #6B7A94;
-    --border:     #D8DFE9;
-    --border-light: #EDF0F5;
-    --bg:         #F7F9FC;
-    --white:      #FFFFFF;
-    --text:       #0D1F3C;
-    --text-sec:   #3D4F6B;
+* { margin:0; padding:0; box-sizing:border-box; }
 
-    --gap-critical-bg:   #FCEBEB;
-    --gap-critical-text: #7A1F1F;
-    --gap-critical-border: #E07070;
-    --gap-identified-bg:   #FDF3E3;
-    --gap-identified-text: #6B3A00;
-    --gap-identified-border: #D4943A;
-    --compliant-bg:   #E1F5EE;
-    --compliant-text: #085041;
-    --compliant-border: #3BAB82;
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.7;
+}
 
-    --font-display: 'EB Garamond', Georgia, serif;
-    --font-body: 'DM Sans', system-ui, sans-serif;
+/* ── COVER PAGE ── */
+.cover {
+  background: var(--navy);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
 
-    --page-max: 900px;
-    --section-gap: 32px;
-  }
+.cover::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%, rgba(201,168,76,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 85% 80%, rgba(201,168,76,0.05) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(201,168,76,0.02) 60px, rgba(201,168,76,0.02) 61px);
+  pointer-events:none;
+}
 
-  html { font-size: 15px; }
+.cover-body {
+  position:relative;
+  z-index:1;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding: 56px 64px;
+}
 
-  body {
-    font-family: var(--font-body);
-    color: var(--text);
-    background: var(--bg);
-    line-height: 1.6;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+.cover-brand {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:auto;
+  padding-bottom:48px;
+}
 
-  /* ─── Print ─────────────────────────────────────── */
-  @media print {
-    @page {
-      margin: 15mm;
-      size: A4;
-    }
-    body { background: white; font-size: 11pt; }
-    .no-print { display: none !important; }
-    .page-break { break-before: page; page-break-before: always; }
-    .avoid-break { break-inside: avoid; page-break-inside: avoid; }
-    .report-cover { break-after: page; page-break-after: always; min-height: 100vh; }
-    
-    /* Force specific blocks to never split */
-    .priority-box, .next-steps-box, .gap-card, .product-card, .rating-callout, .info-box, .data-table, .gov-table, .roadmap-table {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-      display: block !important; /* Disabling flex/grid for print-safe pagination */
-      margin-bottom: 20px !important;
-    }
+.cover-logo {
+  width:44px; height:44px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px; font-weight:700;
+  color: var(--navy);
+}
 
-    .gap-list, .product-grid, .advisory-list {
-      display: block !important; /* Disabling flex for reliable page breaks */
-    }
-    
-    a { color: inherit; text-decoration: none; }
-  }
+.cover-brand-text { display:flex; flex-direction:column; }
+.cover-brand-name { font-size:12px; font-weight:600; color:var(--gold); letter-spacing:0.14em; text-transform:uppercase; }
+.cover-brand-sub { font-size:10px; color:var(--muted); letter-spacing:0.06em; margin-top:2px; }
 
-  /* ─── Layout ─────────────────────────────────────── */
-  .report-wrapper {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    background: var(--white);
-    box-shadow: 0 0 40px rgba(13,31,60,0.08);
-  }
+.cover-main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:48px 0; }
 
-  .report-cover {
-    background: var(--navy);
-    padding: 72px 72px 64px;
-    position: relative;
-    overflow: hidden;
-    min-height: 480px;
-    display: flex;
-    flex-direction: column;
-  }
+.cover-eyebrow {
+  font-size:11px;
+  font-weight:600;
+  color:var(--gold);
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  margin-bottom:24px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
-  .report-cover::before {
-    content: '';
-    position: absolute;
-    top: -120px; right: -120px;
-    width: 500px; height: 500px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-  .report-cover::after {
-    content: '';
-    position: absolute;
-    bottom: -80px; left: -80px;
-    width: 340px; height: 340px;
-    border-radius: 50%;
-    border: 1px solid rgba(29,158,117,0.15);
-  }
+.cover-eyebrow::after {
+  content:'';
+  height:1px;
+  width:60px;
+  background:var(--gold);
+  opacity:0.4;
+}
 
-  .cover-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: auto;
-    padding-bottom: 48px;
-  }
-  .cover-brand-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--teal-mid);
-  }
-  .cover-brand-name {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.55);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
+.cover-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(40px,6vw,64px);
+  font-weight:600;
+  color:var(--white);
+  line-height:1.1;
+  margin-bottom:8px;
+}
 
-  .cover-eyebrow {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--teal-mid);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
+.cover-title span { color:var(--gold); }
 
-  .cover-title {
-    font-family: var(--font-display);
-    font-size: 36px;
-    font-weight: 500;
-    color: #FFFFFF;
-    line-height: 1.15;
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
+.cover-subtitle {
+  font-size:16px;
+  color:rgba(255,255,255,0.5);
+  margin-bottom:48px;
+  font-weight:300;
+}
 
-  .cover-subtitle {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 400;
-    font-style: italic;
-    color: rgba(255,255,255,0.55);
-    margin-bottom: 40px;
-  }
+.cover-meta-grid {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:1px;
+  background:rgba(201,168,76,0.15);
+  border:1px solid rgba(201,168,76,0.15);
+  border-radius:12px;
+  overflow:hidden;
+  max-width:640px;
+}
 
-  .cover-prepared {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.45);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 8px;
-  }
+.cover-meta-cell {
+  background:rgba(255,255,255,0.03);
+  padding:16px 20px;
+}
 
-  .cover-institution {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin-bottom: 4px;
-  }
+.cover-meta-label {
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  margin-bottom:4px;
+}
 
-  .cover-inst-type {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 16px;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 40px;
-  }
+.cover-meta-value {
+  font-size:14px;
+  color:var(--white);
+  font-weight:500;
+}
 
-  .cover-meta-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px;
-    overflow: hidden;
-    max-width: 520px;
-    position: relative;
-    z-index: 1;
-  }
-  .cover-meta-cell {
-    background: rgba(255,255,255,0.04);
-    padding: 16px 20px;
-  }
-  .cover-meta-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 5px;
-  }
-  .cover-meta-value {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 600;
-    color: #FFFFFF;
-  }
+.cover-meta-value.gold { color:var(--gold); }
 
-  /* ─── Overall Rating Banner ─────────────────────── */
-  .rating-banner {
-    padding: 24px 72px;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    border-bottom: 1px solid var(--border-light);
-  }
-  .rating-banner.critical { background: var(--red-bg); border-left: 5px solid var(--red); }
-  .rating-banner.high     { background: var(--orange-bg); border-left: 5px solid var(--orange); }
-  .rating-banner.medium   { background: var(--amber-bg); border-left: 5px solid var(--amber); }
-  .rating-banner.low      { background: var(--teal-light); border-left: 5px solid var(--teal); }
+/* OVERALL RISK RATING on cover */
+.cover-risk {
+  margin-top:40px;
+  display:inline-flex;
+  align-items:center;
+  gap:16px;
+  border-radius:10px;
+  padding:16px 24px;
+  max-width:640px;
+}
 
-  .rating-banner-left { flex: 1; }
-  .rating-banner-eyebrow {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-  .rating-banner-value {
-    font-family: var(--font-display);
-    font-size: 34px;
-    font-weight: 600;
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-  .rating-banner.critical .rating-banner-value { color: var(--red); }
-  .rating-banner.high     .rating-banner-value { color: var(--orange); }
-  .rating-banner.medium   .rating-banner-value { color: var(--amber); }
-  .rating-banner.low      .rating-banner-value { color: var(--teal); }
+.cover-risk.critical { background:rgba(192,57,43,0.15); border:1px solid rgba(192,57,43,0.35); }
+.cover-risk.high { background:rgba(211,84,0,0.15); border:1px solid rgba(211,84,0,0.35); }
+.cover-risk.medium { background:rgba(212,172,13,0.15); border:1px solid rgba(212,172,13,0.35); }
+.cover-risk.low { background:rgba(30,132,73,0.15); border:1px solid rgba(30,132,73,0.35); }
 
-  .rating-banner-note {
-    font-size: 13px;
-    font-style: italic;
-    color: var(--text-sec);
-  }
+.cover-risk-badge {
+  color:white;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:6px 14px;
+  border-radius:6px;
+  white-space:nowrap;
+}
+.badge-critical { background:var(--critical); }
+.badge-high { background:var(--high); }
+.badge-medium { background:var(--medium); }
+.badge-low { background:var(--good); }
 
-  /* ─── Report Body ─────────────────────────────────── */
-  .report-body { padding: 0 72px; }
+.cover-risk-text {
+  font-size:13px;
+  color:rgba(255,255,255,0.65);
+  line-height:1.5;
+}
 
-  .report-section {
-    padding-top: var(--section-gap);
-    padding-bottom: var(--section-gap);
-    border-bottom: 1px solid var(--border-light);
-  }
-  .report-section:last-child { border-bottom: none; }
+.cover-footer {
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  padding:24px 64px 40px;
+  border-top:1px solid rgba(201,168,76,0.12);
+}
 
-  .section-heading {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--navy);
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--navy);
-    letter-spacing: -0.01em;
-  }
+.cover-footer-left { font-size:11px; color:rgba(255,255,255,0.3); line-height:1.6; }
+.cover-footer-right { font-size:11px; color:rgba(255,255,255,0.3); text-align:right; }
 
-  .subsection-heading {
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--navy-mid);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
-    margin-top: 20px;
-  }
-  .subsection-heading:first-child { margin-top: 0; }
+/* ── LAYOUT ── */
+.page { max-width:900px; margin:0 auto; padding:60px 64px; }
 
-  /* ─── Tables (shared) ─────────────────────────────── */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-  }
-  .data-table th {
-    background: var(--navy);
-    color: #FFFFFF;
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    padding: 11px 14px;
-    text-align: left;
-    border: none;
-  }
-  .data-table td {
-    padding: 13px 14px;
-    border-bottom: 1px solid var(--border-light);
-    vertical-align: top;
-    color: var(--text);
-    line-height: 1.55;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    min-width: 0;
-  }
-  .data-table tr:last-child td { border-bottom: none; }
-  .data-table tr:nth-child(even) td { background: #FAFBFD; }
-  .data-table .bold { font-weight: 600; }
-  .data-table .field-label { font-weight: 600; color: var(--navy-mid); width: 38%; }
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-light);
+}
+.page-header-brand { font-size: 10px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; }
+.page-header-doc { font-size: 10px; color: var(--muted); }
 
-  /* ─── Section 1: Institution Profile ─────────────── */
-  .profile-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
-  .profile-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border-light);
-    font-size: 13.5px;
-    vertical-align: top;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  .profile-table tr:nth-child(even) td { background: #FAFBFD; }
-  .profile-table .field { font-weight: 600; color: var(--navy-mid); width: 38%; }
-  .profile-table .deadline-val { font-weight: 700; color: var(--navy); }
+@media print {
+  .cover { min-height:100vh; }
+  .page { padding:40px 48px; }
+  .no-print { display:none !important; }
+  .page-break { page-break-before:always; }
+}
 
-  /* ─── Rating Callout Box ──────────────────────────── */
-  .rating-callout {
-    border-radius: 6px;
-    padding: 24px 28px;
-    margin-bottom: 28px;
-  }
-  .rating-callout.critical { background: var(--red-bg); border: 1px solid #E5B0B0; border-left: 4px solid var(--red); }
-  .rating-callout.high     { background: var(--orange-bg); border: 1px solid #F0C8A0; border-left: 4px solid var(--orange); }
-  .rating-callout.medium   { background: var(--amber-bg); border: 1px solid #E8C882; border-left: 4px solid var(--amber); }
-  .rating-callout.low      { background: var(--teal-light); border: 1px solid #9FD4BC; border-left: 4px solid var(--teal); }
+/* ── TOC ── */
+.toc { padding: 60px 64px; background: var(--off-white); border-bottom: 1px solid var(--border); page-break-after: always; }
+.toc-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--navy); margin-bottom: 32px; }
+.toc-item { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light); font-size: 14px; color: var(--ink); }
+.toc-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gold); font-weight: 600; width: 24px; }
+.toc-label { flex: 1; color: var(--navy); font-weight: 500; }
+.toc-dots { flex: 1; border-bottom: 1px dotted rgba(201,168,76,0.3); margin: 0 8px; position: relative; top: -4px; height: 1px; align-self: center; }
+.toc-section { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); width: 30px; text-align: right; }
 
-  .rating-callout-title {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  .rating-callout.critical .rating-callout-title { color: var(--red); }
-  .rating-callout.high     .rating-callout-title { color: var(--orange); }
-  .rating-callout.medium   .rating-callout-title { color: var(--amber); }
-  .rating-callout.low      .rating-callout-title { color: var(--teal); }
+/* ── SECTION HEADINGS ── */
+.section-divider {
+  margin: 52px 0 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
 
-  .rating-callout-body {
-    font-size: 13.5px;
-    color: var(--text);
-    margin-bottom: 12px;
-    line-height: 1.65;
-  }
-  .rating-callout-note {
-    font-size: 13px;
-    font-style: italic;
-    color: var(--text-sec);
-    line-height: 1.6;
-  }
+.section-label-tag {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
 
-  /* ─── Scorecard Table ─────────────────────────────── */
-  .scorecard-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-  .scorecard-table th {
-    background: var(--navy);
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    padding: 10px 14px;
-    text-align: left;
-  }
-  .scorecard-table td {
-    padding: 11px 14px;
-    border-bottom: 1px solid var(--border-light);
-    font-size: 13px;
-    vertical-align: middle;
-  }
-  .scorecard-table tr:nth-child(even) td { background: #FAFBFD; }
-  .scorecard-table .sc-label { color: var(--text-sec); }
-  .scorecard-table .sc-score { font-weight: 700; color: var(--navy); }
-  .scorecard-table .sc-rating { text-align: right; }
+.section-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-  /* ─── Status Badges ───────────────────────────────── */
-  .badge {
-    display: inline-block;
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
-  .badge-critical   { background: var(--gap-critical-bg);    color: var(--gap-critical-text);   border: 1px solid var(--gap-critical-border); }
-  .badge-gap        { background: var(--gap-identified-bg);  color: var(--gap-identified-text); border: 1px solid var(--gap-identified-border); }
-  .badge-compliant  { background: var(--compliant-bg);       color: var(--compliant-text);      border: 1px solid var(--compliant-border); }
-  .badge-high       { background: var(--orange-bg);          color: var(--orange);              border: 1px solid #F0C8A0; }
-  .badge-elevated   { background: var(--amber-bg);           color: var(--amber);               border: 1px solid #E8C882; }
-  .badge-inplace    { background: var(--compliant-bg);       color: var(--compliant-text);      border: 1px solid var(--compliant-border); }
-  .badge-notconf    { background: #F3F5F9;                   color: var(--muted);               border: 1px solid var(--border); }
-  .badge-notinplace { background: var(--gap-critical-bg);    color: var(--gap-critical-text);   border: 1px solid var(--gap-critical-border); }
+.section-num-badge {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  color: var(--navy);
+  flex-shrink: 0;
+}
 
-  /* ─── Info Box (Regulatory Context) ──────────────── */
-  .info-box {
-    background: #EEF2FB;
-    border: 1px solid #BCC8E3;
-    border-left: 4px solid var(--navy-mid);
-    border-radius: 5px;
-    padding: 18px 22px;
-    font-size: 13px;
-    color: var(--text-sec);
-    line-height: 1.65;
-    margin-top: 20px;
-  }
-  .info-box strong {
-    display: block;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 8px;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.2;
+}
 
-  /* ─── Section 2: Gap Analysis Cards ─────────────── */
-  .gap-list { display: flex; flex-direction: column; gap: 12px; }
+/* ── EXECUTIVE SUMMARY ── */
+.exec-lead {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--navy);
+  line-height: 1.5;
+  margin-bottom: 20px;
+  padding-left: 20px;
+  border-left: 3px solid var(--gold);
+}
 
-  .gap-card {
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    overflow: hidden;
-    background: var(--white);
-  }
-  .gap-card.row-critical { border-left: 4px solid var(--red); }
-  .gap-card.row-gap      { border-left: 4px solid var(--amber); }
-  .gap-card.row-compliant { border-left: 4px solid var(--teal); }
+.exec-body {
+  font-size: 14px;
+  color: #2C3E50;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
 
-  .gap-card-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 13px 18px;
-    border-bottom: 1px solid var(--border-light);
-    flex-wrap: wrap;
-  }
-  .gap-card.row-critical .gap-card-header { background: #FEF7F7; }
-  .gap-card.row-gap      .gap-card-header { background: #FFFBF5; }
-  .gap-card.row-compliant .gap-card-header { background: #F4FBF8; }
+/* ── SCORECARD ── */
+.scorecard {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  margin:32px 0;
+}
 
-  .gap-ref-pill {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--navy);
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 3px 9px;
-    white-space: nowrap;
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
-  }
-  .gap-card-title {
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--navy);
-    flex: 1;
-    min-width: 0;
-  }
-  .gap-card-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .gap-card-finding,
-  .gap-card-action {
-    padding: 14px 18px;
-    font-size: 13px;
-    line-height: 1.65;
-  }
-  .gap-card-finding {
-    border-right: 1px solid var(--border-light);
-    color: var(--text);
-  }
-  .gap-card-action {
-    color: var(--text-sec);
-    background: #FAFBFD;
-  }
-  .gap-col-label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
+.score-cell {
+  background:var(--white);
+  padding:20px;
+  text-align:center;
+}
 
-  @media (max-width: 600px) {
-    .gap-card-body { grid-template-columns: 1fr; }
-    .gap-card-finding { border-right: none; border-bottom: 1px solid var(--border-light); }
-  }
+.score-value {
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;
+  font-weight:700;
+  line-height:1;
+  margin-bottom:6px;
+}
 
-  /* ─── Section 2.1: Governance Table ──────────────── */
-  .gov-table { width: 100%; border-collapse: collapse; }
-  .gov-table th {
-    background: var(--navy);
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    padding: 10px 14px;
-    text-align: left;
-  }
-  .gov-table td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border-light);
-    font-size: 13px;
-    vertical-align: middle;
-  }
-  .gov-table tr:nth-child(even) td { background: #FAFBFD; }
-  .gov-table .gov-total td {
-    background: var(--navy) !important;
-    color: #FFFFFF;
-    font-weight: 700;
-    font-size: 13px;
-  }
+.score-label {
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  line-height:1.4;
+}
 
-  /* ─── Section 3: Priority Actions ────────────────── */
-  .priority-box {
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--navy-mid);
-    border-radius: 5px;
-    padding: 22px 26px;
-    margin-bottom: 16px;
-    background: var(--white);
-  }
-  .priority-box:last-child { margin-bottom: 0; }
+.score-critical { color:var(--critical); }
+.score-high { color:var(--high); }
+.score-gold { color:var(--gold); }
+.score-good { color:var(--good); }
+.score-navy { color:var(--navy); }
 
-  .priority-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 12px;
-  }
-  .priority-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    border-radius: 50%;
-    background: var(--navy);
-    color: #FFFFFF;
-    font-weight: 700;
-    font-size: 14px;
-    font-family: var(--font-body);
-    margin-top: 2px;
-  }
-  .priority-titles { flex: 1; }
-  .priority-title {
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--navy);
-    line-height: 1.3;
-    margin-bottom: 4px;
-  }
-  .priority-deadline {
-    font-size: 11.5px;
-    font-weight: 700;
-    color: var(--red);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .priority-body {
-    font-size: 13.5px;
-    color: var(--text-sec);
-    line-height: 1.65;
-    padding-left: 48px;
-  }
+/* ── TABLES ── */
+.profile-table, .gov-table, .milestone-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+}
 
-  /* ─── Section 4: Roadmap Table ────────────────────── */
-  .roadmap-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  .roadmap-table th {
-    background: var(--navy);
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    padding: 11px 14px;
-    text-align: left;
-    border-right: 1px solid rgba(255,255,255,0.1);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  .roadmap-table th:last-child { border-right: none; }
-  .roadmap-table td {
-    padding: 16px 14px;
-    border-bottom: 1px solid var(--border-light);
-    border-right: 1px solid var(--border-light);
-    vertical-align: top;
-    font-size: 13px;
-    line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    min-width: 0;
-  }
-  .roadmap-table td:last-child { border-right: none; }
-  .roadmap-phase-header {
-    font-weight: 700;
-    color: var(--navy);
-    font-size: 13px;
-    display: block;
-    margin-bottom: 3px;
-  }
-  .roadmap-phase-timeline {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--teal);
-    display: block;
-    margin-top: 2px;
-  }
-  .roadmap-table tr:nth-child(4n+2) td { background: #FAFBFD; }
+.profile-table tr, .gov-table tr, .milestone-table tr {
+  border-bottom: 1px solid var(--border-light);
+}
 
-  /* ─── Section 5: Support Section ─────────────────── */
-  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
-  .product-card {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 20px;
-    background: var(--white);
-  }
-  .product-card-name {
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--navy);
-    margin-bottom: 4px;
-  }
-  .product-card-function {
-    font-size: 12.5px;
-    color: var(--muted);
-    margin-bottom: 10px;
-    line-height: 1.5;
-  }
-  .product-card-standards {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--teal);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 10px;
-  }
-  .product-card-relevance {
-    font-size: 13px;
-    color: var(--text-sec);
-    line-height: 1.6;
-    border-top: 1px solid var(--border-light);
-    padding-top: 10px;
-    margin-top: 10px;
-  }
+.profile-table td {
+  padding: 12px 16px;
+  font-size: 13.5px;
+}
 
-  .advisory-list {
-    list-style: none;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-  .advisory-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text-sec);
-    line-height: 1.5;
-  }
-  .advisory-list li::before {
-    content: '→';
-    color: var(--teal-mid);
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+.profile-table td:first-child {
+  width: 38%;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
-  .next-steps-box {
-    background: var(--navy);
-    border-radius: 6px;
-    padding: 24px 28px;
-    color: rgba(255,255,255,0.9);
-    font-size: 13.5px;
-    line-height: 1.65;
-  }
-  .next-steps-box strong {
-    display: block;
-    font-size: 14px;
-    font-weight: 700;
-    color: #FFFFFF;
-    margin-bottom: 10px;
-  }
-  .next-steps-email {
-    display: inline-block;
-    margin-top: 10px;
-    font-weight: 600;
-    color: var(--teal-mid);
-    font-size: 13px;
-  }
+.gov-table th, .milestone-table th {
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: #FAFAF7;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
 
-  /* ─── Responsive ─────────────────────────────────── */
-  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.gov-table td, .milestone-table td {
+  padding: 14px 16px;
+  font-size: 13.5px;
+}
 
-  @media (max-width: 720px) {
-    .report-cover   { padding: 40px 24px 36px; }
-    .rating-banner  { padding: 24px 24px; }
-    .report-body    { padding: 0 24px; }
-    .report-disclaimer { padding: 24px 24px; }
-    .report-footer  { padding: 16px 24px; }
-    .cover-title    { font-size: 30px; }
-    .product-grid   { grid-template-columns: 1fr; }
-    .advisory-list  { grid-template-columns: 1fr; }
-  }
+/* ── TAGS & BADGES ── */
+.req-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
 
-  /* ─── Disclaimer ──────────────────────────────────── */
-  .report-disclaimer {
-    padding: 32px 72px;
-    border-top: 1px solid var(--border-light);
-    background: #F7F9FC;
-  }
-  .disclaimer-text {
-    font-size: 12px;
-    color: var(--muted);
-    font-style: italic;
-    line-height: 1.7;
-  }
-  .disclaimer-text strong {
-    font-style: normal;
-    color: var(--text-sec);
-    display: block;
-    margin-bottom: 6px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+.req-mandatory { background: var(--mandatory-bg); border: 1px solid var(--mandatory-border); color: var(--mandatory); }
+.req-conditional { background: var(--conditional-bg); border: 1px solid var(--conditional-border); color: var(--conditional); }
+.req-cbn { background: #F0F4F8; border: 1px solid #CBD5E0; color: #4A5568; font-family: 'DM Mono', monospace; }
 
-  /* ─── Report Footer ───────────────────────────────── */
-  .report-footer {
-    background: var(--navy);
-    padding: 20px 72px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .footer-brand {
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.45);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .footer-ref {
-    font-size: 11px;
-    color: rgba(255,255,255,0.35);
-  }
+.status-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 4px; white-space: nowrap;
+}
+.status-critical { background: var(--critical-bg); border: 1px solid var(--critical-border); color: var(--critical); }
+.status-high { background: var(--high-bg); border: 1px solid var(--high-border); color: var(--high); }
+.status-gap { background: var(--medium-bg); border: 1px solid var(--medium-border); color: var(--medium); }
+.status-compliant { background: var(--good-bg); border: 1px solid var(--good-border); color: var(--good); }
 
-  /* ─── Section Intro Text ──────────────────────────── */
-  .section-intro {
-    font-size: 13.5px;
-    color: var(--text-sec);
-    line-height: 1.7;
-    margin-bottom: 22px;
-  }
+/* ── STANDARDS ── */
+.std-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+.std-header {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px;
+  padding: 16px 20px; background: #FAFAF7; border-bottom: 1px solid var(--border-light);
+}
+.std-ref { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--navy); background: rgba(11,29,53,0.06); border-radius: 5px; padding: 4px 10px; }
+.std-name { font-size: 14px; font-weight: 600; color: var(--navy); }
+.std-body { padding: 20px; }
+.std-finding { font-size: 13.5px; color: #2C3E50; line-height: 1.7; margin-bottom: 16px; padding: 14px 16px; background: #FAFAF7; border-left: 3px solid; border-radius: 0 6px 6px 0; }
+.std-finding.critical { border-left-color: var(--critical); }
+.std-finding.high { border-left-color: var(--high); }
+.std-finding.gap { border-left-color: var(--medium); }
+.std-finding.compliant { border-left-color: var(--good); }
 
-  /* ─── No-data state ───────────────────────────────── */
-  .no-data {
-    text-align: center;
-    padding: 80px 40px;
-    color: var(--muted);
-    font-size: 15px;
-  }
-  .no-data-title {
-    font-family: var(--font-display);
-    font-size: 26px;
-    color: var(--navy);
-    margin-bottom: 12px;
-  }
+.std-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+.std-block-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.std-block-text { font-size: 13px; color: #2C3E50; line-height: 1.6; }
 
+.regtech-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04));
+  border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px;
+  font-size: 11px; font-weight: 600; color: var(--gold); margin-top: 8px; margin-right: 6px;
+  text-decoration: none; cursor: pointer;
+}
+.regtech-pill::before { content: '→'; color: var(--gold); }
+
+/* ── ALERTS ── */
+.inline-alert { display: flex; gap: 16px; align-items: flex-start; padding: 18px 22px; border-radius: 8px; margin: 24px 0; font-size: 13px; line-height: 1.6; }
+.ia-icon { font-size: 18px; margin-top: -2px; }
+.ia-critical { background: var(--critical-bg); border: 1px solid var(--critical-border); color: #7A1F1F; }
+.ia-warn { background: var(--high-bg); border: 1px solid var(--high-border); color: #6B3A00; }
+.ia-info { background: #EEF2FB; border: 1px solid #BCC8E3; color: var(--navy-mid); }
+
+/* ── GOVERNANCE ── */
+.score-ring-wrap { display: flex; align-items: center; gap: 32px; margin: 32px 0; background: #FAFAF7; padding: 24px; border-radius: 12px; border: 1px solid var(--border-light); }
+.score-ring { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+.score-ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.score-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.score-ring-num { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1; }
+.score-ring-denom { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.score-ring-context { flex: 1; }
+.score-ring-context h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--navy); margin-bottom: 8px; }
+.score-ring-context p { font-size: 13px; color: #2C3E50; line-height: 1.6; }
+
+/* ── PRIORITY ACTIONS ── */
+.priority-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.priority-header {
+  display: flex; align-items: flex-start; gap: 16px; padding: 18px 20px;
+  background: linear-gradient(135deg, rgba(11,29,53,0.03), rgba(201,168,76,0.04));
+  border-bottom: 1px solid var(--border-light);
+}
+.priority-num {
+  width: 36px; height: 36px; background: var(--navy); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--gold); flex-shrink: 0;
+}
+.priority-title { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.priority-deadline { font-size: 11px; color: var(--critical); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+.priority-body { padding: 18px 20px; font-size: 13px; color: #2C3E50; line-height: 1.7; }
+
+/* ── ROADMAP ── */
+.roadmap-phase { position: relative; padding-left: 32px; margin-bottom: 32px; }
+.roadmap-phase::before {
+  content: ''; position: absolute; left: 10px; top: 36px; bottom: -16px; width: 1px; background: var(--border);
+}
+.roadmap-phase:last-child::before { display: none; }
+.phase-dot {
+  position: absolute; left: 0; top: 6px; width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: 3px solid var(--white); box-shadow: 0 0 0 1px var(--border);
+}
+.phase-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.phase-label { font-size: 11px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; background: rgba(201,168,76,0.08); border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; }
+.phase-timeline { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.phase-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.phase-body { font-size: 13.5px; color: #2C3E50; line-height: 1.7; margin-bottom: 12px; }
+.phase-deliverables { display: flex; flex-wrap: wrap; gap: 6px; }
+.deliverable-tag { font-size: 11px; background: #F0F4F8; border: 1px solid #CBD5E0; border-radius: 4px; padding: 3px 10px; color: #4A5568; }
+.services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 24px; }
+.service-item { display: flex; gap: 12px; margin-bottom: 0 !important; }
+
+/* ── PRODUCT CARDS ── */
+.regtech-product-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.regtech-product-header { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); }
+.product-icon {
+  width: 40px; height: 40px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; color: var(--navy);
+}
+.product-name { font-size: 15px; font-weight: 600; color: var(--white); }
+.product-name a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 1px; }
+.product-tagline { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.regtech-product-body { padding: 18px 20px; }
+.gap-closed-tag { font-size: 11px; background: var(--mandatory-bg); border: 1px solid var(--mandatory-border); color: var(--mandatory); border-radius: 4px; padding: 2px 10px; font-family: 'DM Mono', monospace; margin-right: 6px; margin-bottom: 6px; display: inline-block; }
+.product-desc { font-size: 13.5px; color: #2C3E50; line-height: 1.7; }
+
+/* ── CTA ── */
+.cta-box { background: var(--navy); border-radius: 16px; padding: 40px; text-align: center; margin: 40px 0; position: relative; overflow: hidden; }
+.cta-box::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(201,168,76,0.1), transparent); }
+.cta-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--white); margin-bottom: 12px; position: relative; }
+.cta-subtitle { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 28px; line-height: 1.6; max-width: 500px; margin-left: auto; margin-right: auto; position: relative; }
+.cta-buttons { display: flex; justify-content: center; gap: 16px; position: relative; }
+.btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; }
+.btn-secondary { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 13px; }
+
+/* ── FOOTER ── */
+.disclaimer { font-size: 11px; color: var(--muted); line-height: 1.6; padding: 20px 0; border-top: 1px solid var(--border-light); margin-top: 40px; }
+.print-bar { position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: flex; gap: 8px; }
+.btn-print { background: var(--navy); color: var(--gold); border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; padding: 10px 20px; border-radius: 8px; cursor: pointer; letter-spacing: 0.05em; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: all 0.2s; }
+
+.legend-box { display: flex; gap: 24px; flex-wrap: wrap; padding: 16px 20px; background: var(--off-white); border: 1px solid var(--border-light); border-radius: 10px; margin: 24px 0; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink); }
+
+.avoid-break { page-break-inside: avoid; }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════
-     REPORT MOUNT POINT
-     Call renderReport(jsonData) to populate
-════════════════════════════════════════════════════ -->
-<div id="report-root">
-  <div class="no-data">
-    <div class="no-data-title">CBN AML Gap Assessment</div>
-    <p>Awaiting assessment data. Call <code>renderReport(json)</code> to generate the report.</p>
-  </div>
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">⬇ Save as PDF</button>
 </div>
 
+<div id="report-container"></div>
+
 <script>
-/* ══════════════════════════════════════════════════════
-   UTILITY HELPERS
-══════════════════════════════════════════════════════ */
-const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+/**
+ * DYNAMIC DATA BLOCK
+ * Overwritten by PDF Generator at runtime
+ */
+const DEMO_REPORT = {"meta":{"inst_name":"Johndup","inst_type":"DMB","inst_type_full":"Deposit Money Bank","report_date":"15/04/2026","circular_ref":"BSD/DIR/PUB/LAB/019/002","roadmap_deadline":"10 June 2026","compliance_deadline":"September 2027","compliance_deadline_basis":"18 months from March 2026 issuance for Deposit Money Banks","cbn_risk":"Medium","tx_vol":"1K-50K","geo":"Single state","group_structure":"Standalone entity","risk_factors_display":"PEP exposure","contact_name":"Modupe","contact_email":"samuel.john@opexconsult.co.uk","contact_phone":"","contact_role":"CCO"},"executive_summary":{"lead":"Johndup is a standalone Deposit Money Bank operating in a single state with a customer base under 10,000 and daily transaction volumes of 1,000–50,000. The institution faces PEP exposure risk and operates entirely manual AML processes.","body_paragraphs":["CBN Circular BSD/DIR/PUB/LAB/019/002 issued March 2026 mandates all Deposit Money Banks deploy integrated AML solutions meeting 12 baseline standards by September 2027. Johndup must submit a detailed Implementation Roadmap by 10 June 2026 — 135 days from now.","This assessment identifies Critical Gaps across all 12 standards. Johndup operates entirely manual AML processes with zero governance controls in place. No MLRO appointed, no board-approved policy, no BVN integration, no internal audit coverage. Governance score: 0/10 (Critical).","Immediate action required. Roadmap submission is non-negotiable. Failure to submit constitutes regulatory non-compliance. OPEX Consulting can complete the CBN template using these findings and guide platform selection within budget constraints identified."],"inline_alert":"CBN Circular states: 'Institutions without designated MLRO/CCO and board-approved AML policy by roadmap submission date will be subject to immediate supervisory intervention and potential sanctions.'"},"overall_rating":{"rating":"CRITICAL","rating_label":"Critical Non-Compliance","sector_context_note":"DMBs face heightened CBN scrutiny. Manual processes with PEP exposure and zero governance baseline constitute examination-critical deficiencies requiring urgent remediation."},"scorecard":{"aml_system_status_label":"Manual processes only","aml_system_status_rating":"Critical Gap","standards_compliant_count":0,"standards_compliant_rating":"Critical Gap","standards_critical_gap_count":12,"standards_critical_gap_rating":"Critical Gap","standards_gap_identified_count":0,"governance_score_label":"0/10 controls in place","governance_score_rating":"Critical Gap","internal_audit_label":"AML not covered","internal_audit_rating":"Critical Gap","risk_factors_label":"PEP exposure","risk_factors_rating":"Elevated","regulatory_context_box":"DMB classification triggers 18-month compliance timeline ending September 2027. Universal roadmap deadline 10 June 2026 applies regardless of implementation status."},"profile":{"sector_context_box":"Deposit Money Banks are Tier 1 supervised entities under CBN prudential framework. Manual AML processes are incompatible with DMB licensing requirements and expose Johndup to immediate supervisory action."},"requirement_categories_intro":"CBN Circular BSD/DIR/PUB/LAB/019/002 establishes 12 mandatory baseline standards plus governance prerequisites. All requirements apply unconditionally to Deposit Money Banks regardless of size or geographic footprint.","requirement_categories_alert":"Johndup must comply with all 17 requirement categories below. Zero conditional exemptions apply to DMB licence holders. Partial compliance is treated as non-compliance for examination purposes.","requirement_categories":[{"area":"Integrated AML Solution — core functional footprint","cbn_ref":"5.1(A)","category":"Mandatory","trigger":"Applies to all DMBs unconditionally. Manual processes do not satisfy integrated solution requirement."},{"area":"CDD/KYC/KYB — automated identity verification","cbn_ref":"5.2(A)","category":"Mandatory","trigger":"DMB retail deposit products require automated CDD. Manual BVN lookups constitute non-compliance."},{"area":"Sanctions & PEP Screening — real-time capability","cbn_ref":"5.3(A)","category":"Mandatory","trigger":"PEP exposure confirmed. Manual screening against domestic lists only is insufficient for DMB risk profile."},{"area":"Customer Risk Assessment — dynamic scoring","cbn_ref":"5.4(A)","category":"Mandatory","trigger":"All DMBs must maintain automated risk scoring. Manual assessment does not meet standard."},{"area":"Transaction Monitoring — real-time multi-scenario","cbn_ref":"5.5(A)","category":"Mandatory","trigger":"Trade finance and credit products require real-time monitoring. Manual review is non-compliant."},{"area":"Fraud Monitoring — integrated detection","cbn_ref":"5.6(A)","category":"Mandatory","trigger":"DMBs must deploy fraud monitoring regardless of channel footprint. ATM/POS operations require coverage."},{"area":"Case Management — ECM with audit trail","cbn_ref":"5.7(A)","category":"Mandatory","trigger":"Manual case handling does not provide required Maker-Checker controls or immutable audit trail."},{"area":"Regulatory Reporting — automated STR/CTR filing","cbn_ref":"5.8(A)","category":"Mandatory","trigger":"goAML portal usage without automation does not satisfy real-time reporting requirement for DMBs."},{"area":"Audit Trail — immutable logging","cbn_ref":"5.9(A)","category":"Mandatory","trigger":"Manual audit trail does not meet immutability or completeness standards required for DMB examination."},{"area":"Core Banking Integration — bidirectional real-time","cbn_ref":"5.10(A)","category":"Mandatory","trigger":"All DMBs must integrate AML solution with core banking. Manual data extraction is non-compliant."},{"area":"Data Security & Sovereignty — encryption and residency","cbn_ref":"5.11(A)","category":"Mandatory","trigger":"No encryption deployed. Data sovereignty confirmed but security controls absent constitute critical gap."},{"area":"Reporting & Analytics — real-time dashboards","cbn_ref":"5.12(A)","category":"Mandatory","trigger":"Manual reporting does not provide board-level dashboards or regulatory analytics required for DMBs."},{"area":"Board-Approved AML/CFT/CPF Policy","cbn_ref":"6.1(A)","category":"Mandatory","trigger":"No board-approved policy in place. Mandatory for all DMBs before roadmap submission."},{"area":"Formally Designated MLRO/CCO","cbn_ref":"6.2(A)","category":"Mandatory","trigger":"No MLRO appointed. CBN requires formal designation with board approval before June 2026."},{"area":"AML Solution Governance Framework","cbn_ref":"6.3(A)","category":"Mandatory","trigger":"No governance framework documented. Required for all automated AML deployments by DMBs."},{"area":"Vendor/Third-Party Management Policy","cbn_ref":"6.4(A)","category":"Mandatory","trigger":"Vendor demos seen but no vendor management policy. Mandatory before platform procurement."},{"area":"CBN Implementation Roadmap Submission","cbn_ref":"Circular Para 8","category":"Mandatory","trigger":"Universal deadline 10 June 2026 applies to all institutions. Non-submission triggers supervisory action."}],"gap_analysis_intro":"Johndup exhibits Critical Gaps across all 12 CBN baseline standards. Manual processes, zero governance controls, and absence of foundational policies create immediate examination risk and regulatory non-compliance.","standards":[{"section":"5.1","title":"Integrated AML Solution","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"8 Core Functions Required","type":"mandatory"}],"finding":"Johndup operates entirely manual AML processes with no integrated platform. Section 5.1 requires automated coverage of CDD, sanctions screening, transaction monitoring, fraud detection, case management, regulatory reporting, risk assessment, and audit trail. Manual processes do not constitute an integrated solution and fail to meet DMB licensing requirements.","required_action":"Deploy integrated AML platform covering all 8 core functions before September 2027 compliance deadline. Initiate vendor selection immediately post-roadmap submission.","regtech_solution":"RegPort provides turnkey integrated AML solution covering all 8 mandatory functions with pre-configured DMB workflows, real-time core banking integration, and CBN-compliant reporting templates.","regtech_products":["RegPort"]},{"section":"5.2","title":"CDD/KYC/KYB","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"BVN/NIN Integration Required","type":"mandatory"}],"finding":"Manual BVN lookups and manual KYC review processes do not satisfy Section 5.2 requirements. DMBs must deploy real-time automated identity verification with BVN/NIN integration, automated UBO mapping for corporate accounts, and dynamic KYC refresh triggers. Manual processes expose Johndup to identity fraud and regulatory sanctions.","required_action":"Implement automated CDD with real-time BVN/NIN API integration and automated UBO mapping before compliance deadline. Migrate existing customer base to automated verification.","regtech_solution":"RegPort includes native BVN/NIN integration via NIBSS APIs, automated UBO discovery for corporate accounts, and risk-based KYC refresh scheduling aligned with CBN tiering requirements.","regtech_products":["RegPort"]},{"section":"5.3","title":"Sanctions & PEP Screening","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"PEP Exposure Confirmed","type":"conditional"}],"finding":"Manual screening against CBN/EFCC domestic lists only is insufficient. Section 5.3 requires real-time screening against domestic and international sanctions lists including OFAC, UN, EU, and UK HMT. PEP exposure confirmed in risk profile elevates this to examination-critical deficiency. Manual processes cannot detect cross-border PEP relationships or beneficial ownership structures.","required_action":"Deploy real-time sanctions and PEP screening covering domestic and international lists with automated adverse media monitoring before compliance deadline.","regtech_solution":"RegGuard provides AI-powered real-time screening against 50+ global sanctions lists including OFAC, UN, EU, UK HMT, plus automated PEP relationship mapping and adverse media alerts.","regtech_products":["RegGuard"]},{"section":"5.4","title":"Customer Risk Assessment","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Dynamic Scoring Required","type":"mandatory"}],"finding":"Manual customer risk assessment does not provide dynamic scoring, automated risk tiering, or event-driven re-assessment required by Section 5.4. DMBs must maintain automated risk models incorporating transaction behaviour, geographic exposure, product usage, and sanctions/PEP hits. Manual assessment cannot scale to regulatory expectations.","required_action":"Implement automated customer risk scoring with dynamic re-assessment triggers and board-approved risk appetite thresholds before compliance deadline.","regtech_solution":"RegPort includes configurable risk scoring engine with 40+ risk factors, automated tiering aligned with CBN categories, and event-driven re-assessment for material changes.","regtech_products":["RegPort"]},{"section":"5.5","title":"Transaction Monitoring","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Trade Finance Exposure","type":"conditional"}],"finding":"Manual transaction review does not satisfy Section 5.5 requirements for real-time multi-scenario monitoring. Trade finance products require automated detection of structuring, layering, round-tripping, and trade-based money laundering typologies. Manual processes cannot identify complex patterns across customer networks or detect real-time suspicious activity.","required_action":"Deploy real-time transaction monitoring with pre-configured trade finance scenarios and network analysis before compliance deadline. Integrate with core banking for real-time data feeds.","regtech_solution":"RegPort provides 60+ pre-configured monitoring scenarios including trade finance typologies, real-time network analysis, and automated alert generation with risk-based prioritisation.","regtech_products":["RegPort"]},{"section":"5.6","title":"Fraud Monitoring","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"ATM/POS Channel Risk","type":"conditional"}],"finding":"No fraud monitoring capability deployed. Section 5.6 requires integrated fraud detection with bidirectional feed to customer risk assessment. ATM/POS channel operations expose Johndup to card fraud, account takeover, and synthetic identity fraud. Absence of fraud monitoring creates immediate operational and reputational risk.","required_action":"Implement real-time fraud monitoring integrated with AML platform and customer risk engine before compliance deadline. Deploy device fingerprinting and behavioural analytics for ATM/POS channels.","regtech_solution":"RegGuard provides real-time fraud detection with machine learning models for card fraud, account takeover, and synthetic identity detection, plus automated risk score updates.","regtech_products":["RegGuard"]},{"section":"5.7","title":"Case Management","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Maker-Checker Required","type":"mandatory"}],"finding":"Manual case handling does not provide Enterprise Case Management with Maker-Checker controls, immutable audit trail, or automated escalation workflows required by Section 5.7. DMBs must maintain full investigation lifecycle management with documented approval chains and regulatory evidence packs. Manual processes cannot demonstrate examination-ready case documentation.","required_action":"Deploy ECM platform with Maker-Checker controls, automated escalation, and immutable audit trail before compliance deadline. Migrate open investigations to automated system.","regtech_solution":"RegPort includes full ECM module with configurable Maker-Checker workflows, automated escalation rules, immutable audit trail, and one-click STR generation from case files.","regtech_products":["RegPort"]},{"section":"5.8","title":"Regulatory Reporting","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Automated Filing Required","type":"mandatory"}],"finding":"Manual goAML portal usage with informal approval process does not satisfy Section 5.8 requirements. DMBs must deploy automated STR/CTR generation with documented approval workflows and real-time filing capability. Informal approval processes create regulatory risk and cannot demonstrate compliance with filing deadlines.","required_action":"Implement automated regulatory reporting with documented approval workflows and direct goAML integration before compliance deadline. Establish formal MLRO sign-off process.","regtech_solution":"RegComply automates STR/CTR generation from case files, enforces documented approval workflows, and provides direct goAML API integration for real-time filing with delivery confirmation.","regtech_products":["RegComply"]},{"section":"5.9","title":"Audit Trail","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Internal Audit Coverage Required","type":"mandatory"}],"finding":"Manual audit trail does not provide immutable logging, tamper-proof evidence, or comprehensive activity tracking required by Section 5.9. AML not covered by internal audit constitutes dual critical gap. DMBs must maintain complete audit trail of all AML activities with internal audit review at least twice yearly.","required_action":"Deploy immutable audit trail capability and establish internal audit coverage of AML processes before compliance deadline. Conduct initial AML audit within 90 days of platform deployment.","regtech_solution":"RegPort provides blockchain-anchored immutable audit trail capturing all system activities, user actions, and configuration changes with tamper-proof evidence for examination purposes.","regtech_products":["RegPort"]},{"section":"5.10","title":"Core Banking Integration","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Real-Time Integration Required","type":"mandatory"}],"finding":"No automated core banking integration exists. Section 5.10 requires bidirectional real-time integration for customer data, transaction feeds, and risk score updates. Manual data extraction creates latency, data quality issues, and prevents real-time monitoring required for DMB operations.","required_action":"Establish bidirectional real-time integration between AML platform and core banking system before compliance deadline. Implement automated data validation and reconciliation controls.","regtech_solution":"RegPort includes pre-built connectors for major core banking platforms used in Nigeria with bidirectional real-time APIs, automated data validation, and reconciliation dashboards.","regtech_products":["RegPort"]},{"section":"5.11","title":"Data Security & Sovereignty","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Encryption Required","type":"mandatory"}],"finding":"No encryption deployed and MFA not enforced constitute critical security gaps. Section 5.11 requires encryption at rest and in transit, MFA for all users, and Nigeria data residency. Data sovereignty confirmed but absence of encryption and MFA creates immediate data breach risk and regulatory non-compliance.","required_action":"Implement full encryption at rest and in transit, enforce MFA for all AML system users, and conduct security audit before compliance deadline.","regtech_solution":"RegPort deploys with AES-256 encryption at rest, TLS 1.3 in transit, mandatory MFA, and Nigeria-based cloud infrastructure meeting CBN data sovereignty requirements.","regtech_products":["RegPort"]},{"section":"5.12","title":"Reporting & Analytics","status":"Critical Gap","req_tags":[{"label":"Mandatory — All DMBs","type":"mandatory"},{"label":"Board Dashboards Required","type":"mandatory"}],"finding":"Manual reporting does not provide real-time dashboards, board-level analytics, or regulatory reporting templates required by Section 5.12. DMBs must maintain automated dashboards for MLRO, board, and CBN examination purposes with drill-down capability and trend analysis.","required_action":"Deploy automated reporting and analytics platform with board dashboards and regulatory templates before compliance deadline. Establish monthly board reporting cadence.","regtech_solution":"RegPort includes pre-configured dashboards for MLRO, board, and regulators with real-time KPIs, trend analysis, and one-click regulatory report generation.","regtech_products":["RegPort"]}],"governance_assessment":{"intro":"Johndup has zero governance controls in place. No MLRO appointed, no board-approved policy, no documented frameworks. This constitutes examination-critical deficiency requiring immediate remediation before roadmap submission.","score_percentage":0,"score_context":"0/10 governance controls in place represents critical non-compliance. CBN requires foundational governance baseline before platform deployment. Absence of MLRO and board policy alone triggers supervisory intervention risk.","items":[{"control":"Formally designated MLRO or CCO","status":"Not in place","cbn_ref":"6.2(A)","category":"Mandatory","action_required":"Appoint MLRO with board approval before roadmap submission deadline."},{"control":"Board-approved AML/CFT/CPF Policy","status":"Not in place","cbn_ref":"6.1(A)","category":"Mandatory","action_required":"Draft and obtain board approval for comprehensive AML policy before June 2026."},{"control":"Documented AML Solution Governance Framework","status":"Not in place","cbn_ref":"6.3(A)","category":"Mandatory","action_required":"Develop governance framework covering roles, escalation, and oversight before platform deployment."},{"control":"Formal Change Control for AML Configurations","status":"Not in place","cbn_ref":"6.3(B)","category":"Mandatory","action_required":"Establish change control process with Maker-Checker approval before platform go-live."},{"control":"Model Governance Committee for AI/ML","status":"Not in place","cbn_ref":"6.5(A)","category":"Conditional","action_required":"Not immediately required. Establish if AI/ML capabilities deployed in future."},{"control":"Documented Alert Review SLAs","status":"Not in place","cbn_ref":"5.7(B)","category":"Mandatory","action_required":"Document alert review SLAs aligned with risk tiering before platform deployment."},{"control":"Vendor/Third-Party Management Policy","status":"Not in place","cbn_ref":"6.4(A)","category":"Mandatory","action_required":"Adopt vendor management policy before platform procurement and contracting."},{"control":"Data Retention and Destruction Policy","status":"Not in place","cbn_ref":"5.11(C)","category":"Mandatory","action_required":"Document data retention policy aligned with CBN 7-year requirement before platform deployment."},{"control":"BVN/NIN Integration","status":"Not in place","cbn_ref":"5.2(B)","category":"Mandatory","action_required":"Establish real-time BVN/NIN integration via NIBSS APIs before compliance deadline."},{"control":"AML Training Programme with Documented Records","status":"Not in place","cbn_ref":"6.6(A)","category":"Mandatory","action_required":"Deploy AML training programme with attendance tracking before compliance deadline."}],"overall_score_label":"0/10 — Critical","overall_score_rating":"Critical"},"priority_actions":[{"number":1,"title":"CBN Implementation Roadmap Submission","deadline_label":"HARD DEADLINE: 10 JUNE 2026 · MANDATORY FOR ALL INSTITUTIONS","body":"Johndup must submit the CBN Implementation Roadmap Template by 10 June 2026. This is a universal non-negotiable deadline applying to all financial institutions regardless of implementation status. The roadmap must cover 12 sections including executive summary, gap analysis, implementation strategy, timeline, resource plan, governance framework, and board sign-off. Incomplete or missing submissions constitute regulatory non-compliance and trigger immediate supervisory action.\n\nOPEX Consulting can complete the CBN template using findings from this assessment. We provide turnkey roadmap preparation including gap analysis documentation, phased implementation timeline, resource planning, and board presentation materials. Roadmap completion typically requires 2-3 weeks from engagement to final board approval."},{"number":2,"title":"MLRO/CCO Appointment","deadline_label":"CRITICAL: REQUIRED BEFORE ROADMAP SUBMISSION","body":"CBN Circular requires formal MLRO or CCO designation with board approval before roadmap submission. The MLRO must be a senior officer with direct board reporting line, authority to halt suspicious transactions, and independence from business units. Job description must specify AML/CFT responsibilities, qualifications, and reporting obligations.\n\nOPEX Consulting provides interim MLRO services during recruitment and can draft job descriptions, board resolutions, and MLRO terms of reference aligned with CBN requirements. We also offer MLRO training and certification preparation."},{"number":3,"title":"Board-Approved AML/CFT/CPF Policy","deadline_label":"CRITICAL: REQUIRED BEFORE ROADMAP SUBMISSION","body":"Johndup must obtain board approval for comprehensive AML/CFT/CPF policy before June 2026 roadmap deadline. The policy must cover customer due diligence, sanctions screening, transaction monitoring, suspicious activity reporting, record retention, training, and governance. Policy must be tailored to Johndup's DMB licence, product profile, and risk factors.\n\nOPEX Consulting drafts CBN-compliant AML policies customised to institution type and risk profile. We provide policy templates, board presentation materials, and implementation guidance. Policy development typically requires 3-4 weeks from kickoff to board approval."},{"number":4,"title":"AML Platform Selection and Procurement","deadline_label":"TARGET: Q3 2026 · DEPLOYMENT BY Q2 2027","body":"Johndup has seen vendor demos but requires formal platform selection aligned with budget constraints. Platform must cover all 8 core functions required by Section 5.1 with real-time core banking integration, BVN/NIN APIs, and Nigeria data residency. Procurement must follow documented vendor management process.\n\nOPEX Consulting provides vendor evaluation support including RFP preparation, demo facilitation, scoring matrix development, and contract negotiation. We maintain vendor-neutral advisory stance and can guide RegTech365 product evaluation alongside alternatives. Budget-conscious institutions benefit from our procurement optimisation and phased deployment strategies."},{"number":5,"title":"Internal Audit Coverage of AML","deadline_label":"TARGET: INITIAL AUDIT Q4 2026","body":"AML currently not covered by internal audit. CBN requires internal audit review of AML processes at least twice yearly with documented findings and remediation tracking. First audit should occur within 90 days of platform deployment to validate configuration, test scenarios, and verify governance controls.\n\nOPEX Consulting offers internal audit co-sourcing for AML/CFT including audit planning, fieldwork execution, findings documentation, and remediation tracking. We provide CBN-aligned audit programmes and can train internal audit teams on AML examination techniques."}],"roadmap":{"intro":"This roadmap guides Johndup from current manual processes to full CBN compliance by September 2027. Four phases span 18 months covering governance foundation, platform deployment, integration, and examination readiness.","phases":[{"phase_number":1,"title":"Foundation & Roadmap Submission","timeline":"Now – 10 June 2026","description":"Establish governance baseline and submit CBN roadmap. Appoint MLRO with board approval. Draft and approve AML/CFT/CPF policy. Document vendor management policy. Complete CBN Implementation Roadmap Template covering all 12 sections. Obtain board sign-off and submit to CBN Compliance Department by 10 June 2026 deadline.","deliverables":["MLRO appointment with board resolution","Board-approved AML/CFT/CPF Policy","Vendor Management Policy","CBN Implementation Roadmap submitted"],"standards_addressed":"6.1, 6.2, 6.4"},{"phase_number":2,"title":"Governance & Architecture","timeline":"June 2026 – September 2026","description":"Complete governance framework and design technical architecture. Document AML Solution Governance Framework covering roles, escalation, and oversight. Establish change control process with Maker-Checker approval. Design core banking integration architecture. Develop data retention policy. Document alert review SLAs. Conduct vendor selection and contract negotiation.","deliverables":["AML Solution Governance Framework","Change Control Process documented","Core banking integration design","Data Retention Policy","Alert Review SLAs documented","Vendor contract executed"],"standards_addressed":"6.3, 5.11"},{"phase_number":3,"title":"Platform Deployment & Integration","timeline":"October 2026 – June 2027","description":"Deploy integrated AML platform and establish core integrations. Implement RegPort covering CDD, sanctions screening, transaction monitoring, case management, and regulatory reporting. Deploy RegGuard for fraud monitoring. Establish real-time BVN/NIN integration via NIBSS APIs. Configure bidirectional core banking integration. Implement encryption and MFA. Migrate existing customer base to automated CDD. Configure monitoring scenarios for trade finance and retail banking. Conduct user acceptance testing.","deliverables":["RegPort platform deployed","RegGuard fraud monitoring live","BVN/NIN real-time integration","Core banking integration operational","Encryption and MFA enforced","Customer base migrated to automated CDD","Monitoring scenarios configured and tested"],"standards_addressed":"5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.10, 5.11, 5.12"},{"phase_number":4,"title":"Assurance & Examination Readiness","timeline":"July 2027 – September 2027","description":"Validate compliance and prepare for CBN examination. Conduct internal audit of AML processes with documented findings. Deploy AML training programme via RegLearn with attendance tracking. Prepare examination evidence pack covering all 12 standards. Conduct board AML briefing with compliance dashboard review. Validate immutable audit trail and regulatory reporting workflows. Conduct dry-run CBN examination simulation. Remediate any findings before compliance deadline.","deliverables":["Internal audit report with findings","AML training programme deployed","Examination evidence pack prepared","Board AML compliance briefing","Audit trail validation completed","Dry-run examination conducted","All findings remediated"],"standards_addressed":"5.9, 6.6"}],"milestones":[{"milestone":"MLRO appointed and board-approved AML policy in place","target_date":"31 May 2026","owner":"Board of Directors"},{"milestone":"CBN Implementation Roadmap submitted","target_date":"10 June 2026","owner":"MLRO / Compliance"},{"milestone":"Vendor contract executed and governance framework documented","target_date":"30 September 2026","owner":"MLRO / IT"},{"milestone":"Platform deployment complete with core banking integration live","target_date":"30 June 2027","owner":"IT / Compliance"},{"milestone":"Internal audit completed and training programme deployed","target_date":"31 August 2027","owner":"Internal Audit / MLRO"},{"milestone":"Full CBN compliance achieved and examination-ready","target_date":"30 September 2027","owner":"MLRO / Board"}]},"support_section":{"intro_paragraph":"OPEX Consulting and RegTech365 provide end-to-end support for Johndup's AML transformation. We combine regulatory advisory, platform deployment, and ongoing assurance to deliver turnkey CBN compliance within budget constraints.","differentiator":"OPEX Consulting is the only Nigerian advisory firm offering integrated RegTech365 deployment with CBN roadmap preparation, policy drafting, and internal audit co-sourcing. We understand DMB budget realities and structure phased implementations aligned with cash flow.","products":[{"name":"RegPort","gaps_closed":["5.1 — Integrated AML Solution","5.2 — CDD/KYC/KYB","5.4 — Customer Risk Assessment","5.5 — Transaction Monitoring","5.7 — Case Management","5.9 — Audit Trail","5.10 — Core Banking Integration","5.11 — Data Security","5.12 — Reporting & Analytics"],"tagline":"Integrated AML Platform for CBN Baseline Standards Compliance","description":"RegPort unifies CDD/KYC, sanctions/PEP screening, transaction monitoring, customer risk assessment, and regulatory reporting in a single platform. The platform is purpose-built for Nigerian financial institutions, featuring real-time BVN/NIN integration via NIBSS, automated goAML/NFIU filing, and AI-enabled fuzzy matching for international sanctions lists.","standards_addressed":"5.1, 5.2, 5.3, 5.4, 5.5, 5.8, 5.10"},{"name":"RegGuard","gaps_closed":["5.3 — Sanctions & PEP Screening","5.6 — Fraud Monitoring"],"tagline":"Real-Time Fraud Monitoring with Bidirectional Risk Feed","description":"RegGuard provides real-time fraud monitoring for card issuance, mobile money, and agent network channels. It detects pattern-based fraud like SIM swap attacks and account takeover, with an automated feed that pushes fraud alerts directly into customer risk scores to identify money laundering disguised as fraud.","standards_addressed":"5.6"},{"name":"RegComply","gaps_closed":["5.8 — Regulatory Reporting"],"tagline":"Enterprise Case Management with Immutable Audit Trails","description":"RegComply delivers the mandatory Case Management and Governance Audit layer. It enforces Maker-Checker workflows for investigation, provides role-based access for MLROs, and maintains tamper-proof audit logs of all configuration changes and alert dispositions required for CBN examination.","standards_addressed":"5.7, 5.9, 5.12"},{"name":"RegLearn","gaps_closed":["6.6 — AML Training Programme"],"tagline":"AML Training Programme with Documented Records","description":"RegLearn provides role-specific AML/CFT/CPF training modules covering the 12 Baseline Standards. The platform tracks staff completion, assessment scores, and certification status, producing the documented training records specifically mandated under Section 6.7 of the Circular.","standards_addressed":"6.7"}],"advisory_services":[{"title":"CBN Roadmap Template completion","description":"End-to-end support in completing and validating the mandatory 12-section roadmap for June 10th submission."},{"title":"AML/CFT/CPF policy drafting","description":"Development of Board-approved policies aligned with the new 2026 Baseline Standards and ISO 42001."},{"title":"MLRO appointment advisory","description":"Guidance on role definition, reporting lines, and CBN notification for newly appointed MLROs."},{"title":"Evidence pack preparation","description":"Compilation of all technical and governance documentation into an audit-ready format for CBN examination."},{"title":"ISO 27001 and 42001 alignment","description":"Gap analysis and implementation support for international security and AI governance standards."},{"title":"Vendor due diligence","description":"Structured evaluation of RegTech platform providers against CBN technical requirements."},{"title":"Governance framework drafting","description":"Drafting of AML Solution Governance, Change Control, and Data Retention policies."},{"title":"DMB-Specific Budget Optimisation","description":"Phased deployment strategies aligned with cash flow constraints and capital planning cycles for smaller DMBs."},{"title":"Trade Finance AML Configuration","description":"Scenario design and tuning for trade-based money laundering detection specific to Johndup's trade finance products."}],"cta":{"title":"Start Your Compliance Journey","subtitle":"OPEX Consulting can complete your CBN roadmap and guide platform selection within 3 weeks.","primary_button_label":"Schedule Roadmap Consultation","secondary_button_label":"Request RegTech365 Demo"}}};
 
-function statusBadge(status) {
-  const s = String(status).toLowerCase();
-  if (s === 'critical gap' || s === 'critical')   return `<span class="badge badge-critical">Critical Gap</span>`;
-  if (s === 'gap identified')                      return `<span class="badge badge-gap">Gap Identified</span>`;
-  if (s === 'compliant')                           return `<span class="badge badge-compliant">Compliant</span>`;
-  if (s === 'high')                                return `<span class="badge badge-high">High</span>`;
-  if (s === 'elevated')                            return `<span class="badge badge-elevated">Elevated</span>`;
-  if (s === 'standard')                            return `<span class="badge badge-compliant">Standard</span>`;
-  if (s === 'in place')                            return `<span class="badge badge-inplace">In Place</span>`;
-  if (s === 'not confirmed')                       return `<span class="badge badge-notconf">Not Confirmed</span>`;
-  if (s === 'not in place')                        return `<span class="badge badge-notinplace">Not In Place</span>`;
-  if (s === 'weak' || s === 'partial')             return `<span class="badge badge-gap">${esc(status)}</span>`;
-  if (s === 'adequate' || s === 'strong')          return `<span class="badge badge-compliant">${esc(status)}</span>`;
-  return `<span class="badge badge-notconf">${esc(status)}</span>`;
+function esc(s) {
+  if (!s) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 
-function ratingClass(rating) {
-  const r = String(rating).toLowerCase();
-  if (r === 'critical') return 'critical';
-  if (r === 'high')     return 'high';
-  if (r === 'medium')   return 'medium';
-  if (r === 'low')      return 'low';
-  return 'critical';
+function getRatingClass(r) {
+  const s = String(r || "").toLowerCase();
+  if (s.includes('critical')) return 'critical';
+  if (s.includes('high')) return 'high';
+  if (s.includes('gap') || s.includes('identified') || s.includes('medium')) return 'gap';
+  return 'compliant';
 }
 
-function gapRowClass(status) {
-  const s = String(status).toLowerCase();
-  if (s === 'critical gap') return 'row-critical';
-  if (s === 'gap identified') return 'row-gap';
-  if (s === 'compliant') return 'row-compliant';
-  return '';
+function getProductLink(name) {
+  const n = String(name || "").toLowerCase();
+  if (n.includes("regport")) return "https://regport.regtech365.com/";
+  if (n.includes("regguard")) return "https://regguard-client-production.gentlemushroom-84487ebc.eastus.azurecontainerapps.io";
+  if (n.includes("regcomply")) return "https://www.regtech365.com/";
+  return "https://www.regtech365.com/";
 }
 
-/* ══════════════════════════════════════════════════════
-   SECTION BUILDERS
-══════════════════════════════════════════════════════ */
-function buildCover(r) {
-  const rc = ratingClass(r.overall_rating.rating);
+function pageHeader(r) {
   return `
-  <div class="report-cover">
-    <div class="cover-brand">
-      <div class="cover-brand-dot"></div>
-      <span class="cover-brand-name">OPEX Consulting &nbsp;|&nbsp; RegTech365</span>
+    <div class="page-header">
+      <span class="page-header-brand">OPEX Consulting · RegTech365</span>
+      <span class="page-header-doc">${esc(r.meta.inst_name)} (${esc(r.meta.inst_type)}) · CBN AML Gap Assessment · ${esc(r.meta.report_date)}</span>
+    </div>`;
+}
+
+function sectionTitle(num, tag, title) {
+  return `
+    <div class="section-divider">
+      <span class="section-label-tag">${esc(tag)}</span>
+      <div class="section-header-row">
+        <div class="section-num-badge">${esc(num)}</div>
+        <h2 class="section-heading">${esc(title)}</h2>
+      </div>
+    </div>`;
+}
+
+function render(r) {
+  const container = document.getElementById('report-container');
+  let h = '';
+
+  // 1. COVER
+  const oRisk = getRatingClass(r.overall_rating.rating);
+  h += `
+  <div class="cover">
+    <div class="cover-body">
+      <div class="cover-brand">
+        <div class="cover-logo">O</div>
+        <div class="cover-brand-text">
+          <div class="cover-brand-name">OPEX Consulting &nbsp;·&nbsp; RegTech365</div>
+          <div class="cover-brand-sub">Compliance Advisory &amp; Regulatory Technology · Lagos, Nigeria</div>
+        </div>
+      </div>
+      <div class="cover-main">
+        <div class="cover-eyebrow">CBN AML Baseline Standards</div>
+        <h1 class="cover-title">Gap Assessment<br><span>Report</span></h1>
+        <p class="cover-subtitle">Circular ${esc(r.meta.circular_ref)} — ${esc(r.meta.report_date)}</p>
+        
+        <div class="cover-meta-grid">
+          <div class="cover-meta-cell"><div class="cover-meta-label">Institution</div><div class="cover-meta-value">${esc(r.meta.inst_name)}</div></div>
+          <div class="cover-meta-cell"><div class="cover-meta-label">Institution Type</div><div class="cover-meta-value">${esc(r.meta.inst_type_full)}</div></div>
+          <div class="cover-meta-cell"><div class="cover-meta-label">CBN Risk Classification</div><div class="cover-meta-value gold">${esc(r.meta.cbn_risk)}</div></div>
+          <div class="cover-meta-cell"><div class="cover-meta-label">Report Date</div><div class="cover-meta-value">${esc(r.meta.report_date)}</div></div>
+          <div class="cover-meta-cell"><div class="cover-meta-label">Roadmap Deadline</div><div class="cover-meta-value gold">${esc(r.meta.roadmap_deadline)}</div></div>
+          <div class="cover-meta-cell"><div class="cover-meta-label">Full Compliance Deadline</div><div class="cover-meta-value">${esc(r.meta.compliance_deadline)}</div></div>
+        </div>
+
+        <div class="cover-risk ${oRisk}">
+          <div class="cover-risk-badge badge-${oRisk}">⚠ ${esc(r.overall_rating.rating)}</div>
+          <div class="cover-risk-text">${esc(r.overall_rating.summary || r.overall_rating.sector_context_note)}</div>
+        </div>
+      </div>
     </div>
-    <div class="cover-eyebrow">CBN AML Baseline Standards</div>
-    <div class="cover-title">Gap Assessment<br>Report</div>
-    <div class="cover-subtitle">Baseline Standards for Automated AML Solutions</div>
-    <div class="cover-prepared">Prepared for:</div>
-    <div class="cover-institution">${esc(r.meta.inst_name)}</div>
-    <div class="cover-inst-type">${esc(r.meta.inst_type_full)}</div>
-    <div class="cover-meta-grid">
-      <div class="cover-meta-cell">
-        <div class="cover-meta-label">Circular Reference</div>
-        <div class="cover-meta-value">${esc(r.meta.circular_ref)}</div>
-      </div>
-      <div class="cover-meta-cell">
-        <div class="cover-meta-label">Report Date</div>
-        <div class="cover-meta-value">${esc(r.meta.report_date)}</div>
-      </div>
-      <div class="cover-meta-cell">
-        <div class="cover-meta-label">Roadmap Deadline</div>
-        <div class="cover-meta-value">${esc(r.meta.roadmap_deadline)}</div>
-      </div>
-      <div class="cover-meta-cell">
-        <div class="cover-meta-label">Full Compliance Deadline</div>
-        <div class="cover-meta-value">${esc(r.meta.compliance_deadline)}</div>
-      </div>
-    </div>
-  </div>
-  <div class="rating-banner ${rc}">
-    <div class="rating-banner-left">
-      <div class="rating-banner-eyebrow">Overall Compliance Risk Rating</div>
-      <div class="rating-banner-value">${esc(r.overall_rating.rating)}</div>
-      <div class="rating-banner-note">${esc(r.overall_rating.rating_label)}</div>
+    <div class="cover-footer">
+      <div class="cover-footer-left">Prepared by OPEX Consulting / RegTech365<br>business@regtech365.com</div>
+      <div class="cover-footer-right">Confidential — for internal compliance planning only<br>Not legal advice</div>
     </div>
   </div>`;
-}
 
-function buildSection1(r) {
-  const sc = r.scorecard;
-  const rc = ratingClass(r.overall_rating.rating);
-  return `
-  <div class="report-section avoid-break">
-    <div class="section-heading">Section 1: Executive Summary</div>
+  // 2. TOC
+  h += `
+  <div class="toc">
+    <h2 class="toc-title">Contents</h2>
+    <div class="toc-item"><span class="toc-num">01</span><span class="toc-label">Executive Summary</span><span class="toc-dots"></span><span class="toc-section">p.3</span></div>
+    <div class="toc-item"><span class="toc-num">02</span><span class="toc-label">Institution Profile &amp; Scorecard</span><span class="toc-dots"></span><span class="toc-section">p.4</span></div>
+    <div class="toc-item"><span class="toc-num">03</span><span class="toc-label">CBN Requirement Categories</span><span class="toc-dots"></span><span class="toc-section">p.5</span></div>
+    <div class="toc-item"><span class="toc-num">04</span><span class="toc-label">Gap Analysis — 12 Standards</span><span class="toc-dots"></span><span class="toc-section">p.6</span></div>
+    <div class="toc-item"><span class="toc-num">05</span><span class="toc-label">Governance Assessment</span><span class="toc-dots"></span><span class="toc-section">p.12</span></div>
+    <div class="toc-item"><span class="toc-num">06</span><span class="toc-label">Top 5 Priority Actions</span><span class="toc-dots"></span><span class="toc-section">p.13</span></div>
+    <div class="toc-item"><span class="toc-num">07</span><span class="toc-label">Implementation Roadmap</span><span class="toc-dots"></span><span class="toc-section">p.15</span></div>
+    <div class="toc-item"><span class="toc-num">08</span><span class="toc-label">Product Suite &amp; Advisory</span><span class="toc-dots"></span><span class="toc-section">p.17</span></div>
+  </div>`;
 
-    <div class="subsection-heading">1.1 Institution Profile</div>
+  // 3. EXEC SUMMARY
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("01", "Section One", "Executive Summary");
+  h += `<p class="exec-lead">${esc(r.executive_summary.lead)}</p>`;
+  (r.executive_summary.body_paragraphs || r.executive_summary.paragraphs || []).forEach(p => h += `<p class="exec-body">${esc(p)}</p>`);
+  if (r.executive_summary.inline_alert) {
+    h += `
+      <div class="inline-alert ia-critical">
+        <span class="ia-icon">⚠</span>
+        <span>${esc(r.executive_summary.inline_alert)}</span>
+      </div>`;
+  }
+  h += `
+    <div class="scorecard">
+      <div class="score-cell"><div class="score-value score-critical">${r.scorecard.standards_compliant_count}<span style="font-size:18px">/12</span></div><div class="score-label">Standards<br>Compliant</div></div>
+      <div class="score-cell"><div class="score-value score-critical">${r.scorecard.standards_critical_gap_count}</div><div class="score-label">Critical Gap<br>Ratings</div></div>
+      <div class="score-cell"><div class="score-value score-high">${r.scorecard.standards_gap_identified_count}</div><div class="score-label">Gap Identified<br>Ratings</div></div>
+      <div class="score-cell"><div class="score-value score-critical">${esc(r.scorecard.governance_score_label)}</div><div class="score-label">Governance<br>Controls</div></div>
+      <div class="score-cell"><div class="score-value score-critical">${esc(r.scorecard.aml_system_status_label)}</div><div class="score-label">AML System<br>Status</div></div>
+      <div class="score-cell"><div class="score-value score-high">${esc(r.scorecard.risk_factors_label)}</div><div class="score-label">Fraud Exposure<br>Risk Level</div></div>
+    </div>
+  </div>`;
+
+  // 4. PROFILE
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("02", "Section Two", "Institution Profile & Assessment Scorecard");
+  h += `
     <table class="profile-table">
-      <tr><td class="field">Institution</td><td>${esc(r.meta.inst_name)}</td></tr>
-      <tr><td class="field">Institution Type</td><td>${esc(r.meta.inst_type_full)}</td></tr>
-      <tr><td class="field">CBN Risk Classification</td><td>${esc(r.meta.cbn_risk ?? '—')}</td></tr>
-      <tr><td class="field">Transaction Volume</td><td>${esc(r.meta.tx_vol ?? '—')}</td></tr>
-      <tr><td class="field">Geographic Footprint</td><td>${esc(r.meta.geo ?? '—')}</td></tr>
-      <tr><td class="field">Compliance Deadline (Roadmap)</td><td class="deadline-val">${esc(r.meta.roadmap_deadline)}</td></tr>
-      <tr><td class="field">Full Compliance Deadline</td><td class="deadline-val">${esc(r.meta.compliance_deadline)} (${esc(r.meta.compliance_deadline_basis)})</td></tr>
-      <tr><td class="field">Circular Reference</td><td>${esc(r.meta.circular_ref)} — issued 10 March 2026</td></tr>
+      <tr><td>Institution</td><td><strong>${esc(r.meta.inst_name)}</strong></td></tr>
+      <tr><td>Institution Type</td><td>${esc(r.meta.inst_type_full)}</td></tr>
+      <tr><td>CBN Risk Classification</td><td>${esc(r.meta.cbn_risk)}</td></tr>
+      <tr><td>Daily Transaction Volume</td><td>${esc(r.meta.tx_vol)}</td></tr>
+      <tr><td>Geographic Footprint</td><td>${esc(r.meta.geo)}</td></tr>
+      <tr><td>Group / Holding Structure</td><td>${esc(r.meta.group_structure)}</td></tr>
+      <tr><td>Elevated Risk Indicators</td><td>${esc(r.meta.risk_factors_display)}</td></tr>
+      <tr><td>Roadmap Submission Deadline</td><td><strong style="color:var(--critical)">${esc(r.meta.roadmap_deadline)}</strong></td></tr>
+      <tr><td>Full Compliance Deadline</td><td>${esc(r.meta.compliance_deadline)}</td></tr>
     </table>
-
-    <div class="subsection-heading">1.2 Overall Compliance Risk Rating</div>
-    <div class="rating-callout ${rc}">
-      <div class="rating-callout-title">${esc(r.overall_rating.rating)}</div>
-      <div class="rating-callout-body">${esc(r.overall_rating.summary_paragraph)}</div>
-      <div class="rating-callout-note">${esc(r.overall_rating.sector_context_note)}</div>
-    </div>
-
-    <div class="subsection-heading">1.3 Assessment Scorecard</div>
-    <table class="scorecard-table">
-      <thead>
-        <tr>
-          <th>Assessment Dimension</th>
-          <th>Score</th>
-          <th style="text-align:right">Rating</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="sc-label">AML System Status</td>
-          <td class="sc-score">${esc(sc.aml_system_status_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.aml_system_status_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Standards Compliant (of 12)</td>
-          <td class="sc-score">${esc(sc.standards_compliant_count)} / 12</td>
-          <td class="sc-rating">${statusBadge(sc.standards_compliant_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Standards with Critical Gap</td>
-          <td class="sc-score">${esc(sc.standards_critical_gap_count)} / 12</td>
-          <td class="sc-rating">${statusBadge(sc.standards_critical_gap_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Standards with Gap Identified</td>
-          <td class="sc-score">${esc(sc.standards_gap_identified_count)} / 12</td>
-          <td class="sc-rating">${statusBadge('Gap Identified')}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Governance Controls in Place</td>
-          <td class="sc-score">${esc(sc.governance_score_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.governance_score_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Internal Audit Coverage of AML</td>
-          <td class="sc-score">${esc(sc.internal_audit_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.internal_audit_rating)}</td>
-        </tr>
-        <tr>
-          <td class="sc-label">Risk Factors Identified</td>
-          <td class="sc-score">${esc(sc.risk_factors_label)}</td>
-          <td class="sc-rating">${statusBadge(sc.risk_factors_rating)}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="info-box">
-      <strong>Regulatory Context</strong>
-      ${esc(sc.regulatory_context_box)}
+    <div class="inline-alert ia-info">
+      <span class="ia-icon">ℹ</span>
+      <span><strong>Why ${esc(r.meta.inst_name)}'s status matters.</strong> ${esc(r.profile.sector_context_box || r.scorecard.regulatory_context_box)}</span>
     </div>
   </div>`;
-}
 
-function buildSection2(r) {
-  const standards = (r.standards || []).map(s => `
-    <div class="gap-card avoid-break ${gapRowClass(s.status)}">
-      <div class="gap-card-header">
-        <span class="gap-ref-pill">${esc(s.section)}</span>
-        <span class="gap-card-title">${esc(s.title)}</span>
-        ${statusBadge(s.status)}
-      </div>
-      <div class="gap-card-body">
-        <div class="gap-card-finding">
-          <div class="gap-col-label">Finding</div>
-          ${esc(s.finding)}
-        </div>
-        <div class="gap-card-action">
-          <div class="gap-col-label">Required Action</div>
-          ${esc(s.required_action)}
-        </div>
-      </div>
-    </div>`).join('');
-
-  const ga = r.governance_assessment;
-  const govRows = (ga.items || []).map(item => `
-    <tr>
-      <td>${esc(item.control)}</td>
-      <td style="text-align:right">${statusBadge(item.status)}</td>
-    </tr>`).join('');
-
-  return `
-  <div class="report-section">
-    <div class="section-heading">Section 2: Gap Analysis — 12 CBN Baseline Standards</div>
-    <p class="section-intro">${esc(r.gap_analysis_intro)}</p>
-
-    <div class="gap-list">${standards}</div>
-
-    <div class="subsection-heading" style="margin-top:40px">2.1 Governance Assessment</div>
-    <p class="section-intro">${esc(ga.intro)}</p>
-    <div class="table-wrap">
+  // 5. REQUIREMENT CATEGORIES
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("03", "Section Three", "Requirement Categories — Mandatory vs Conditional");
+  h += `<p class="exec-body">${esc(r.requirement_categories_intro)}</p>
+    <div class="legend-box">
+      <div class="legend-item"><span class="req-tag req-mandatory">Mandatory</span> Applies to all without exception</div>
+      <div class="legend-item"><span class="req-tag req-conditional">Conditional</span> Activated by risk/type</div>
+      <div class="legend-item"><span class="req-tag req-cbn">5.x</span> CBN circular section</div>
+    </div>
     <table class="gov-table">
-      <thead>
-        <tr>
-          <th>Governance Control</th>
-          <th style="text-align:right;width:180px">Current Status</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Requirement Area</th><th>CBN Ref</th><th>Category</th><th>Trigger for ${esc(r.meta.inst_name)}</th></tr></thead>
       <tbody>
-        ${govRows}
-        <tr class="gov-total">
-          <td>Overall Governance Score</td>
-          <td style="text-align:right">${esc(ga.overall_score_label)}</td>
-        </tr>
+        ${(r.requirement_categories || []).map(row => `
+          <tr>
+            <td>${esc(row.area)}</td>
+            <td><span class="req-tag req-cbn">${esc(row.cbn_ref)}</span></td>
+            <td><span class="req-tag req-${esc(row.category.toLowerCase())}">${esc(row.category)}</span></td>
+            <td>${esc(row.trigger)}</td>
+          </tr>
+        `).join('')}
       </tbody>
     </table>
+    <div class="inline-alert ia-warn">
+      <span class="ia-icon">⚡</span>
+      <span>${esc(r.requirement_categories_alert)}</span>
     </div>
   </div>`;
-}
 
-function buildSection3(r) {
-  const actions = (r.priority_actions || []).map(a => `
-    <div class="priority-box avoid-break">
+  // 6. STANDARDS
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("04", "Section Four", "Gap Analysis — 12 CBN Baseline Standards");
+  (r.standards || []).forEach(s => {
+    const sC = getRatingClass(s.status);
+    h += `
+    <div class="std-card avoid-break">
+      <div class="std-header">
+        <div class="std-ref">${esc(s.section)}</div>
+        <div class="std-name">${esc(s.title)}</div>
+        <div class="std-badges"><span class="status-badge status-${sC}">${esc(s.status)}</span></div>
+      </div>
+      <div class="std-body">
+        <div style="margin-bottom:12px">
+          ${(s.req_tags || []).map(tag => `<span class="req-tag req-${tag.type}">${esc(tag.label)}</span>`).join('')}
+        </div>
+        <div class="std-finding ${sC}">${esc(s.finding)}</div>
+        <div class="std-grid">
+          <div><div class="std-block-label">Required Action</div><div class="std-block-text">${esc(s.required_action || s.action)}</div></div>
+          <div>
+            <div class="std-block-label">RegTech365 Solution</div>
+            <div class="std-block-text">${esc(s.regtech_solution || s.solution)}</div>
+            <div>${(s.regtech_products || []).map(p => `<a href="${getProductLink(p)}" target="_blank" class="regtech-pill">${esc(p)}</a>`).join('')}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+  h += `</div>`;
+
+  // 7. GOVERNANCE
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("05", "Section Five", "Governance Assessment — Section 6 Controls");
+  h += `<p class="exec-body">${esc(r.governance_assessment.intro)}</p>`;
+  
+  const gPct = r.governance_assessment.score_percentage || 0;
+  const dashOffset = 314 - (3.14 * gPct);
+
+  h += `
+    <div class="score-ring-wrap">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#F0F0E8" stroke-width="10"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="${gPct < 50 ? '#C0392B':'#1E8449'}" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="${dashOffset}" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-label"><span class="score-ring-num">${gPct}%</span></div>
+      </div>
+      <div class="score-ring-context">
+        <h3>Governance Score — ${esc(r.scorecard.governance_score_rating)}</h3>
+        <p>${esc(r.governance_assessment.score_context)}</p>
+      </div>
+    </div>
+    <table class="gov-table">
+      <thead><tr><th>Governance Control</th><th>CBN Ref</th><th>Category</th><th>${esc(r.meta.inst_name)} Status</th><th>Action Required</th></tr></thead>
+      <tbody>
+        ${(r.governance_assessment.items || []).map(item => `
+          <tr>
+            <td><strong>${esc(item.control)}</strong></td>
+            <td><span class="req-tag req-cbn">${esc(item.cbn_ref)}</span></td>
+            <td><span class="req-tag req-${esc(item.category.toLowerCase())}" style="font-size:9px">${esc(item.category)}</span></td>
+            <td>${esc(item.status)}</td>
+            <td>${esc(item.action_required)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // 8. PRIORITY ACTIONS
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("06", "Section Six", "Top 5 Priority Actions");
+  (r.priority_actions || []).forEach((a, i) => {
+    h += `
+    <div class="priority-card">
       <div class="priority-header">
-        <div class="priority-number">${esc(a.number)}</div>
-        <div class="priority-titles">
+        <div class="priority-num">0${a.number || i+1}</div>
+        <div>
           <div class="priority-title">${esc(a.title)}</div>
           <div class="priority-deadline">${esc(a.deadline_label)}</div>
         </div>
       </div>
       <div class="priority-body">${esc(a.body)}</div>
-    </div>`).join('');
-
-  return `
-  <div class="report-section">
-    <div class="section-heading">Section 3: Top 5 Priority Actions Before ${esc(r.meta.roadmap_deadline)}</div>
-    <p class="section-intro">The following five actions are the minimum required for ${esc(r.meta.inst_name)} to submit a credible, CBN-compliant implementation roadmap by the ${esc(r.meta.roadmap_deadline)} deadline. The roadmap submission itself is mandatory under Circular ${esc(r.meta.circular_ref)}. Incomplete, inconsistent, or unsupported submissions may result in supervisory action.</p>
-    ${actions}
-  </div>`;
-}
-
-function buildSection4(r) {
-  const phases = (r.roadmap.phases || []).map(p => `
-    <tr>
-      <td>
-        <span class="roadmap-phase-header">${esc(p.title)}</span>
-        <span class="roadmap-phase-timeline">${esc(p.timeline)}</span>
-      </td>
-      <td>${esc(p.objectives)}</td>
-      <td>${esc(p.key_deliverables)}</td>
-      <td>${esc(p.standards_addressed)}</td>
-    </tr>`).join('');
-
-  return `
-  <div class="report-section">
-    <div class="section-heading">Section 4: Recommended Implementation Roadmap</div>
-    <p class="section-intro">${esc(r.roadmap.intro)}</p>
-    <div class="table-wrap">
-    <table class="roadmap-table">
-      <thead>
-        <tr>
-          <th style="width:20%">Phase</th>
-          <th style="width:22%">Objectives</th>
-          <th style="width:35%">Key Deliverables</th>
-          <th style="width:23%">CBN Standards Addressed</th>
-        </tr>
-      </thead>
-      <tbody>${phases}</tbody>
-    </table>
-    </div>
-  </div>`;
-}
-
-function buildSection5(r) {
-  const ss = r.support_section;
-  const products = (ss.products || []).map(p => `
-    <div class="product-card avoid-break">
-      <div class="product-card-name">${esc(p.name)}</div>
-      <div class="product-card-function">${esc(p.function)}</div>
-      <div class="product-card-standards">${esc(p.standards_addressed)}</div>
-      <div class="product-card-relevance">${esc(p.relevance_to_client)}</div>
-    </div>`).join('');
-
-  const services = (ss.advisory_services || []).map(s =>
-    `<li>${esc(s)}</li>`).join('');
-
-  return `
-  <div class="report-section page-break">
-    <div class="section-heading">Section 5: How RegTech365 and OPEX Consulting Can Support</div>
-    <p class="section-intro">${esc(ss.intro_paragraph)}</p>
-
-    <div class="subsection-heading">5.1 Immediate Advisory Support — Roadmap Submission</div>
-    <p class="section-intro">${esc(ss.advisory_intro)}</p>
-
-    <div class="subsection-heading">5.2 RegTech365 Product Suite — Mapped to Your Gaps</div>
-    <div class="product-grid">${products}</div>
-
-    <div class="subsection-heading">5.3 OPEX Advisory Services</div>
-    <ul class="advisory-list">${services}</ul>
-
-    <div class="next-steps-box avoid-break">
-      <strong>Next Step</strong>
-      ${esc(ss.next_steps_box)}
-      <a class="next-steps-email" href="mailto:compliance@opexconsulting.ng">compliance@opexconsulting.ng</a>
-    </div>
-  </div>`;
-}
-
-function buildFooter(r) {
-  return `
-  <div class="report-disclaimer">
-    <p class="disclaimer-text"><strong>Disclaimer</strong>${esc(r.disclaimer)}</p>
-  </div>
-  <div class="report-footer">
-    <span class="footer-brand">OPEX Consulting Limited &nbsp;|&nbsp; RegTech365</span>
-    <span class="footer-ref">Circular ${esc(r.meta.circular_ref)} &nbsp;·&nbsp; ${esc(r.meta.report_date)}</span>
-  </div>`;
-}
-
-/* ══════════════════════════════════════════════════════
-   MAIN RENDER FUNCTION
-   Call this with the parsed JSON object from the AI API
-══════════════════════════════════════════════════════ */
-function renderReport(reportData) {
-  const r = reportData;
-
-  // Inject passthrough meta fields from input JSON if present
-  // (allows the caller to forward cbn_risk, tx_vol, geo from form data
-  //  into the meta block even if the AI didn't echo them back)
-  if (r._input) {
-    r.meta.cbn_risk = r.meta.cbn_risk || r._input.cbn_risk || '—';
-    r.meta.tx_vol   = r.meta.tx_vol   || txVolLabel(r._input.tx_vol);
-    r.meta.geo      = r.meta.geo      || r._input.geo || '—';
-  }
-
-  const html = `
-    <div class="report-wrapper">
-      ${buildCover(r)}
-      <div class="report-body">
-        ${buildSection1(r)}
-        ${buildSection2(r)}
-        ${buildSection3(r)}
-        ${buildSection4(r)}
-        ${buildSection5(r)}
-      </div>
-      ${buildFooter(r)}
     </div>`;
+  });
+  h += `</div>`;
 
-  document.getElementById('report-root').innerHTML = html;
+  // 9. ROADMAP
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("07", "Section Seven", "Recommended Implementation Roadmap");
+  h += `<p class="exec-body">${esc(r.roadmap.intro)}</p>`;
+  (r.roadmap.phases || []).forEach((p) => {
+    h += `
+    <div class="roadmap-phase">
+      <div class="phase-dot"></div>
+      <div class="phase-header"><span class="phase-label">Phase ${p.phase_number}</span><span class="phase-timeline">${esc(p.timeline)}</span></div>
+      <h3 class="phase-title">${esc(p.title)}</h3>
+      <p class="phase-body">${esc(p.body || p.description)}</p>
+      <div class="phase-deliverables">${(p.deliverables || []).map(d => `<span class="deliverable-tag">${esc(d)}</span>`).join('')}</div>
+    </div>`;
+  });
+  
+  h += `
+    <table class="milestone-table">
+      <thead><tr><th>Milestone</th><th>Target Date</th><th>Owner</th></tr></thead>
+      <tbody>
+        ${(r.roadmap.milestones || []).map(m => `
+          <tr><td>${esc(m.milestone)}</td><td>${esc(m.target_date)}</td><td>${esc(m.owner)}</td></tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // 10. PRODUCT SUITE
+  h += `<div class="page">`;
+  h += pageHeader(r);
+  h += sectionTitle("08", "Section Eight", "RegTech365 Product Suite & Advisory");
+  h += `<p class="exec-body">${esc(r.support_section.intro_paragraph)}</p>
+    <div class="inline-alert ia-info"><span class="ia-icon">💡</span><span><strong>What makes this different.</strong> ${esc(r.support_section.differentiator)}</span></div>`;
+    
+  (r.support_section.products || []).forEach(p => {
+    h += `
+    <div class="regtech-product-card">
+      <div class="regtech-product-header">
+        <div class="product-icon">${esc(p.name.substring(0,2).toUpperCase())}</div>
+        <div>
+          <div class="product-name"><a href="${getProductLink(p.name)}" target="_blank">${esc(p.name)}</a></div>
+          <div class="product-tagline">${esc(p.tagline)}</div>
+        </div>
+      </div>
+      <div class="regtech-product-body">
+        <div style="margin-bottom:12px">${(p.gaps_closed || []).map(g => `<span class="gap-closed-tag">${esc(g)}</span>`).join('')}</div>
+        <p class="product-desc">${esc(p.description)}</p>
+      </div>
+    </div>`;
+  });
+
+  h += `
+    <h3 style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--navy); margin:28px 0 16px;">OPEX Consulting Advisory Services</h3>
+    <div class="services-grid">
+      ${(r.support_section.advisory_services || []).map(s => `
+        <div class="service-item">
+          <div style="width:6px; height:6px; background:var(--gold); border-radius:50%; margin-top:8px; flex-shrink:0;"></div>
+          <div class="service-text"><strong>${esc(s.title)}</strong> — ${esc(s.description)}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="cta-box">
+      <h2 class="cta-title">${esc(r.support_section.cta.title)}</h2>
+      <p class="cta-subtitle">${esc(r.support_section.cta.subtitle)}</p>
+      <div class="cta-buttons">
+        <a href="mailto:business@regtech365.com?subject=CBN AML Gap Assessment Query - ${encodeURIComponent(r.meta.inst_name)}" class="btn-primary">${esc(r.support_section.cta.primary_button_label)}</a>
+        <a href="mailto:business@regtech365.com?subject=CBN AML Advisory Inquiry - ${encodeURIComponent(r.meta.inst_name)}" class="btn-secondary">${esc(r.support_section.cta.secondary_button_label)}</a>
+      </div>
+    </div>
+    
+  </div>`;
+
+  container.innerHTML = h;
 }
 
-/* ══════════════════════════════════════════════════════
-   HELPER: TRANSLATE FORM VALUES TO DISPLAY LABELS
-══════════════════════════════════════════════════════ */
-function txVolLabel(v) {
-  const map = {
-    '<1K': 'Under 1,000 transactions per day',
-    '1K-50K': '1,000 – 50,000 transactions per day',
-    '50K-500K': '50,000 – 500,000 transactions per day',
-    '>500K': 'Over 500,000 transactions per day'
-  };
-  return map[v] || v || '—';
-}
-
-/* ══════════════════════════════════════════════════════
-   DEMO — REMOVE OR REPLACE IN PRODUCTION
-   Populate with live data from the API response
-══════════════════════════════════════════════════════ */
-const DEMO_REPORT = {"meta":{"inst_name":"Sunrise Microfinance Bank Ltd","inst_type":"MFB","inst_type_full":"Microfinance Bank","contact_name":"Amara Okonkwo","contact_email":"amara@sunrisemfb.ng","contact_role":"Chief Compliance Officer","report_date":"2025","circular_ref":"BSD/DIR/PUB/LAB/019/002","roadmap_deadline":"10 June 2026","compliance_deadline":"March 2028","compliance_deadline_basis":"24 months from March 2026 issuance for MFBs"},"overall_rating":{"rating":"HIGH","rating_label":"High Risk — Immediate Action Required","summary_paragraph":"Sunrise MFB faces HIGH compliance risk. Partial AML system covers only 2 of 12 standards. No transaction monitoring, case management, or regulatory reporting automation exists. 8 Critical Gaps identified. March 2028 deadline requires urgent platform deployment.","sector_context_note":"MFBs with FX/remittance and PEP exposure require real-time monitoring capabilities under 5.5 and 5.6."},"scorecard":{"aml_system_status_label":"Partial — CDD/KYC and Sanctions/PEP only","aml_system_status_rating":"Critical Gap","standards_compliant_count":2,"standards_compliant_rating":"Critical Gap","standards_critical_gap_count":8,"standards_critical_gap_rating":"High","standards_gap_identified_count":2,"governance_score_label":"4 of 10 controls in place","governance_score_rating":"Critical Gap","internal_audit_label":"Annual AML audit coverage","internal_audit_rating":"Gap Identified","risk_factors_label":"PEP exposure and cross-border FX","risk_factors_rating":"Elevated","regulatory_context_box":"MFBs must submit roadmap by 10 June 2026 and achieve full compliance by March 2028 per BSD/DIR/PUB/LAB/019/002."},"gap_analysis_intro":"Sunrise MFB has 8 Critical Gaps and 2 Gaps Identified across the 12 Baseline Standards.","standards":[{"section":"5.1","title":"Automated AML Solution","status":"Critical Gap","finding":"Partial system covers only CDD/KYC and sanctions/PEP. 5.1 requires all 8 functions including transaction monitoring, risk assessment, case management, and regulatory reporting — all absent.","required_action":"Deploy full AML platform covering all 8 mandatory functions before roadmap submission."},{"section":"5.2","title":"Customer Due Diligence","status":"Compliant","finding":"CDD/KYC function automated with confirmed BVN/NIN integration. Meets 5.2 requirements for identity verification and ongoing monitoring of retail deposit and credit customers.","required_action":"Maintain current CDD capability and integrate with future transaction monitoring system."},{"section":"5.3","title":"Sanctions & PEP Screening","status":"Compliant","finding":"Automated sanctions and PEP screening in place. Critical for MFB with documented PEP exposure and cross-border FX operations. Meets 5.3 real-time screening requirements.","required_action":"Ensure screening integrates with case management once ECM deployed under 5.7."},{"section":"5.4","title":"Risk Assessment & Profiling","status":"Critical Gap","finding":"No automated risk assessment function. 5.4 requires dynamic customer risk scoring based on transaction patterns, product usage, and geographic exposure — mandatory for MFBs with multi-state footprint.","required_action":"Deploy risk assessment engine with dynamic scoring before March 2027."},{"section":"5.5","title":"Transaction Monitoring","status":"Critical Gap","finding":"No transaction monitoring system exists. 5.5 requires real-time multi-scenario monitoring for deposits, loans, and FX/remittance flows. Critical for MFB processing cross-border transactions.","required_action":"Deploy real-time transaction monitoring via RegPort before roadmap submission deadline."},{"section":"5.6","title":"Fraud Monitoring","status":"Critical Gap","finding":"No fraud monitoring capability. 5.6 requires real-time fraud detection for mobile app and USSD channels. MFB's digital delivery channels create material fraud exposure.","required_action":"Deploy RegGuard for real-time fraud monitoring across branch, mobile, and USSD."},{"section":"5.7","title":"Case Management","status":"Critical Gap","finding":"No enterprise case management system. 5.7 requires ECM with Maker-Checker workflow, full audit trail, and escalation protocols for alerts from sanctions, transaction monitoring, and fraud systems.","required_action":"Deploy RegComply ECM with Maker-Checker and immutable audit trail by Q3 2026."},{"section":"5.8","title":"Regulatory Reporting","status":"Critical Gap","finding":"No automated regulatory reporting. 5.8 requires automated STR, CTR, SAR, and FTR generation. MFB with FX/remittance must file goAML reports — manual processes create filing risk.","required_action":"Automate STR/CTR/SAR/FTR generation and goAML integration via RegPort by Q4 2026."},{"section":"5.9","title":"Audit Trail & Internal Audit","status":"Gap Identified","finding":"Annual internal audit frequency insufficient. 5.9 requires AML internal audit at least twice yearly. No confirmed immutable audit trail for AML system configurations and alert decisions.","required_action":"Increase AML audit to semi-annual and deploy immutable audit trail via RegComply."},{"section":"5.10","title":"System Integration","status":"Critical Gap","finding":"No confirmed integration architecture. 5.10 requires bidirectional real-time integration between AML platform, core banking, and KYC systems for deposits, loans, and FX transactions.","required_action":"Design and implement real-time API integration architecture by Q2 2026."},{"section":"5.11","title":"Data Security & Privacy","status":"Gap Identified","finding":"No confirmed MFA, encryption, or NDPA compliance evidence. 5.11 requires documented data security controls for customer PII and transaction data across branch, mobile, and USSD channels.","required_action":"Document MFA, encryption, and NDPA compliance controls before CBN examination readiness."},{"section":"5.12","title":"Management Reporting","status":"Critical Gap","finding":"No automated management reporting. 5.12 requires real-time dashboards for alert volumes, case closure rates, and risk trends. Board and MLRO require monthly AML performance visibility.","required_action":"Deploy real-time dashboards and customisable reports via RegComply by Q4 2026."}],"governance_assessment":{"intro":"Sunrise MFB has 4 of 10 governance controls in place — Partial governance framework.","items":[{"control":"Formally designated MLRO or CCO","status":"In place"},{"control":"Board-approved AML/CFT/CPF policy","status":"In place"},{"control":"Documented AML solution governance framework","status":"Not in place"},{"control":"Formal change control for AML configurations","status":"Not in place"},{"control":"Model governance committee for AI/ML","status":"Not in place"},{"control":"Documented alert review SLAs","status":"Not in place"},{"control":"Vendor/Third-Party Management Policy","status":"Not in place"},{"control":"Data retention and destruction policy","status":"Not in place"},{"control":"BVN/NIN integration","status":"In place"},{"control":"AML training programme with documented records","status":"Not in place"}],"overall_score_label":"4 of 10 — Partial","overall_score_rating":"Partial"},"priority_actions":[{"number":1,"title":"CBN Roadmap Template Submission","deadline_label":"10 June 2026","body":"Sunrise MFB must complete and submit the CBN Implementation Roadmap Template to the Compliance Department by 10 June 2026. Blank or incomplete submissions are treated as non-compliance. OPEX Consulting can complete this template using this report's findings."},{"number":2,"title":"AML Platform Selection and Procurement","deadline_label":"Q1 2026","body":"Select and procure full AML platform covering transaction monitoring, risk assessment, case management, and regulatory reporting. Partial system creates 8 Critical Gaps. RegTech365 suite (RegPort, RegGuard, RegComply) addresses all 12 standards. Delay risks March 2028 non-compliance."},{"number":3,"title":"Vendor Management Policy Development","deadline_label":"Q2 2026","body":"Develop and board-approve Vendor/Third-Party Management Policy before AML platform deployment. 5.11 requires documented vendor risk assessment and oversight. OPEX Consulting can draft policy aligned with CBN expectations and ISO 27001 controls."},{"number":4,"title":"AML Training Programme with Documented Records","deadline_label":"Q3 2026","body":"Deploy AML training programme with documented records for all staff handling deposits, loans, and FX transactions. 5.9 requires evidence of competency. RegLearn provides training with automated record-keeping for CBN examination readiness."},{"number":5,"title":"Semi-Annual AML Internal Audit Coverage","deadline_label":"Q2 2026","body":"Increase AML internal audit frequency from annual to semi-annual. 5.9 requires at least twice-yearly coverage. Annual audits create Gap Identified status. OPEX Consulting can design audit programme and provide interim audit support."}],"roadmap":{"intro":"Four-phase roadmap delivers full compliance by March 2028 for Sunrise MFB.","phases":[{"phase_number":1,"title":"Foundation & Roadmap Submission","timeline":"Now — 10 June 2026","objectives":"Establish governance baseline and submit CBN roadmap.","key_deliverables":"CBN roadmap template submission, vendor management policy, AML governance framework, alert review SLA documentation, data retention policy, training programme design","standards_addressed":"5.9, 5.11"},{"phase_number":2,"title":"Platform Selection & Integration Design","timeline":"June — September 2026","objectives":"Select AML platform and design integration architecture.","key_deliverables":"AML platform procurement (RegPort, RegGuard, RegComply, RegLearn), integration architecture design, API specifications for core banking and KYC, change control framework, semi-annual audit schedule","standards_addressed":"5.1, 5.10"},{"phase_number":3,"title":"System Deployment & Configuration","timeline":"October 2026 — June 2027","objectives":"Deploy and configure full AML platform across all functions.","key_deliverables":"Transaction monitoring deployment (RegPort), fraud monitoring deployment (RegGuard), case management deployment (RegComply), risk assessment engine, regulatory reporting automation, real-time dashboards, staff training via RegLearn","standards_addressed":"5.4, 5.5, 5.6, 5.7, 5.8, 5.12"},{"phase_number":4,"title":"Assurance & Examination Readiness","timeline":"July 2027 — March 2028","objectives":"Validate controls and prepare evidence pack for CBN examination.","key_deliverables":"Semi-annual AML internal audit, MFA and encryption evidence, NDPA compliance documentation, immutable audit trail validation, evidence pack for 12 standards, board reporting on compliance status","standards_addressed":"5.9, 5.11"}]},"support_section":{"intro_paragraph":"OPEX Consulting and RegTech365 provide end-to-end support for Sunrise MFB's compliance journey from roadmap submission to examination readiness.","advisory_intro":"OPEX Consulting delivers six core advisory services for MFB compliance:","products":[{"name":"RegPort","function":"Transaction monitoring, sanctions/PEP screening, risk assessment, regulatory reporting","standards_addressed":"5.1, 5.2, 5.3, 5.4, 5.5, 5.8","relevance_to_client":"Addresses 8 Critical Gaps for Sunrise MFB. Real-time monitoring for deposits, loans, and FX/remittance. Automates goAML/NFIU reporting for cross-border transactions."},{"name":"RegGuard","function":"Real-time fraud monitoring and detection","standards_addressed":"5.6","relevance_to_client":"Critical for Sunrise MFB's mobile app and USSD channels. Detects fraud patterns across branch, digital, and agent networks in real time."},{"name":"RegComply","function":"Enterprise case management, audit trail, governance logs, management reporting","standards_addressed":"5.7, 5.9, 5.12","relevance_to_client":"Provides Maker-Checker workflow, immutable audit trail, and real-time dashboards. Closes 3 Critical Gaps for case management, audit, and reporting."},{"name":"RegLearn","function":"AML/compliance training with documented records","standards_addressed":"5.9","relevance_to_client":"Delivers documented training records for staff handling deposits, loans, and FX. Addresses governance gap and supports CBN examination readiness."}],"advisory_services":["CBN roadmap template completion and submission","AML/CFT/CPF policy drafting and board presentation","MLRO/CCO appointment advisory and role definition","Evidence pack preparation for CBN examination readiness","ISO/IEC 27001 and 42001 alignment for Section 6 AI governance","Agent network AML controls review and framework"],"next_steps_box":"Contact OPEX Consulting to schedule roadmap workshop and platform demonstration. Immediate action required to meet 10 June 2026 deadline."}};
-
-// Render the demo on load
-renderReport(DEMO_REPORT);
+window.addEventListener('load', () => {
+    if (typeof DEMO_REPORT !== 'undefined') {
+        render(DEMO_REPORT);
+    }
+});
 </script>
 </body>
 </html>

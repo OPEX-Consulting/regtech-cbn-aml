@@ -59,6 +59,49 @@ Governance Detail (per control): {{gov_detail}}
 Internal Audit Frequency: {{audit_freq}}
 Additional Context: {{extra_context}}
 
+## GRANULAR CAPABILITY DATA (use to refine per-standard ratings)
+
+Coverage Matrix (per function — None/Manual/Partial/Full):
+- CDD/KYC: {{cov_cdd}}
+- Sanctions & PEP: {{cov_sanctions}}
+- Transaction Monitoring: {{cov_txmon}}
+- Fraud Monitoring: {{cov_fraud}}
+- Case Management: {{cov_case}}
+- Regulatory Reporting: {{cov_reporting}}
+- Customer Risk Assessment: {{cov_risk}}
+- Audit Trail: {{cov_audit}}
+- Data Security: {{cov_security}}
+
+KYC Detail:
+- BVN/NIN Integration: {{bvn_status}}
+- KYC Review Process: {{kyc_review}}
+- UBO Mapping: {{ubo_map}}
+
+Sanctions Detail:
+- Screening Capability: {{sanctions_capab}}
+- Lists Screened: {{sanction_lists}}
+
+Fraud Detail:
+- Fraud Monitoring Capability: {{fraud_capab}}
+- Fraud-to-Risk Feed: {{fraud_feed}}
+
+Reporting Detail:
+- Filing Method: {{reporting_method}}
+- Approval Process: {{report_approval}}
+
+Security Detail:
+- Encryption: {{encryption}}
+- MFA: {{mfa}}
+- Data Sovereignty: {{data_sov}}
+- BIA Status: {{bia_status}}
+
+Implementation Context:
+- Approach: {{impl_approach}}
+- Vendor Status: {{vendor_status}}
+- Roadmap Preparation: {{roadmap_status}}
+- Biggest Concern: {{biggest_concern}}
+- Regulatory Context: {{regulatory_context}}
+
 ---
 
 ## COMPLIANCE DEADLINES
@@ -102,17 +145,17 @@ LOW — ALL of:
 ### Per-Standard Status
 
 5.1: Critical Gap if None/Manual. Gap Identified if Partial. Compliant only if Full and all 8 functions covered.
-5.2: Critical Gap if CDD/KYC not covered. Gap Identified if covered but BVN/NIN not confirmed or not automated. Compliant only if covered + BVN/NIN confirmed + full system.
-5.3: Critical Gap if sanctions/PEP not in covered functions. Gap Identified if covered but partial. Compliant only if full automated system.
-5.4: Critical Gap if risk assessment not covered. Gap Identified if covered but partial. Compliant only if full system with dynamic scoring.
-5.5: Critical Gap if transaction monitoring not covered or system is None/Manual. Gap Identified if covered but partial. Compliant only if full real-time system.
-5.6: Critical Gap if fraud monitoring not covered AND institution is high-fraud-risk (IMTO, PSP, MMO, card issuer) OR risk factors include material fraud exposure. Gap Identified if not covered but no elevated fraud risk. Compliant only if covered under full system.
-5.7: Critical Gap if case management not covered. Gap Identified if covered but partial. Compliant only if ECM with Maker-Checker and full audit trail confirmed.
-5.8: Critical Gap if regulatory reporting not covered. Gap Identified if covered but partial. Compliant only if automated STR/CTR/SAR/FTR generation confirmed.
-5.9: Critical Gap if audit trail not covered AND internal audit is Not covered. Gap Identified if audit trail covered but internal audit annual or less. Compliant only if immutable audit trail + AML internal audit at least twice yearly.
-5.10: Critical Gap if system is None. Gap Identified if partial system with no confirmed integration architecture. Compliant only if bidirectional real-time integration with core banking and KYC confirmed.
-5.11: Always at minimum Gap Identified — never auto-Compliant from questionnaire data alone. Compliant only if full system with confirmed MFA, encryption, and NDPA compliance evidenced.
-5.12: Gap Identified if system is partial or None. Compliant only if full system with real-time dashboards and documented customisation processes confirmed.
+5.2: Use cov_cdd + bvn_status + kyc_review + ubo_map. Critical Gap if cov_cdd is None/Manual OR bvn_status is "No integration". Gap Identified if partial or BVN is manual/batch. Compliant only if cov_cdd Full + bvn Real-time + KYC review automated.
+5.3: Use cov_sanctions + sanctions_capab + sanction_lists. Critical Gap if cov_sanctions None AND sanctions_capab None. Gap Identified if partial screening or limited lists. Compliant only if Real-time AI screening across domestic + international lists.
+5.4: Critical Gap if cov_risk None/Manual. Gap Identified if covered but partial. Compliant only if full system with dynamic scoring.
+5.5: Use cov_txmon. Critical Gap if cov_txmon None/Manual or system is None/Manual. Gap Identified if partial. Compliant only if full real-time system.
+5.6: Use cov_fraud + fraud_capab + fraud_feed. Critical Gap if cov_fraud None AND institution is high-fraud-risk (IMTO, PSP, MMO, card issuer) OR risk factors include material fraud exposure. Gap Identified if not covered but no elevated fraud risk. Compliant only if full real-time fraud monitoring with risk feed.
+5.7: Critical Gap if cov_case None. Gap Identified if partial. Compliant only if ECM with Maker-Checker and full audit trail.
+5.8: Use cov_reporting + reporting_method + report_approval. Critical Gap if cov_reporting None OR reporting_method is "Not filing". Gap Identified if partial or manual portal. Compliant only if fully automated with documented approval.
+5.9: Critical Gap if cov_audit None AND audit is "Not covered". Gap Identified if partial. Compliant only if immutable audit trail + AML internal audit at least twice yearly.
+5.10: Critical Gap if system is None. Gap Identified if partial with no confirmed integration. Compliant only if bidirectional real-time integration confirmed.
+5.11: Use cov_security + encryption + mfa + data_sov + bia_status. Always at minimum Gap Identified. Compliant only if encryption Full + MFA Full + data_sov Nigeria + BIA includes AML.
+5.12: Gap Identified if system is partial or None. Compliant only if full system with real-time dashboards and documented customisation.
 
 ### Governance Item Mapping
 Map each of the 10 controls to "In place", "Not confirmed", or "Not in place" using gov_detail:
@@ -220,45 +263,6 @@ next_steps_box: MAX 35 words
 
 ---
 
-## INPUT JSON SCHEMA
-The following JSON will be inserted into your user message. All fields are as collected from the assessment form.
-
-{
-  "inst_name": "string — institution name",
-  "contact_name": "string — contact full name",
-  "contact_email": "string — work email",
-  "contact_role": "string — role/title",
-  "inst_type": "one of: DMB | MFB | PSP | IMTO | MMO | Finance Company | PMI | Other",
-  "tx_vol": "one of: <1K | 1K-50K | 50K-500K | >500K",
-  "cust_base": "one of: <10K | 10K-100K | 100K-500K | >500K",
-  "cbn_risk": "one of: Low | Medium | High | Not assessed",
-  "geo": "one of: Single state | Multiple states | Cross-border",
-  "group_structure": "one of: Standalone | Subsidiary | Group holding | Shared services arrangement",
-  "products": ["array of: Retail deposits | Trade finance | Virtual assets / crypto | Agent banking | FX / remittance | Credit / loans | Card issuance | Mobile money | Insurance / bancassurance | Wealth / investment | Pension / savings | Payment processing | Mortgage / real estate finance | Corporate banking"],
-  "channels": ["array of: Branch network | Mobile app | USSD | Internet banking | API / open banking | SWIFT | ATM / POS | Agent network | NIP / NCS | Third-party integrations"],
-  "aml_status": "one of: None | Manual | Partial | Full",
-  "aml_functions": ["array of zero or more: CDD/KYC/KYB | Sanctions & PEP screening | Customer risk assessment | Transaction monitoring | Fraud monitoring | Case management | Regulatory reporting (STR/CTR) | Audit trail"],
-  "aiml": "one of: Yes - in use | Yes - planned | No | Unknown",
-  "auto_close": "one of: Yes | No",
-  "risk_factors": ["array of zero or more: PEP exposure | Cross-border FX | Virtual assets | Agent banking network | Card products | Material fraud exposure"],
-  "governance": {
-    "mlro": "Yes | No",
-    "board-policy": "Yes | No",
-    "aml-gov-framework": "Yes | No",
-    "change-control": "Yes | No",
-    "model-gov": "Yes | No",
-    "alert-sla": "Yes | No",
-    "vendor-policy": "Yes | No",
-    "data-retention": "Yes | No",
-    "bvn-nin": "Yes | No",
-    "training": "Yes | No"
-  },
-  "audit": "one of: Not covered | Annually | Twice a year | Quarterly",
-  "extra_context": "string — optional free-text additional context"
-}
-
----
-
 ## OUTPUT SCHEMA
 
 Produce output matching this schema exactly. Do not add, remove, or rename any keys.
@@ -301,90 +305,18 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
   },
   "gap_analysis_intro": "string",
   "standards": [
-    {
-      "section": "5.1",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.2",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.3",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.4",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.5",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.6",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.7",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.8",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.9",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.10",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.11",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    },
-    {
-      "section": "5.12",
-      "title": "string",
-      "status": "Compliant | Gap Identified | Critical Gap",
-      "finding": "string",
-      "required_action": "string"
-    }
+    { "section": "5.1", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.2", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.3", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.4", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.5", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.6", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.7", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.8", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.9", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.10", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.11", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" },
+    { "section": "5.12", "title": "string", "status": "Compliant | Gap Identified | Critical Gap", "finding": "string", "required_action": "string" }
   ],
   "governance_assessment": {
     "intro": "string",
@@ -404,111 +336,31 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     "overall_score_rating": "Critical | Weak | Partial | Adequate | Strong"
   },
   "priority_actions": [
-    {
-      "number": 1,
-      "title": "string",
-      "deadline_label": "string",
-      "body": "string"
-    },
-    {
-      "number": 2,
-      "title": "string",
-      "deadline_label": "string",
-      "body": "string"
-    },
-    {
-      "number": 3,
-      "title": "string",
-      "deadline_label": "string",
-      "body": "string"
-    },
-    {
-      "number": 4,
-      "title": "string",
-      "deadline_label": "string",
-      "body": "string"
-    },
-    {
-      "number": 5,
-      "title": "string",
-      "deadline_label": "string",
-      "body": "string"
-    }
+    { "number": 1, "title": "string", "deadline_label": "string", "body": "string" },
+    { "number": 2, "title": "string", "deadline_label": "string", "body": "string" },
+    { "number": 3, "title": "string", "deadline_label": "string", "body": "string" },
+    { "number": 4, "title": "string", "deadline_label": "string", "body": "string" },
+    { "number": 5, "title": "string", "deadline_label": "string", "body": "string" }
   ],
   "roadmap": {
     "intro": "string",
     "phases": [
-      {
-        "phase_number": 1,
-        "title": "string",
-        "timeline": "string",
-        "objectives": "string",
-        "key_deliverables": "string",
-        "standards_addressed": "string"
-      },
-      {
-        "phase_number": 2,
-        "title": "string",
-        "timeline": "string",
-        "objectives": "string",
-        "key_deliverables": "string",
-        "standards_addressed": "string"
-      },
-      {
-        "phase_number": 3,
-        "title": "string",
-        "timeline": "string",
-        "objectives": "string",
-        "key_deliverables": "string",
-        "standards_addressed": "string"
-      },
-      {
-        "phase_number": 4,
-        "title": "string",
-        "timeline": "string",
-        "objectives": "string",
-        "key_deliverables": "string",
-        "standards_addressed": "string"
-      }
+      { "phase_number": 1, "title": "string", "timeline": "string", "objectives": "string", "key_deliverables": "string", "standards_addressed": "string" },
+      { "phase_number": 2, "title": "string", "timeline": "string", "objectives": "string", "key_deliverables": "string", "standards_addressed": "string" },
+      { "phase_number": 3, "title": "string", "timeline": "string", "objectives": "string", "key_deliverables": "string", "standards_addressed": "string" },
+      { "phase_number": 4, "title": "string", "timeline": "string", "objectives": "string", "key_deliverables": "string", "standards_addressed": "string" }
     ]
   },
   "support_section": {
     "intro_paragraph": "string",
     "advisory_intro": "string",
     "products": [
-      {
-        "name": "RegPort",
-        "function": "string",
-        "standards_addressed": "string",
-        "relevance_to_client": "string"
-      },
-      {
-        "name": "RegGuard",
-        "function": "string",
-        "standards_addressed": "string",
-        "relevance_to_client": "string"
-      },
-      {
-        "name": "RegComply",
-        "function": "string",
-        "standards_addressed": "string",
-        "relevance_to_client": "string"
-      },
-      {
-        "name": "RegLearn",
-        "function": "string",
-        "standards_addressed": "string",
-        "relevance_to_client": "string"
-      }
+      { "name": "RegPort", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" },
+      { "name": "RegGuard", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" },
+      { "name": "RegComply", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" },
+      { "name": "RegLearn", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" }
     ],
-    "advisory_services": [
-      "string",
-      "string",
-      "string",
-      "string",
-      "string",
-      "string"
-    ],
+    "advisory_services": [ "string", "string", "string", "string", "string", "string" ],
     "next_steps_box": "string"
   }
 }
