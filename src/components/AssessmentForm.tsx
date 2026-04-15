@@ -489,6 +489,7 @@ const AssessmentForm: React.FC = () => {
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contactEmail)) errs.push("Please enter a valid email");
         if (!d.contactRole.trim()) errs.push("Role is required");
         if (!d.instType) errs.push("Please select an institution type");
+        if (!d.marketingConsent) errs.push("Please consent to receive regulatory updates to proceed");
         break;
       case 2:
         if (!d.txVol) errs.push("Please select daily transaction volume");
@@ -565,18 +566,49 @@ const AssessmentForm: React.FC = () => {
 
     setReportProgress(5);
 
-    // Call edge function
+    // ── Live progress ticker ──────────────────────────────────────────────
+    // Advances the bar from 5% → 92% while the AI is working.
+    // Each tick adds a smaller increment as we approach 92% so it never
+    // quite reaches it — the real 100% jump only fires on success.
+    let currentPct = 5;
+    const progressInterval = setInterval(() => {
+      setReportProgress((prev) => {
+        if (prev === null || prev >= 92) return prev;
+        // Slow down as we approach the ceiling
+        const remaining = 92 - (prev ?? 5);
+        const increment = Math.max(0.4, remaining * 0.025);
+        const next = Math.min(92, (prev ?? 5) + increment);
+        currentPct = next;
+        return next;
+      });
+    }, 800);
+
+    // Call FastAPI
     let reportJson: AmlReportJson;
     try {
-      const { data: fnData, error: fnError } = await supabase.functions.invoke(
-        "generate-aml-report",
-        { body: { inputJson } }
-      );
-      if (fnError) throw fnError;
-      if (fnData?.error) throw new Error(fnData.error);
-      if (!fnData?.report) throw new Error("Edge function returned no report data.");
+      const response = await fetch("http://localhost:8001/api/v1/generate-aml-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inputJson),
+        signal: AbortSignal.timeout(600_000), // 10-minute browser-side timeout
+      });
 
-      reportJson = fnData.report as AmlReportJson;
+      clearInterval(progressInterval);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`FastAPI error (${response.status}): ${errorText || response.statusText}`);
+      }
+
+      const fnData = await response.json();
+
+      // Support both { report: ... } and direct report responses
+      const report = fnData?.report || fnData;
+      if (!report || typeof report !== "object") {
+        throw new Error("Invalid response format from report generator.");
+      }
+
+      reportJson = report as AmlReportJson;
       reportJson._input = {
         cbn_risk: data.cbnRisk,
         tx_vol: data.txVol,
@@ -586,6 +618,7 @@ const AssessmentForm: React.FC = () => {
       setReportData(reportJson);
       setReportProgress(100);
     } catch (err: any) {
+      clearInterval(progressInterval);
       console.error("Report generation failed:", err);
       toast.error(`Report generation failed: ${err.message ?? "Unknown error"}`);
       setSubmitting(false);
@@ -688,6 +721,13 @@ const AssessmentForm: React.FC = () => {
           </div>
           <TextField label="Your role / title" value={data.contactRole} onChange={(v) => update("contactRole", v)} placeholder="e.g. Chief Compliance Officer" />
           <RadioGroupField label="Institution type" name="inst-type" options={institutionTypes} value={data.instType} onChange={(v) => update("instType", v)} columns={2} />
+          <div className="mt-8 mb-6">
+            <CheckboxField 
+              label="I consent to receive promotional emails, regulatory updates, and advisory insights from OPEX Consulting and RegTech365 (required)."
+              checked={data.marketingConsent}
+              onChange={(v) => update("marketingConsent", v)}
+            />
+          </div>
           <NavButtons onNext={() => tryNext(2)} />
         </div>
       )}
@@ -871,6 +911,7 @@ const AssessmentForm: React.FC = () => {
             <ReviewRow label="Email" value={data.contactEmail || "—"} />
             <ReviewRow label="Role" value={data.contactRole || "—"} />
             <ReviewRow label="Type" value={data.instType || "—"} />
+            <ReviewRow label="Marketing Consent" value={data.marketingConsent ? "Yes" : "No"} />
           </ReviewSection>
           <ReviewSection title="Scale & Risk">
             <ReviewRow label="Transaction volume" value={data.txVol || "—"} />
@@ -907,15 +948,6 @@ const AssessmentForm: React.FC = () => {
             <ReviewRow label="Approach" value={data.implApproach || "—"} />
             <ReviewRow label="Vendor status" value={data.vendorStatus || "—"} />
           </ReviewSection>
-
-          <div className="mt-8 mb-4">
-            <CheckboxField 
-              label="I consent to receive promotional emails, regulatory updates, and advisory insights from OPEX Consulting and RegTech365."
-              checked={data.marketingConsent}
-              onChange={(v) => update("marketingConsent", v)}
-            />
-          </div>
-
           <NavButtons onBack={() => goTo(9)} onNext={generateReport} nextLabel={submitting ? "Generating…" : "Generate Gap Report ↗"} />
         </div>
       )}

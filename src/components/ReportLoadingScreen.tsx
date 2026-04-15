@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface ReportLoadingScreenProps {
   progress: number; // 0–100
@@ -43,7 +43,10 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
 }) => {
   const [factIndex, setFactIndex] = useState(0);
   const [factVisible, setFactVisible] = useState(true);
+  const [elapsed, setElapsed] = useState(0); // seconds
+  const startRef = useRef<number>(Date.now());
 
+  // Rotate Did You Know facts
   useEffect(() => {
     const interval = setInterval(() => {
       setFactVisible(false);
@@ -54,6 +57,24 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Elapsed time counter — resets if progress resets to 0
+  useEffect(() => {
+    if (progress === 0) {
+      startRef.current = Date.now();
+      setElapsed(0);
+    }
+    if (progress >= 100) return;
+    const timer = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - startRef.current) / 1000));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [progress]);
+
+  const fmtElapsed = (s: number) => {
+    if (s < 60) return `${s}s`;
+    return `${Math.floor(s / 60)}m ${s % 60}s`;
+  };
 
   const currentStage = [...STAGES]
     .reverse()
@@ -106,10 +127,17 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
 
         {/* Current stage or Download */}
         {progress < 100 ? (
-          <div className="flex items-center justify-center gap-2 bg-primary-foreground/[0.06] border border-primary-foreground/10 rounded-lg px-5 py-3 mb-5 text-[13px] text-primary-foreground/80 font-sans min-h-[46px]">
-            <span className="text-base flex-shrink-0">{currentStage.icon}</span>
-            <span className="leading-snug">{currentStage.label}</span>
-          </div>
+          <>
+            <div className="flex items-center justify-center gap-2 bg-primary-foreground/[0.06] border border-primary-foreground/10 rounded-lg px-5 py-3 mb-3 text-[13px] text-primary-foreground/80 font-sans min-h-[46px]">
+              <span className="text-base flex-shrink-0 animate-pulse">{currentStage.icon}</span>
+              <span className="leading-snug">{currentStage.label}</span>
+            </div>
+            {elapsed > 3 && (
+              <p className="text-[11px] text-primary-foreground/35 mb-4 font-sans tabular-nums">
+                ⏱ Elapsed: {fmtElapsed(elapsed)}
+              </p>
+            )}
+          </>
         ) : (
           <>
             <button
@@ -168,7 +196,7 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
 
         <p className="text-[11.5px] text-primary-foreground/30 font-sans">
           {progress < 100
-            ? "This typically takes 30–60 seconds. Please don't close this tab."
+            ? "AI analysis typically takes 1–3 minutes. Please keep this tab open."
             : "Your report is ready for review."}
         </p>
       </div>

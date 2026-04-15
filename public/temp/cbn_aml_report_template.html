@@ -448,6 +448,7 @@ body {
   background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04));
   border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px;
   font-size: 11px; font-weight: 600; color: var(--gold); margin-top: 8px; margin-right: 6px;
+  text-decoration: none; cursor: pointer;
 }
 .regtech-pill::before { content: '→'; color: var(--gold); }
 
@@ -628,6 +629,14 @@ function getRatingClass(r) {
   return 'compliant';
 }
 
+function getProductLink(name) {
+  const n = String(name || "").toLowerCase();
+  if (n.includes("regport")) return "https://regport.regtech365.com/";
+  if (n.includes("regguard")) return "https://regguard-client-production.gentlemushroom-84487ebc.eastus.azurecontainerapps.io";
+  if (n.includes("regcomply")) return "https://www.regtech365.com/";
+  return "https://www.regtech365.com/";
+}
+
 function pageHeader(r) {
   return `
     <div class="page-header">
@@ -801,7 +810,7 @@ function render(r) {
           <div>
             <div class="std-block-label">RegTech365 Solution</div>
             <div class="std-block-text">${esc(s.regtech_solution || s.solution)}</div>
-            <div>${(s.regtech_products || []).map(p => `<span class="regtech-pill">${esc(p)}</span>`).join('')}</div>
+            <div>${(s.regtech_products || []).map(p => `<a href="${getProductLink(p)}" target="_blank" class="regtech-pill">${esc(p)}</a>`).join('')}</div>
           </div>
         </div>
       </div>
@@ -902,17 +911,12 @@ function render(r) {
     <div class="inline-alert ia-info"><span class="ia-icon">💡</span><span><strong>What makes this different.</strong> ${esc(r.support_section.differentiator)}</span></div>`;
     
   (r.support_section.products || []).forEach(p => {
-    let link = "";
-    if (p.name.includes("RegPort")) link = "https://regport.regtech365.com/";
-    if (p.name.includes("RegGuard")) link = "https://regguard-client-production.gentlemushroom-84487ebc.eastus.azurecontainerapps.io";
-    if (p.name.includes("RegComply")) link = "https://www.regtech365.com/";
-
     h += `
     <div class="regtech-product-card">
       <div class="regtech-product-header">
         <div class="product-icon">${esc(p.name.substring(0,2).toUpperCase())}</div>
         <div>
-          <div class="product-name">${link ? `<a href="${link}" target="_blank">${esc(p.name)}</a>` : esc(p.name)}</div>
+          <div class="product-name"><a href="${getProductLink(p.name)}" target="_blank">${esc(p.name)}</a></div>
           <div class="product-tagline">${esc(p.tagline)}</div>
         </div>
       </div>
