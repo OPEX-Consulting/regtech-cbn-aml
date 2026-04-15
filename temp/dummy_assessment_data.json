@@ -1,47 +1,90 @@
 {
-  "inst_name": "Sunrise Microfinance Bank Ltd",
-  "contact_name": "Amara Okonkwo",
-  "contact_email": "amara@sunrisemfb.ng",
-  "contact_role": "Chief Compliance Officer",
-  "inst_type": "MFB",
-  "tx_vol": "1K-50K",
-  "cust_base": "10K-100K",
-  "cbn_risk": "Medium",
-  "geo": "Multiple states",
+  "inst_name": "Flutterwave",
+  "contact_name": "Munachimso",
+  "contact_email": "samuel.john@opexconsult.co.uk",
+  "contact_phone": "",
+  "contact_role": "CTO",
+  "inst_type": "Fintech",
+  "tx_vol": ">500K",
+  "cust_base": ">500K",
+  "cbn_risk": "High",
+  "geo": "Single state",
   "group_structure": "Standalone",
   "products": [
-    "Retail deposits",
+    "Mobile money",
+    "Payment processing",
     "Credit / loans",
-    "FX / remittance"
+    "Card issuance"
   ],
   "channels": [
     "Branch network",
     "Mobile app",
-    "USSD"
+    "Internet banking",
+    "ATM / POS"
   ],
-  "aml_status": "Partial",
+  "aml_status": "Full",
   "aml_functions": [
     "CDD/KYC/KYB",
-    "Sanctions & PEP screening"
+    "Sanctions & PEP screening",
+    "Customer risk assessment",
+    "Transaction monitoring",
+    "Fraud monitoring",
+    "Case management",
+    "Regulatory reporting (STR/CTR)",
+    "Audit trail"
   ],
-  "aiml": "No",
-  "auto_close": "No",
+  "aiml": "Yes - in use",
+  "auto_close": "Yes",
   "risk_factors": [
     "PEP exposure",
-    "Cross-border FX"
+    "Cross-border FX",
+    "Agent banking network",
+    "Card products"
   ],
   "governance": {
     "mlro": "Yes",
     "board-policy": "Yes",
-    "aml-gov-framework": "No",
-    "change-control": "No",
-    "model-gov": "No",
-    "alert-sla": "No",
-    "vendor-policy": "No",
-    "data-retention": "No",
+    "aml-gov-framework": "Yes",
+    "change-control": "Yes",
+    "model-gov": "Yes",
+    "alert-sla": "Yes",
+    "vendor-policy": "Yes",
+    "data-retention": "Yes",
     "bvn-nin": "Yes",
-    "training": "No"
+    "training": "Yes"
   },
-  "audit": "Annually",
-  "extra_context": "We are currently looking to automate our transaction monitoring and case management processes to meet the 10 June 2026 roadmap deadline."
+  "audit": "Twice a year",
+  "extra_context": "",
+  "cov_cdd": "full",
+  "cov_sanctions": "full",
+  "cov_txmon": "full",
+  "cov_fraud": "full",
+  "cov_case": "full",
+  "cov_reporting": "full",
+  "cov_risk": "full",
+  "cov_audit": "full",
+  "cov_security": "full",
+  "bvn_status": "Real-time",
+  "kyc_review": "Full",
+  "ubo_map": "Full",
+  "sanctions_capab": "Real-time AI",
+  "sanction_lists": [
+    "CBN / EFCC domestic lists"
+  ],
+  "fraud_capab": "Full",
+  "fraud_feed": "Yes",
+  "reporting_method": "Fully automated",
+  "report_approval": "Documented",
+  "encryption": "Full",
+  "mfa": "Full",
+  "data_sov": "Nigeria",
+  "bia_status": "BIA with AML",
+  "impl_approach": "Upgrade existing",
+  "vendor_status": "Contracted",
+  "roadmap_status": "Submitted",
+  "biggest_concern": "None",
+  "regulatory_context": "",
+  "support": [
+    "RegTech365 product demo"
+  ]
 }

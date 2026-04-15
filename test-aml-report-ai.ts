@@ -31,12 +31,35 @@ async function main() {
   let rawResponseText = "";
 
   try {
+    // --- PII MASKING START ---
+    const originalPII = {
+      contact_name: inputJson.contact_name,
+      contact_email: inputJson.contact_email,
+      contact_phone: inputJson.contact_phone,
+    };
+
+    const maskedInputJson = {
+      ...inputJson,
+      contact_name: "[REDACTED_NAME]",
+      contact_email: "[REDACTED_EMAIL]",
+      contact_phone: "[REDACTED_PHONE]",
+    };
+    // --- PII MASKING END ---
+
+    const userMessage = `ASSESSMENT DATA: ${JSON.stringify(maskedInputJson)}`;
+
+    // Log Full Prompt to File
+    const promptLogPath = path.resolve(process.cwd(), "temp/last_ai_prompt_sent.log");
+    const fullPromptLog = `═══════════════ SYSTEM PROMPT ═══════════════\n${systemPrompt}\n\n═══════════════ USER MESSAGE ═══════════════\n${userMessage}\n`;
+    fs.writeFileSync(promptLogPath, fullPromptLog);
+    console.log(`📝 Full prompt logged to ${promptLogPath} (PII Masked)`);
+
     const client = new AnthropicFoundry({ apiKey, baseURL });
     const stream = client.messages.stream({
         model: deployment,
         max_tokens: 32000,
         system: systemPrompt,
-        messages: [{ role: "user", content: `ASSESSMENT DATA: ${JSON.stringify(inputJson)}` }],
+        messages: [{ role: "user", content: userMessage }],
         temperature: 0.1,
     });
 
@@ -57,6 +80,19 @@ async function main() {
     if (jsonStart !== -1 && jsonEnd !== -1) {
         cleanJson = cleanJson.substring(jsonStart, jsonEnd + 1);
         const parsed = JSON.parse(cleanJson);
+
+        // --- PII UNMASKING START ---
+        if (parsed.meta) {
+          parsed.meta.contact_name = originalPII.contact_name;
+          parsed.meta.contact_email = originalPII.contact_email;
+          parsed.meta.contact_phone = originalPII.contact_phone;
+
+          // Set real report date (DD/MM/YYYY)
+          const now = new Date();
+          parsed.meta.report_date = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+        }
+        // --- PII UNMASKING END ---
+
         const outputPath = path.resolve(process.cwd(), "temp/last_ai_report_response.json");
         fs.writeFileSync(outputPath, JSON.stringify(parsed, null, 2));
         console.log(`✅ Success! Full regulatory report saved to ${outputPath}`);
@@ -64,7 +100,14 @@ async function main() {
 
   } catch (error: any) {
     console.error("\n❌ AI Test Failed:", error.message);
+    const errorLogPath = path.resolve(process.cwd(), "temp/test_error.log");
+    fs.writeFileSync(errorLogPath, `[${new Date().toISOString()}] ERROR:\n${error.message}\n\nSTACK:\n${error.stack}`);
+    console.log(`📝 Error details logged to ${errorLogPath}`);
   }
 }
 
-main();
+main().catch(err => {
+    console.error("FATAL UNCAUGHT ERROR:", err);
+    const errorLogPath = path.resolve(process.cwd(), "temp/test_error.log");
+    fs.appendFileSync(errorLogPath, `\n\n[${new Date().toISOString()}] FATAL UNCAUGHT:\n${err.message}\n${err.stack}`);
+});

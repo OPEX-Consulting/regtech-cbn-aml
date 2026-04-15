@@ -5,6 +5,7 @@ import {
   TextField,
   RadioGroupField,
   CheckboxGroupField,
+  CheckboxField,
   SelectField,
   TextAreaField,
   CoverageRow,
@@ -76,6 +77,7 @@ interface FormData {
   regulatoryContext: string;
   supportNeeds: string[];
   extraContext: string;
+  marketingConsent: boolean;
 }
 
 const initialData: FormData = {
@@ -89,6 +91,7 @@ const initialData: FormData = {
   sanctionsCapab: "", sanctionLists: [], fraudCapab: "", fraudFeed: "",
   reportingMethod: "", reportApproval: "", encryption: "", mfa: "", dataSov: "", biaStatus: "",
   implApproach: "", vendorStatus: "", biggestConcern: "", regulatoryContext: "", supportNeeds: [], extraContext: "",
+  marketingConsent: false,
 };
 
 const TOTAL_STEPS = 10; // 9 data sections + 1 review
@@ -336,15 +339,15 @@ const supportOptions = [
    ═══════════════════════════════════════════════════════════════════════ */
 
 const coverageItems: { key: keyof FormData; name: string; desc: string }[] = [
-  { key: "covCdd", name: "Customer Due Diligence / KYC / KYB", desc: "Automated with BVN/NIN linkage — §5.2" },
-  { key: "covSanctions", name: "Sanctions & PEP Screening", desc: "Real-time with fuzzy matching — §5.3" },
-  { key: "covTxmon", name: "Transaction Monitoring", desc: "Rules-based and/or AI/ML with alert generation — §5.5" },
-  { key: "covFraud", name: "Fraud Monitoring & Detection", desc: "Real-time across cards, e-channels, digital — §5.6" },
-  { key: "covCase", name: "Case Management", desc: "Enterprise ECM with maker-checker and audit trail — §5.7" },
-  { key: "covReporting", name: "Regulatory Reporting (STR/CTR/SAR/FTR)", desc: "Automated generation and goAML submission — §5.8" },
-  { key: "covRisk", name: "Customer Risk Assessment", desc: "Dynamic profiling tied to documented risk appetite — §5.4" },
-  { key: "covAudit", name: "Immutable Audit Trail & Logging", desc: "Tamper-proof logs of all events and actions — §5.9" },
-  { key: "covSecurity", name: "Data Security & NDPA Compliance", desc: "Encryption, MFA, data sovereignty, BIA — §5.11" },
+  { key: "covCdd", name: "Customer Due Diligence / KYC / KYB", desc: "Automated with BVN/NIN linkage — 5.2" },
+  { key: "covSanctions", name: "Sanctions & PEP Screening", desc: "Real-time with fuzzy matching — 5.3" },
+  { key: "covTxmon", name: "Transaction Monitoring", desc: "Rules-based and/or AI/ML with alert generation — 5.5" },
+  { key: "covFraud", name: "Fraud Monitoring & Detection", desc: "Real-time across cards, e-channels, digital — 5.6" },
+  { key: "covCase", name: "Case Management", desc: "Enterprise ECM with maker-checker and audit trail — 5.7" },
+  { key: "covReporting", name: "Regulatory Reporting (STR/CTR/SAR/FTR)", desc: "Automated generation and goAML submission — 5.8" },
+  { key: "covRisk", name: "Customer Risk Assessment", desc: "Dynamic profiling tied to documented risk appetite — 5.4" },
+  { key: "covAudit", name: "Immutable Audit Trail & Logging", desc: "Tamper-proof logs of all events and actions — 5.9" },
+  { key: "covSecurity", name: "Data Security & NDPA Compliance", desc: "Encryption, MFA, data sovereignty, BIA — 5.11" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -676,7 +679,7 @@ const AssessmentForm: React.FC = () => {
         <div>
           <SectionHeader num="01" title="Institution Profile" sub="Tell us about your institution. This calibrates your CBN risk classification and compliance deadline." />
           <div className="grid grid-cols-2 gap-3">
-            <TextField label="Institution name" value={data.instName} onChange={(v) => update("instName", v)} placeholder="e.g. GG International Ltd" />
+            <TextField label="Institution name" value={data.instName} onChange={(v) => update("instName", v)} placeholder="e.g. Sunrise Microfinance Bank" />
             <TextField label="Contact person (compliance lead)" value={data.contactName} onChange={(v) => update("contactName", v)} placeholder="Full name" />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -727,11 +730,11 @@ const AssessmentForm: React.FC = () => {
       {/* ── S4: AML System Status & Coverage ──────────────────────────── */}
       {step === 4 && (
         <div>
-          <SectionHeader num="04" title="AML System Status" sub="The CBN requires an integrated AML solution covering 9 core functional areas. §5.1" />
+          <SectionHeader num="04" title="AML System Status" sub="The CBN requires an integrated AML solution covering 9 core functional areas. 5.1" />
           <InfoBox>
             The CBN has stated that AML solutions without effective linkage to CDD/KYC/KYB information and customer risk assessments will not be regarded as compliant. Standalone tools do not satisfy the Baseline Standards.
           </InfoBox>
-          <RadioGroupField label="Overall AML system status §5.1(A)" name="aml-status" options={amlStatusOptions} value={data.amlStatus} onChange={(v) => update("amlStatus", v)} columns={1} />
+          <RadioGroupField label="Overall AML system status 5.1(A)" name="aml-status" options={amlStatusOptions} value={data.amlStatus} onChange={(v) => update("amlStatus", v)} columns={1} />
 
           <div className="text-[11px] font-medium text-muted-foreground tracking-wider uppercase mb-3 mt-6 pb-1.5 border-b border-border-light">
             Coverage Matrix — Current capability per function
@@ -751,7 +754,7 @@ const AssessmentForm: React.FC = () => {
           <RadioGroupField label="AI/ML usage in your AML system" name="aiml" options={aimlOptions} value={data.aiml} onChange={(v) => update("aiml", v)} />
           <RadioGroupField label="Automated alert closure" name="auto-close" options={autoCloseOptions} value={data.autoClose} onChange={(v) => update("autoClose", v)} />
           <p className="text-xs text-muted-foreground -mt-3 mb-5">
-            Note: Automated alert closure requires CBN notification and strict governance under §5.5.
+            Note: Automated alert closure requires CBN notification and strict governance under 5.5.
           </p>
           <NavButtons onBack={() => goTo(3)} onNext={() => tryNext(5)} />
         </div>
@@ -760,7 +763,7 @@ const AssessmentForm: React.FC = () => {
       {/* ── S5: Governance & Policy ───────────────────────────────────── */}
       {step === 5 && (
         <div>
-          <SectionHeader num="05" title="Governance & Policy Framework" sub="Section 6 of the Baseline Standards sets cross-cutting governance obligations assessed independently from technology. §5.9, Section 6" />
+          <SectionHeader num="05" title="Governance & Policy Framework" sub="Section 6 of the Baseline Standards sets cross-cutting governance obligations assessed independently from technology. 5.9, Section 6" />
           <div className="mb-5">
             {govItems.map((item) => (
               <GovItem key={item.id} label={item.label} value={data.governance[item.id] || ""} onChange={(val) => setGov(item.id, val)} />
@@ -783,8 +786,8 @@ const AssessmentForm: React.FC = () => {
       {/* ── S6: KYC / CDD ─────────────────────────────────────────────── */}
       {step === 6 && (
         <div>
-          <SectionHeader num="06" title="KYC / CDD Capability" sub="The CBN requires live linkage between KYC records, risk profiles, and transaction monitoring. Disconnected KYC is explicitly non-compliant. §5.2" />
-          <RadioGroupField label="BVN / NIN integration §5.2(B)(I)" name="bvn" options={bvnOptions} value={data.bvnStatus} onChange={(v) => update("bvnStatus", v)} columns={1} />
+          <SectionHeader num="06" title="KYC / CDD Capability" sub="The CBN requires live linkage between KYC records, risk profiles, and transaction monitoring. Disconnected KYC is explicitly non-compliant. 5.2" />
+          <RadioGroupField label="BVN / NIN integration 5.2(B)(I)" name="bvn" options={bvnOptions} value={data.bvnStatus} onChange={(v) => update("bvnStatus", v)} columns={1} />
           <RadioGroupField label="Periodic KYC review process" name="kyc-rev" options={kycReviewOptions} value={data.kycReview} onChange={(v) => update("kycReview", v)} columns={2} />
           <RadioGroupField label="UBO identification & mapping" name="ubo" options={uboOptions} value={data.uboMap} onChange={(v) => update("uboMap", v)} columns={2} />
           <NavButtons onBack={() => goTo(5)} onNext={() => tryNext(7)} />
@@ -794,10 +797,10 @@ const AssessmentForm: React.FC = () => {
       {/* ── S7: Sanctions, PEP & Fraud ────────────────────────────────── */}
       {step === 7 && (
         <div>
-          <SectionHeader num="07" title="Sanctions, PEP & Fraud" sub="Covers sanctions and PEP screening (§5.3), customer risk scoring (§5.4), and fraud monitoring (§5.6)." />
-          <RadioGroupField label="Sanctions & PEP screening capability §5.3" name="sanctions" options={sanctionsCapabOptions} value={data.sanctionsCapab} onChange={(v) => update("sanctionsCapab", v)} columns={1} />
+          <SectionHeader num="07" title="Sanctions, PEP & Fraud" sub="Covers sanctions and PEP screening (5.3), customer risk scoring (5.4), and fraud monitoring (5.6)." />
+          <RadioGroupField label="Sanctions & PEP screening capability 5.3" name="sanctions" options={sanctionsCapabOptions} value={data.sanctionsCapab} onChange={(v) => update("sanctionsCapab", v)} columns={1} />
           <CheckboxGroupField label="Sanction lists currently screened against" options={sanctionListOptions} values={data.sanctionLists} onChange={(v) => update("sanctionLists", v)} columns={1} />
-          <RadioGroupField label="Fraud monitoring capability §5.6" name="fraud" options={fraudCapabOptions} value={data.fraudCapab} onChange={(v) => update("fraudCapab", v)} columns={1} />
+          <RadioGroupField label="Fraud monitoring capability 5.6" name="fraud" options={fraudCapabOptions} value={data.fraudCapab} onChange={(v) => update("fraudCapab", v)} columns={1} />
           <RadioGroupField label="Do fraud indicators feed into ML/TF risk profiles?" name="fraud-feed" options={fraudFeedOptions} value={data.fraudFeed} onChange={(v) => update("fraudFeed", v)} columns={1} />
           <NavButtons onBack={() => goTo(6)} onNext={() => tryNext(8)} />
         </div>
@@ -806,16 +809,16 @@ const AssessmentForm: React.FC = () => {
       {/* ── S8: Reporting & Security ──────────────────────────────────── */}
       {step === 8 && (
         <div>
-          <SectionHeader num="08" title="Reporting, Data Protection & Security" sub="STR/CTR/SAR/FTR submission (§5.8) and AML data security / NDPA compliance (§5.11)." />
-          <RadioGroupField label="Regulatory filing method §5.8" name="reporting" options={reportingMethodOptions} value={data.reportingMethod} onChange={(v) => update("reportingMethod", v)} columns={1} />
+          <SectionHeader num="08" title="Reporting, Data Protection & Security" sub="STR/CTR/SAR/FTR submission (5.8) and AML data security / NDPA compliance (5.11)." />
+          <RadioGroupField label="Regulatory filing method 5.8" name="reporting" options={reportingMethodOptions} value={data.reportingMethod} onChange={(v) => update("reportingMethod", v)} columns={1} />
           <RadioGroupField label="Internal report approval process" name="report-approval" options={reportApprovalOptions} value={data.reportApproval} onChange={(v) => update("reportApproval", v)} columns={1} />
 
           <div className="text-[11px] font-medium text-muted-foreground tracking-wider uppercase mb-3 mt-6 pb-1.5 border-b border-border-light">
-            Data Protection & Security — §5.11
+            Data Protection & Security — 5.11
           </div>
-          <RadioGroupField label="Data encryption §5.11(A)" name="encryption" options={encryptionOptions} value={data.encryption} onChange={(v) => update("encryption", v)} columns={2} />
-          <RadioGroupField label="Multi-factor authentication §5.11(A)(III)" name="mfa" options={mfaOptions} value={data.mfa} onChange={(v) => update("mfa", v)} columns={3} />
-          <RadioGroupField label="Data sovereignty & NDPA §5.11(B)" name="data-sov" options={dataSovOptions} value={data.dataSov} onChange={(v) => update("dataSov", v)} columns={1} />
+          <RadioGroupField label="Data encryption 5.11(A)" name="encryption" options={encryptionOptions} value={data.encryption} onChange={(v) => update("encryption", v)} columns={2} />
+          <RadioGroupField label="Multi-factor authentication 5.11(A)(III)" name="mfa" options={mfaOptions} value={data.mfa} onChange={(v) => update("mfa", v)} columns={3} />
+          <RadioGroupField label="Data sovereignty & NDPA 5.11(B)" name="data-sov" options={dataSovOptions} value={data.dataSov} onChange={(v) => update("dataSov", v)} columns={1} />
           <RadioGroupField label="Business impact analysis (BIA) for AML systems" name="bia" options={biaOptions} value={data.biaStatus} onChange={(v) => update("biaStatus", v)} columns={1} />
           <NavButtons onBack={() => goTo(7)} onNext={() => tryNext(9)} />
         </div>
@@ -904,6 +907,15 @@ const AssessmentForm: React.FC = () => {
             <ReviewRow label="Approach" value={data.implApproach || "—"} />
             <ReviewRow label="Vendor status" value={data.vendorStatus || "—"} />
           </ReviewSection>
+
+          <div className="mt-8 mb-4">
+            <CheckboxField 
+              label="I consent to receive promotional emails, regulatory updates, and advisory insights from OPEX Consulting and RegTech365."
+              checked={data.marketingConsent}
+              onChange={(v) => update("marketingConsent", v)}
+            />
+          </div>
+
           <NavButtons onBack={() => goTo(9)} onNext={generateReport} nextLabel={submitting ? "Generating…" : "Generate Gap Report ↗"} />
         </div>
       )}

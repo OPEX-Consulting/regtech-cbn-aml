@@ -17,11 +17,11 @@ export interface ReportMeta {
   roadmap_deadline: string;
   compliance_deadline: string;
   compliance_deadline_basis: string;
-  cbn_risk?: string;
-  tx_vol?: string;
-  geo?: string;
-  group_structure?: string;
-  risk_factors_display?: string;
+  cbn_risk: string;
+  tx_vol: string;
+  geo: string;
+  group_structure: string;
+  risk_factors_display: string;
 }
 
 export interface ReqTag {
@@ -39,9 +39,9 @@ export interface RequirementCategory {
 export interface GovernanceItem {
   control: string;
   status: string;
-  cbn_ref?: string;
-  category?: string;
-  action_required?: string;
+  cbn_ref: string;
+  category: string;
+  action_required: string;
 }
 
 export interface RoadmapPhase {
@@ -63,12 +63,10 @@ export interface Milestone {
 
 export interface Product {
   name: string;
-  tagline?: string;
-  gaps_closed?: string[];
-  description?: string;
-  function?: string;
+  tagline: string;
+  gaps_closed: string[];
+  description: string;
   standards_addressed: string;
-  relevance_to_client?: string;
 }
 
 export interface AdvisoryService {
@@ -85,7 +83,7 @@ export interface CTA {
 
 export interface AmlReportJson {
   meta: ReportMeta;
-  executive_summary?: {
+  executive_summary: {
     lead: string;
     body_paragraphs: string[];
     inline_alert: string;
@@ -147,18 +145,17 @@ export interface AmlReportJson {
   roadmap: {
     intro: string;
     phases: RoadmapPhase[];
-    milestones?: Milestone[];
+    milestones: Milestone[];
   };
   support_section: {
     intro_paragraph: string;
-    differentiator?: string;
-    advisory_intro?: string;
+    differentiator: string;
     products: Product[];
-    advisory_services: (string | AdvisoryService)[];
-    cta?: CTA;
+    advisory_services: AdvisoryService[];
+    cta: CTA;
     next_steps_box?: string;
   };
-  disclaimer?: string;
+  disclaimer: string;
   // Legacy fields (backward compat)
   capability_snapshot?: Array<{ function: string; level: string }>;
   security_posture?: { encryption: string; mfa: string; data_sovereignty: string; bia_status: string; overall_label: string };
@@ -280,7 +277,7 @@ function buildCover(r: AmlReportJson): string {
       </div>
       <div class="cover-meta-cell">
         <div class="cover-meta-label">CBN Risk Classification</div>
-        <div class="cover-meta-value">${esc(r.meta.cbn_risk ?? "—")}</div>
+        <div class="cover-meta-value">${esc(r.meta.cbn_risk)}</div>
       </div>
       <div class="cover-meta-cell">
         <div class="cover-meta-label">Report Date</div>
@@ -330,9 +327,9 @@ function buildTOC(r: AmlReportJson): string {
 
 function buildSection1(r: AmlReportJson): string {
   const es = r.executive_summary;
-  const bodyParas = es?.body_paragraphs || [];
-  const lead = es?.lead || r.overall_rating.summary_paragraph || "";
-  const inlineAlert = es?.inline_alert || "";
+  const bodyParas = es.body_paragraphs;
+  const lead = es.lead;
+  const inlineAlert = es.inline_alert;
 
   const scoreRing = `
     <div class="score-ring-block">
@@ -370,11 +367,11 @@ function buildSection2(r: AmlReportJson): string {
         <tbody>
           <tr><td class="field-label">Institution</td><td>${esc(r.meta.inst_name)}</td></tr>
           <tr><td class="field-label">Institution Type</td><td>${esc(r.meta.inst_type_full)}</td></tr>
-          <tr><td class="field-label">CBN Risk Classification</td><td>${esc(r.meta.cbn_risk ?? "—")}</td></tr>
-          <tr><td class="field-label">Daily Transaction Volume</td><td>${esc(r.meta.tx_vol ?? "—")}</td></tr>
-          <tr><td class="field-label">Geographic Footprint</td><td>${esc(r.meta.geo ?? "—")}</td></tr>
-          <tr><td class="field-label">Group / Holding Structure</td><td>${esc(r.meta.group_structure ?? "Standalone entity")}</td></tr>
-          <tr><td class="field-label">Elevated Risk Indicators</td><td>${esc(r.meta.risk_factors_display ?? "—")}</td></tr>
+          <tr><td class="field-label">CBN Risk Classification</td><td>${esc(r.meta.cbn_risk)}</td></tr>
+          <tr><td class="field-label">Daily Transaction Volume</td><td>${esc(r.meta.tx_vol)}</td></tr>
+          <tr><td class="field-label">Geographic Footprint</td><td>${esc(r.meta.geo)}</td></tr>
+          <tr><td class="field-label">Group / Holding Structure</td><td>${esc(r.meta.group_structure)}</td></tr>
+          <tr><td class="field-label">Elevated Risk Indicators</td><td>${esc(r.meta.risk_factors_display)}</td></tr>
           <tr><td class="field-label">Circular Reference</td><td>${esc(r.meta.circular_ref)} — issued 10 March 2026</td></tr>
           <tr><td class="field-label">Roadmap Submission Deadline</td><td class="bold">${esc(r.meta.roadmap_deadline)}</td></tr>
           <tr><td class="field-label">Full Compliance Deadline</td><td>${esc(r.meta.compliance_deadline)} (${esc(r.meta.compliance_deadline_basis)})</td></tr>
@@ -491,13 +488,13 @@ function buildSection5(r: AmlReportJson): string {
   const scoreCtx = ga.score_context || "";
   const inPlaceCount = (ga.items || []).filter(i => String(i.status).toLowerCase() === "in place").length;
 
-  const govRows = (ga.items || []).map(item => `
+  const govRows = ga.items.map(item => `
     <tr>
       <td class="bold">${esc(item.control)}</td>
-      <td>${esc(item.cbn_ref || "—")}</td>
-      <td>${item.category ? catBadge(item.category) : "—"}</td>
+      <td>${esc(item.cbn_ref)}</td>
+      <td>${catBadge(item.category)}</td>
       <td>${govStatusDisplay(item.status)}</td>
-      <td>${esc(item.action_required || "—")}</td>
+      <td>${esc(item.action_required)}</td>
     </tr>`).join("");
 
   return `
@@ -579,7 +576,7 @@ function buildSection7(r: AmlReportJson): string {
     </div>`;
   }).join("");
 
-  const milestones = (r.roadmap.milestones || []);
+  const milestones = r.roadmap.milestones;
   const milestoneRows = milestones.map(m => `
     <tr>
       <td>${esc(m.milestone)}</td>
@@ -587,7 +584,7 @@ function buildSection7(r: AmlReportJson): string {
       <td>${esc(m.owner)}</td>
     </tr>`).join("");
 
-  const milestoneTable = milestones.length > 0 ? `
+  const milestoneTable = `
     <div class="table-wrap" style="margin-top:32px">
       <table class="data-table avoid-break">
         <thead>
@@ -595,7 +592,7 @@ function buildSection7(r: AmlReportJson): string {
         </thead>
         <tbody>${milestoneRows}</tbody>
       </table>
-    </div>` : "";
+    </div>`;
 
   return `
   <div class="report-section page-break" id="section-7">
@@ -611,10 +608,8 @@ function buildSection8(r: AmlReportJson): string {
   const ss = r.support_section;
   const diffText = ss.differentiator || "";
 
-  const products = (ss.products || []).map(p => {
-    const tagline = p.tagline || p.function || "";
-    const gapsClosed = (p.gaps_closed || []).map(g => `<span class="gap-closed-tag">${esc(g)}</span>`).join("");
-    const desc = p.description || p.relevance_to_client || "";
+  const products = ss.products.map(p => {
+    const gapsClosed = p.gaps_closed.map(g => `<span class="gap-closed-tag">${esc(g)}</span>`).join("");
     
     return `
     <div class="product-card-v2 avoid-break">
@@ -622,18 +617,15 @@ function buildSection8(r: AmlReportJson): string {
         <span class="product-icon">${esc(p.name.substring(0, 2).toUpperCase())}</span>
         <div>
           <div class="product-name-v2">${esc(p.name)}</div>
-          <div class="product-tagline">${esc(tagline)}</div>
+          <div class="product-tagline">${esc(p.tagline)}</div>
         </div>
       </div>
       ${gapsClosed ? `<div class="product-gaps-closed">${gapsClosed}</div>` : ""}
-      <p class="product-desc-v2">${esc(desc)}</p>
+      <p class="product-desc-v2">${esc(p.description)}</p>
     </div>`;
   }).join("");
 
-  const services = (ss.advisory_services || []).map(s => {
-    if (typeof s === "string") {
-      return `<div class="advisory-item"><span class="advisory-arrow">→</span><span>${esc(s)}</span></div>`;
-    }
+  const services = ss.advisory_services.map(s => {
     return `<div class="advisory-item-v2"><strong>${esc(s.title)}</strong> — ${esc(s.description)}</div>`;
   }).join("");
 
@@ -674,7 +666,7 @@ function buildSection8(r: AmlReportJson): string {
 }
 
 function buildFooter(r: AmlReportJson): string {
-  const disclaimerText = r.disclaimer || "This report is based on self-assessment data provided by the institution in response to Circular BSD/DIR/PUB/LAB/019/002. Findings are advisory only, not legal advice, and represent a point-in-time assessment. Independent verification is recommended.";
+  const disclaimerText = r.disclaimer;
   return `
   <div class="report-disclaimer" id="section-disclaimer">
     <p class="disclaimer-text"><strong>Disclaimer</strong>${esc(disclaimerText)}</p>
@@ -994,7 +986,7 @@ function getReportCSS(): string {
  * --------------------------------------------------------------- */
 async function fetchTemplateCSS(): Promise<string> {
   try {
-    const res = await fetch("/temp/cbn_aml_report_template.html");
+    const res = await fetch("temp/cbn_aml_report_template.html");
     const html = await res.text();
     const match = html.match(/<style>([\s\S]*?)<\/style>/i);
     return match ? match[1] : "";
@@ -1012,44 +1004,63 @@ export async function generatePdf(
 ): Promise<void> {
   onProgress?.(10);
   
-  const css = getReportCSS();
   const r = { ...reportData };
-  
   if (r._input) {
     r.meta.cbn_risk = r.meta.cbn_risk || r._input.cbn_risk || "—";
     r.meta.tx_vol = r.meta.tx_vol || txVolLabel(r._input.tx_vol ?? "");
     r.meta.geo = r.meta.geo || r._input.geo || "—";
   }
 
-  const reportHtml = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>CBN AML Gap Assessment - ${esc(r.meta.inst_name)}</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-        <style>${css}</style>
-      </head>
-      <body>
-        <div class="report-wrapper">
-          ${buildCover(r)}
-          ${buildTOC(r)}
-          <div class="report-body">
-            ${buildSection1(r)}
-            ${buildSection2(r)}
-            ${buildSection3(r)}
-            ${buildSection4(r)}
-            ${buildSection5(r)}
-            ${buildSection6(r)}
-            ${buildSection7(r)}
-            ${buildSection8(r)}
+  // Attempt to use the external premium template for consistency
+  let reportHtml = "";
+  try {
+    const templatePath = "temp/cbn_aml_report_template.html";
+    const res = await fetch(templatePath);
+    if (res.ok) {
+      const templateText = await res.text();
+      const escapedJson = JSON.stringify(r);
+      // Inject data into the template's DEMO_REPORT variable
+      reportHtml = templateText.replace(/const DEMO_REPORT = \{[\s\S]*?\};/, `const DEMO_REPORT = ${escapedJson};`);
+      console.log("✅ Injected AI data into external premium template.");
+    }
+  } catch (e) {
+    console.warn("⚠️ Could not load external template, falling back to built-in generator.", e);
+  }
+
+  // Built-in generator (Legacy/Fallback)
+  if (!reportHtml) {
+    const css = getReportCSS();
+    reportHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>CBN AML Gap Assessment - ${esc(r.meta.inst_name)}</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+          <style>${css}</style>
+        </head>
+        <body>
+          <div class="report-wrapper">
+            ${buildCover(r)}
+            <div class="report-body">
+              ${buildSection1(r)}
+              ${buildSection2(r)}
+              ${buildSection3(r)}
+              ${buildSection4(r)}
+              ${buildSection5(r)}
+              ${buildSection6(r)}
+              ${buildSection7(r)}
+              ${buildSection8(r)}
+            </div>
+            ${buildFooter(r)}
           </div>
-          ${buildFooter(r)}
-        </div>
-      </body>
-    </html>
-  `;
+        </body>
+      </html>
+    `;
+  }
+
+  onProgress?.(40);
 
   const iframe = document.createElement("iframe");
   iframe.style.position = "fixed";
@@ -1067,8 +1078,9 @@ export async function generatePdf(
   doc.write(reportHtml);
   doc.close();
 
-  onProgress?.(50);
+  onProgress?.(70);
 
+  // Wait for rendering and fonts
   setTimeout(() => {
     onProgress?.(90);
     iframe.contentWindow?.focus();
@@ -1077,6 +1089,6 @@ export async function generatePdf(
     
     setTimeout(() => {
       document.body.removeChild(iframe);
-    }, 1000);
-  }, 1000);
+    }, 2000);
+  }, 1500);
 }

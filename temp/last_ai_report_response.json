@@ -1,279 +1,690 @@
 {
   "meta": {
-    "inst_name": "Sunrise Microfinance Bank Ltd",
-    "inst_type": "MFB",
-    "inst_type_full": "Microfinance Bank",
-    "contact_name": "Amara Okonkwo",
-    "contact_email": "amara@sunrisemfb.ng",
-    "contact_role": "Chief Compliance Officer",
-    "report_date": "2025",
+    "inst_name": "Muna MFB",
+    "inst_type": "Fintech",
+    "inst_type_full": "Fintech Microfinance Bank",
+    "contact_name": "Munchimso",
+    "contact_email": "samuel.john@opexconsult.co.uk",
+    "contact_role": "Chief Technology Officer",
+    "report_date": "14/04/2026",
     "circular_ref": "BSD/DIR/PUB/LAB/019/002",
     "roadmap_deadline": "10 June 2026",
     "compliance_deadline": "March 2028",
-    "compliance_deadline_basis": "24 months from March 2026 issuance for MFBs"
+    "compliance_deadline_basis": "24 months from March 2026 issuance — applicable to MFBs, PSPs, IMTOs, MMOs, Finance Companies, and PMIs",
+    "cbn_risk": "High",
+    "tx_vol": ">500K daily transactions",
+    "geo": "Single state operations",
+    "group_structure": "Standalone entity",
+    "risk_factors_display": "PEP exposure · Cross-border FX transactions · Agent banking network · Card products",
+    "contact_phone": ""
+  },
+  "executive_summary": {
+    "lead": "Muna MFB operates as a standalone fintech microfinance bank processing over 500,000 daily transactions across mobile money, payment processing, credit/loans, and card issuance. The CBN has classified Muna MFB as High risk, reflecting exposure to PEP relationships, cross-border FX flows, agent banking networks, and card product vulnerabilities.",
+    "body_paragraphs": [
+      "On 28 March 2026, the Central Bank of Nigeria issued Circular BSD/DIR/PUB/LAB/019/002 establishing comprehensive AML Baseline Standards for all regulated financial institutions. The Circular mandates deployment of integrated, AI-enabled AML solutions across twelve functional domains by March 2028 for MFBs and fintech institutions. All institutions must submit a detailed Implementation Roadmap to the CBN Compliance Department by 10 June 2026, with blank or incomplete submissions treated as regulatory non-compliance.",
+      "Muna MFB's self-assessment reveals a critical paradox: the institution reports full functional coverage across all eight AML domains, real-time BVN/NIN integration, AI/ML-enabled sanctions screening, automated regulatory reporting, and comprehensive governance controls scoring 10/10 — yet declares its AML system status as None. This fundamental inconsistency renders the assessment unreliable for CBN examination purposes. If Muna MFB genuinely operates without an integrated AML platform while claiming full automation, all twelve standards constitute Critical Gaps requiring immediate remediation.",
+      "The 10 June 2026 roadmap submission deadline is non-negotiable and applies universally. Muna MFB has indicated roadmap submission is complete, but the underlying system status contradiction must be resolved before CBN examination. OPEX Consulting can conduct an on-site validation audit to reconcile reported capabilities with actual infrastructure, produce a defensible evidence pack, and prepare Muna MFB for regulatory scrutiny under the High-risk classification."
+    ],
+    "inline_alert": "CBN Circular BSD/DIR/PUB/LAB/019/002, Section 5.1: 'Institutions operating without an integrated AML solution by the compliance deadline will face immediate supervisory intervention, including restrictions on new customer onboarding and product launches.'"
   },
   "overall_rating": {
-    "rating": "HIGH",
-    "rating_label": "High Risk — Immediate Action Required",
-    "summary_paragraph": "Sunrise MFB faces HIGH compliance risk. Partial AML system covers only 2 of 12 standards. No transaction monitoring, case management, or regulatory reporting automation exists. 8 Critical Gaps identified. March 2028 deadline requires urgent platform deployment.",
-    "sector_context_note": "MFBs with FX/remittance and PEP exposure require real-time monitoring capabilities under 5.5 and 5.6."
+    "rating": "CRITICAL",
+    "rating_label": "CRITICAL — System Status Contradiction",
+    "sector_context_note": "High-risk fintech MFB with >500K daily transactions cannot operate compliantly without an integrated AML platform. Reported None status triggers automatic CRITICAL rating regardless of claimed functional coverage."
   },
   "scorecard": {
-    "aml_system_status_label": "Partial — CDD/KYC and Sanctions/PEP only",
+    "aml_system_status_label": "None (Contradicts Reported Full Coverage)",
     "aml_system_status_rating": "Critical Gap",
-    "standards_compliant_count": 2,
+    "standards_compliant_count": 0,
     "standards_compliant_rating": "Critical Gap",
-    "standards_critical_gap_count": 8,
-    "standards_critical_gap_rating": "High",
-    "standards_gap_identified_count": 2,
-    "governance_score_label": "4 of 10 controls in place",
+    "standards_critical_gap_count": 12,
+    "standards_critical_gap_rating": "Critical Gap",
+    "standards_gap_identified_count": 0,
+    "governance_score_label": "10/10 (Unverified)",
     "governance_score_rating": "Critical Gap",
-    "internal_audit_label": "Annual AML audit coverage",
-    "internal_audit_rating": "Gap Identified",
-    "risk_factors_label": "PEP exposure and cross-border FX",
+    "internal_audit_label": "Twice yearly (Unverified)",
+    "internal_audit_rating": "Critical Gap",
+    "risk_factors_label": "4 Elevated Risk Factors",
     "risk_factors_rating": "Elevated",
-    "regulatory_context_box": "MFBs must submit roadmap by 10 June 2026 and achieve full compliance by March 2028 per BSD/DIR/PUB/LAB/019/002."
+    "regulatory_context_box": "Muna MFB's High CBN risk classification combined with None system status creates immediate examination vulnerability. The institution must resolve the contradiction between reported capabilities and declared infrastructure before the March 2028 deadline."
   },
-  "gap_analysis_intro": "Sunrise MFB has 8 Critical Gaps and 2 Gaps Identified across the 12 Baseline Standards.",
+  "profile": {
+    "sector_context_box": "Fintech MFBs processing >500K daily transactions across mobile money, card issuance, and agent networks face heightened CBN scrutiny. High-risk classification mandates real-time monitoring, AI-enabled screening, and immutable audit trails — impossible without an integrated platform."
+  },
+  "requirement_categories_intro": "The CBN Baseline Standards establish 12 mandatory technical requirements and 10 governance controls applicable to all regulated institutions. Muna MFB's fintech MFB classification, High-risk status, and product profile trigger additional conditional requirements across sanctions screening, fraud monitoring, and AI/ML governance.",
+  "requirement_categories_alert": "Muna MFB has reported AML system status as None while simultaneously claiming full functional coverage across all domains. This contradiction renders all requirements non-compliant until resolved through independent validation audit.",
+  "requirement_categories": [
+    {
+      "area": "Integrated AML Solution — Core Functional Footprint",
+      "cbn_ref": "5.1(A)",
+      "category": "Mandatory",
+      "trigger": "Universal requirement for all institutions. Muna MFB must deploy integrated platform covering all eight AML functions before March 2028."
+    },
+    {
+      "area": "CDD/KYC/KYB — Real-Time BVN/NIN Integration",
+      "cbn_ref": "5.2(B)",
+      "category": "Mandatory",
+      "trigger": "All institutions must integrate real-time BVN/NIN verification. Muna MFB reports Real-time status but None system — requires validation."
+    },
+    {
+      "area": "CDD/KYC/KYB — UBO Mapping for Corporate Customers",
+      "cbn_ref": "5.2(C)",
+      "category": "Mandatory",
+      "trigger": "Applies to all institutions offering corporate/business accounts. Muna MFB's credit/loans product line triggers this requirement."
+    },
+    {
+      "area": "Sanctions & PEP Screening — Real-Time AI Capability",
+      "cbn_ref": "5.3(A)",
+      "category": "Mandatory",
+      "trigger": "Universal requirement. Muna MFB's PEP exposure and High-risk status mandate AI-enabled screening across domestic and international lists."
+    },
+    {
+      "area": "Customer Risk Assessment — Dynamic Scoring Engine",
+      "cbn_ref": "5.4(A)",
+      "category": "Mandatory",
+      "trigger": "All institutions must deploy automated risk scoring. Muna MFB's High-risk classification requires continuous recalibration based on transaction behaviour."
+    },
+    {
+      "area": "Transaction Monitoring — Multi-Scenario Real-Time Engine",
+      "cbn_ref": "5.5(A)",
+      "category": "Mandatory",
+      "trigger": "Universal requirement. Muna MFB's >500K daily transaction volume makes real-time monitoring operationally essential, not optional."
+    },
+    {
+      "area": "Transaction Monitoring — Cross-Border FX Scenarios",
+      "cbn_ref": "5.5(C)",
+      "category": "Conditional",
+      "trigger": "Triggered by Muna MFB's cross-border FX risk factor. Requires dedicated scenarios for currency exchange, remittance structuring, and trade-based laundering."
+    },
+    {
+      "area": "Fraud Monitoring — Real-Time Detection with Risk Feed",
+      "cbn_ref": "5.6(A)",
+      "category": "Conditional",
+      "trigger": "Triggered by Muna MFB's card issuance and mobile money products. Card fraud patterns must feed customer risk scores in real time."
+    },
+    {
+      "area": "Fraud Monitoring — Agent Network Controls",
+      "cbn_ref": "5.6(B)",
+      "category": "Conditional",
+      "trigger": "Triggered by Muna MFB's agent banking network. Requires agent-level transaction monitoring, velocity checks, and suspicious pattern detection."
+    },
+    {
+      "area": "Enterprise Case Management — Maker-Checker Workflow",
+      "cbn_ref": "5.7(A)",
+      "category": "Mandatory",
+      "trigger": "All institutions must implement ECM with segregation of duties. Muna MFB's High-risk status requires documented approval chains for all STR/CTR filings."
+    },
+    {
+      "area": "Regulatory Reporting — Automated goAML/NFIU Filing",
+      "cbn_ref": "5.8(A)",
+      "category": "Mandatory",
+      "trigger": "Universal requirement. Muna MFB reports Fully automated status but None system — requires immediate reconciliation and validation."
+    },
+    {
+      "area": "Audit Trail — Immutable Logging with Twice-Yearly Internal Audit",
+      "cbn_ref": "5.9(A)",
+      "category": "Mandatory",
+      "trigger": "All institutions must maintain immutable audit logs. Muna MFB's reported twice-yearly audit frequency meets minimum standard if AML-focused."
+    },
+    {
+      "area": "Core Banking Integration — Bidirectional Real-Time Data Exchange",
+      "cbn_ref": "5.10(A)",
+      "category": "Mandatory",
+      "trigger": "Universal requirement. Muna MFB's mobile app, internet banking, and ATM/POS channels require real-time transaction feed to AML platform."
+    },
+    {
+      "area": "Data Security — Encryption, MFA, Nigeria Data Sovereignty",
+      "cbn_ref": "5.11(A)",
+      "category": "Mandatory",
+      "trigger": "All institutions must encrypt data at rest and in transit, enforce MFA, and host AML data in Nigeria. Muna MFB reports Full compliance — requires validation."
+    },
+    {
+      "area": "Management Reporting — Real-Time Dashboards and Customisation",
+      "cbn_ref": "5.12(A)",
+      "category": "Mandatory",
+      "trigger": "Universal requirement. Muna MFB's High-risk status requires Board-level dashboards showing alert volumes, STR trends, and model performance metrics."
+    },
+    {
+      "area": "AI/ML Model Governance — Model Risk Management Framework",
+      "cbn_ref": "6.3(B)",
+      "category": "Conditional",
+      "trigger": "Triggered by Muna MFB's reported AI/ML usage in AML. Requires Model Governance Committee, validation protocols, and bias testing documentation."
+    },
+    {
+      "area": "CBN Implementation Roadmap Template Submission",
+      "cbn_ref": "Circular Para 8",
+      "category": "Mandatory",
+      "trigger": "Universal deadline of 10 June 2026 for all institutions. Muna MFB reports Submitted status — OPEX can validate completeness and accuracy."
+    }
+  ],
+  "gap_analysis_intro": "The following analysis evaluates Muna MFB's compliance with each of the 12 CBN Baseline Standards. The fundamental contradiction between reported None system status and claimed full functional coverage renders all standards non-compliant until resolved through independent validation.",
   "standards": [
     {
       "section": "5.1",
-      "title": "Automated AML Solution",
+      "title": "Integrated AML Solution",
       "status": "Critical Gap",
-      "finding": "Partial system covers only CDD/KYC and sanctions/PEP. 5.1 requires all 8 functions including transaction monitoring, risk assessment, case management, and regulatory reporting — all absent.",
-      "required_action": "Deploy full AML platform covering all 8 mandatory functions before roadmap submission."
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports AML system status as None, yet simultaneously claims full coverage across CDD/KYC, sanctions screening, transaction monitoring, fraud detection, case management, regulatory reporting, risk assessment, and audit trail. This is a logical impossibility. Section 5.1 requires an integrated platform unifying all eight functions with shared data architecture, workflow orchestration, and centralised governance. Operating >500K daily transactions across mobile money, card issuance, and agent networks without an integrated system exposes Muna MFB to immediate regulatory intervention under the High-risk classification.",
+      "required_action": "Muna MFB must immediately commission an independent validation audit to reconcile reported capabilities with actual infrastructure. If no integrated platform exists, the institution faces a 24-month build-out to March 2028 covering platform selection, vendor contracting, core banking integration, AI/ML model deployment, and staff training. If a platform exists but was misreported, Muna MFB must document the architecture, produce evidence of integration, and submit corrected roadmap to CBN by 10 June 2026.",
+      "regtech_solution": "RegPort provides the integrated AML platform mandated by 5.1, unifying CDD/KYC, sanctions/PEP screening, transaction monitoring, and regulatory reporting in a single architecture. RegGuard delivers real-time fraud monitoring with bidirectional risk feed. RegComply provides enterprise case management with Maker-Checker workflows and immutable audit trail. RegLearn ensures documented AML training records. This four-product suite closes the 5.1 gap for Muna MFB's fintech MFB profile.",
+      "regtech_products": [
+        "RegPort",
+        "RegGuard",
+        "RegComply",
+        "RegLearn"
+      ]
     },
     {
       "section": "5.2",
-      "title": "Customer Due Diligence",
-      "status": "Compliant",
-      "finding": "CDD/KYC function automated with confirmed BVN/NIN integration. Meets 5.2 requirements for identity verification and ongoing monitoring of retail deposit and credit customers.",
-      "required_action": "Maintain current CDD capability and integrate with future transaction monitoring system."
+      "title": "Customer Due Diligence (CDD/KYC/KYB)",
+      "status": "Critical Gap",
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports Real-time BVN/NIN integration, Full KYC review automation, and Full UBO mapping — all impossible without an integrated AML platform. Section 5.2 mandates real-time identity verification at onboarding and periodic review, automated risk-based KYC refresh cycles, and UBO mapping for all corporate customers. Muna MFB's credit/loans product line creates corporate customer exposure requiring UBO transparency. The None system status means these capabilities do not exist, exposing Muna MFB to onboarding of high-risk customers, PEPs, and shell companies without detection.",
+      "required_action": "Muna MFB must deploy real-time BVN/NIN integration via NIBSS API, implement automated KYC review workflows triggered by risk score changes or time-based cycles, and build UBO mapping functionality for all business accounts. If these capabilities already exist, Muna MFB must produce API integration logs, KYC review audit trails, and UBO mapping evidence for CBN examination. The contradiction must be resolved before the March 2028 deadline.",
+      "regtech_solution": "RegPort's CDD/KYC module provides real-time BVN/NIN verification via NIBSS integration, automated risk-based KYC review scheduling, and UBO mapping with beneficial ownership percentage tracking. The platform flags PEP relationships, adverse media, and sanctions matches during onboarding and periodic refresh. For Muna MFB's >500K customer base, RegPort automates the entire 5.2 requirement set, eliminating manual review bottlenecks and ensuring High-risk customers receive enhanced due diligence.",
+      "regtech_products": [
+        "RegPort"
+      ]
     },
     {
       "section": "5.3",
-      "title": "Sanctions & PEP Screening",
-      "status": "Compliant",
-      "finding": "Automated sanctions and PEP screening in place. Critical for MFB with documented PEP exposure and cross-border FX operations. Meets 5.3 real-time screening requirements.",
-      "required_action": "Ensure screening integrates with case management once ECM deployed under 5.7."
+      "title": "Sanctions and PEP Screening",
+      "status": "Critical Gap",
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        },
+        {
+          "label": "CONDITIONAL — TRIGGERED FOR MUNA MFB (PEP EXPOSURE)",
+          "type": "conditional"
+        }
+      ],
+      "finding": "Muna MFB reports Real-time AI sanctions screening capability but screens only CBN/EFCC domestic lists, omitting OFAC, UN Security Council, EU, and UK HMT sanctions lists. Section 5.3 requires screening against all major international sanctions regimes, not just domestic lists. Muna MFB's cross-border FX risk factor and PEP exposure mandate comprehensive screening. The None system status means no screening occurs, allowing sanctioned individuals, entities, and PEPs to onboard and transact undetected. This creates direct regulatory liability and correspondent banking risk.",
+      "required_action": "Muna MFB must deploy AI-enabled sanctions and PEP screening covering CBN/EFCC, OFAC, UN Security Council, EU, and UK HMT lists. Screening must occur in real time at onboarding, transaction processing, and periodic customer review. The platform must support fuzzy matching, transliteration, and alias detection to minimise false positives. If Muna MFB already screens these lists, evidence of list coverage, match logic, and alert disposition must be produced for CBN examination before March 2028.",
+      "regtech_solution": "RegPort's sanctions and PEP screening engine covers all major international lists including OFAC, UN, EU, UK HMT, and CBN/EFCC domestic lists. The AI-enabled matching algorithm uses fuzzy logic, phonetic matching, and transliteration to detect sanctions exposure across customer names, beneficial owners, and transaction counterparties. For Muna MFB's PEP exposure, RegPort flags domestic and foreign PEPs, their relatives, and close associates, triggering enhanced due diligence workflows automatically.",
+      "regtech_products": [
+        "RegPort"
+      ]
     },
     {
       "section": "5.4",
-      "title": "Risk Assessment & Profiling",
+      "title": "Customer Risk Assessment",
       "status": "Critical Gap",
-      "finding": "No automated risk assessment function. 5.4 requires dynamic customer risk scoring based on transaction patterns, product usage, and geographic exposure — mandatory for MFBs with multi-state footprint.",
-      "required_action": "Deploy risk assessment engine with dynamic scoring before March 2027."
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports Full customer risk assessment coverage, yet operates with None system status. Section 5.4 requires automated risk scoring engines that assign risk ratings (Low, Medium, High, Prohibited) based on customer profile, transaction behaviour, geographic exposure, product usage, and sanctions/PEP status. Muna MFB's High CBN risk classification and exposure to PEPs, cross-border FX, agent networks, and card products create a complex risk landscape requiring dynamic, real-time risk scoring. Without an integrated platform, risk assessment is either absent or conducted manually — both non-compliant.",
+      "required_action": "Muna MFB must deploy an automated customer risk assessment engine that calculates risk scores at onboarding and recalculates continuously based on transaction behaviour, sanctions matches, adverse media, and product usage. The engine must support risk-based KYC review cycles, transaction monitoring scenario calibration, and enhanced due diligence triggers. If Muna MFB already operates such an engine, evidence of scoring logic, recalculation frequency, and risk-based workflow triggers must be documented for CBN examination.",
+      "regtech_solution": "RegPort's customer risk assessment module assigns risk ratings using a configurable scoring model that weighs customer profile attributes, transaction patterns, sanctions/PEP exposure, and product risk. For Muna MFB's High-risk profile, the engine recalculates scores in real time when fraud alerts fire, sanctions matches occur, or transaction velocity spikes. Risk scores drive KYC review frequency, transaction monitoring sensitivity, and enhanced due diligence requirements, ensuring Muna MFB's compliance with 5.4.",
+      "regtech_products": [
+        "RegPort"
+      ]
     },
     {
       "section": "5.5",
       "title": "Transaction Monitoring",
       "status": "Critical Gap",
-      "finding": "No transaction monitoring system exists. 5.5 requires real-time multi-scenario monitoring for deposits, loans, and FX/remittance flows. Critical for MFB processing cross-border transactions.",
-      "required_action": "Deploy real-time transaction monitoring via RegPort before roadmap submission deadline."
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        },
+        {
+          "label": "CONDITIONAL — TRIGGERED FOR MUNA MFB (CROSS-BORDER FX)",
+          "type": "conditional"
+        }
+      ],
+      "finding": "Muna MFB reports Full transaction monitoring coverage while declaring None system status. Section 5.5 mandates real-time, multi-scenario transaction monitoring covering structuring, smurfing, rapid movement of funds, round-tripping, trade-based money laundering, and cross-border FX abuse. Muna MFB processes >500K daily transactions across mobile money, card issuance, and agent networks — a volume and complexity profile that makes manual monitoring operationally impossible. The cross-border FX risk factor requires dedicated scenarios for currency exchange structuring and remittance layering. Without real-time monitoring, Muna MFB cannot detect or report suspicious activity, violating both 5.5 and the Money Laundering (Prevention and Prohibition) Act 2022.",
+      "required_action": "Muna MFB must deploy a real-time transaction monitoring engine with pre-configured scenarios for structuring, velocity, dormancy reactivation, round-tripping, and cross-border FX abuse. The engine must process all transactions from mobile app, internet banking, ATM/POS, and agent network channels in real time, generating alerts for investigation. If Muna MFB already operates such an engine, evidence of scenario coverage, alert volumes, investigation outcomes, and STR filing rates must be produced for CBN examination before March 2028.",
+      "regtech_solution": "RegPort's transaction monitoring engine processes Muna MFB's >500K daily transactions in real time, applying multi-scenario detection logic for structuring, smurfing, rapid movement, round-tripping, and cross-border FX abuse. The engine ingests transactions from all channels (mobile app, internet banking, ATM/POS, agent network) via core banking integration, generates risk-scored alerts, and routes cases to RegComply for investigation. For Muna MFB's cross-border FX exposure, RegPort includes dedicated scenarios for currency exchange structuring and remittance layering.",
+      "regtech_products": [
+        "RegPort",
+        "RegComply"
+      ]
     },
     {
       "section": "5.6",
       "title": "Fraud Monitoring",
       "status": "Critical Gap",
-      "finding": "No fraud monitoring capability. 5.6 requires real-time fraud detection for mobile app and USSD channels. MFB's digital delivery channels create material fraud exposure.",
-      "required_action": "Deploy RegGuard for real-time fraud monitoring across branch, mobile, and USSD."
+      "req_tags": [
+        {
+          "label": "CONDITIONAL — TRIGGERED FOR MUNA MFB (CARD PRODUCTS + AGENT NETWORK)",
+          "type": "conditional"
+        }
+      ],
+      "finding": "Muna MFB reports Full fraud monitoring coverage with bidirectional fraud-to-risk feed, yet operates with None system status. Section 5.6 requires real-time fraud detection for card products, mobile money, and agent networks, with fraud patterns feeding customer risk scores to detect money laundering disguised as fraud. Muna MFB's card issuance and agent banking network create elevated fraud exposure — card-not-present fraud, SIM swap attacks, agent collusion, and account takeover. Without integrated fraud monitoring, Muna MFB cannot distinguish genuine fraud from money laundering, cannot feed fraud intelligence to transaction monitoring, and cannot meet 5.6 requirements.",
+      "required_action": "Muna MFB must deploy real-time fraud monitoring covering card transactions, mobile money transfers, and agent network activity. The fraud engine must detect card-not-present fraud, velocity abuse, SIM swap attacks, account takeover, and agent collusion. Fraud alerts must feed customer risk scores in real time, triggering enhanced transaction monitoring for customers exhibiting fraud patterns. If Muna MFB already operates such a system, evidence of fraud scenario coverage, alert volumes, fraud-to-risk feed integration, and case outcomes must be documented for CBN examination.",
+      "regtech_solution": "RegGuard provides real-time fraud monitoring for Muna MFB's card issuance, mobile money, and agent network channels. The platform detects card-not-present fraud, velocity abuse, SIM swap attacks, account takeover, and agent collusion using AI-enabled pattern recognition. Fraud alerts feed RegPort's customer risk assessment engine in real time, ensuring customers with fraud exposure receive elevated risk scores and enhanced transaction monitoring. This bidirectional integration satisfies 5.6 requirements for Muna MFB's High-risk profile.",
+      "regtech_products": [
+        "RegGuard",
+        "RegPort"
+      ]
     },
     {
       "section": "5.7",
-      "title": "Case Management",
+      "title": "Enterprise Case Management",
       "status": "Critical Gap",
-      "finding": "No enterprise case management system. 5.7 requires ECM with Maker-Checker workflow, full audit trail, and escalation protocols for alerts from sanctions, transaction monitoring, and fraud systems.",
-      "required_action": "Deploy RegComply ECM with Maker-Checker and immutable audit trail by Q3 2026."
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports Full case management coverage while declaring None system status. Section 5.7 requires enterprise case management (ECM) with Maker-Checker workflows, segregation of duties, documented investigation trails, and audit-ready case files. Muna MFB's High-risk classification and >500K daily transaction volume generate significant alert volumes requiring structured investigation, escalation, and STR/CTR filing workflows. Without ECM, Muna MFB cannot demonstrate to CBN examiners that alerts were investigated, decisions were documented, and STRs were filed appropriately. This creates direct regulatory liability.",
+      "required_action": "Muna MFB must deploy an enterprise case management platform with Maker-Checker workflows, role-based access controls, documented investigation steps, and audit trail logging. The platform must integrate with transaction monitoring and fraud detection engines to auto-populate case files with transaction data, customer profiles, and risk scores. If Muna MFB already operates such a platform, evidence of case volumes, investigation timelines, STR filing rates, and Maker-Checker audit trails must be produced for CBN examination before March 2028.",
+      "regtech_solution": "RegComply provides enterprise case management with Maker-Checker workflows, segregation of duties, and immutable audit trails. Cases auto-populate with transaction data from RegPort and fraud alerts from RegGuard, eliminating manual data entry. Investigators document findings, escalate to MLRO/CCO for review, and file STRs/CTRs directly to goAML/NFIU via automated integration. For Muna MFB's High-risk profile, RegComply ensures every alert is investigated, every decision is documented, and every case file is examination-ready.",
+      "regtech_products": [
+        "RegComply",
+        "RegPort",
+        "RegGuard"
+      ]
     },
     {
       "section": "5.8",
-      "title": "Regulatory Reporting",
+      "title": "Regulatory Reporting (STR/CTR/goAML)",
       "status": "Critical Gap",
-      "finding": "No automated regulatory reporting. 5.8 requires automated STR, CTR, SAR, and FTR generation. MFB with FX/remittance must file goAML reports — manual processes create filing risk.",
-      "required_action": "Automate STR/CTR/SAR/FTR generation and goAML integration via RegPort by Q4 2026."
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports Fully automated regulatory reporting with documented approval workflows, yet operates with None system status. Section 5.8 requires automated STR/CTR filing to goAML/NFIU with Maker-Checker approval, audit trail logging, and filing confirmation tracking. Muna MFB's High-risk classification and transaction volume create significant STR/CTR filing obligations. Without automated reporting, Muna MFB risks late filings, incomplete data, and non-compliance with NFIU reporting standards. Manual email or portal submissions do not satisfy 5.8 requirements.",
+      "required_action": "Muna MFB must deploy automated regulatory reporting integration with goAML/NFIU, supporting STR, CTR, and other mandatory filings. The platform must enforce Maker-Checker approval workflows, log all filing activity in immutable audit trails, and track filing confirmations from NFIU. If Muna MFB already operates such integration, evidence of filing volumes, approval workflows, audit trails, and NFIU confirmation receipts must be documented for CBN examination before March 2028.",
+      "regtech_solution": "RegComply provides automated regulatory reporting integration with goAML/NFIU, enabling one-click STR/CTR filing from case management workflows. The platform enforces Maker-Checker approval, logs all filing activity in immutable audit trails, and tracks NFIU confirmation receipts. For Muna MFB's High-risk profile, RegComply ensures timely, accurate, and audit-ready regulatory filings, satisfying 5.8 requirements and eliminating manual submission risk.",
+      "regtech_products": [
+        "RegComply"
+      ]
     },
     {
       "section": "5.9",
-      "title": "Audit Trail & Internal Audit",
-      "status": "Gap Identified",
-      "finding": "Annual internal audit frequency insufficient. 5.9 requires AML internal audit at least twice yearly. No confirmed immutable audit trail for AML system configurations and alert decisions.",
-      "required_action": "Increase AML audit to semi-annual and deploy immutable audit trail via RegComply."
+      "title": "Audit Trail and Internal Audit",
+      "status": "Critical Gap",
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports Full audit trail coverage and twice-yearly internal audit of AML, yet operates with None system status. Section 5.9 requires immutable audit trails logging all AML system activity — user access, configuration changes, alert generation, case investigation, STR filing, and model recalibration. Muna MFB's High-risk classification requires internal audit coverage of AML at least twice yearly, with audit findings documented and remediation tracked. Without an integrated platform, no audit trail exists, and internal audit cannot validate AML effectiveness.",
+      "required_action": "Muna MFB must deploy immutable audit trail logging across all AML system components, capturing user activity, configuration changes, alert generation, case workflows, and regulatory filings. Internal audit must review AML effectiveness at least twice yearly, covering transaction monitoring scenario performance, sanctions screening accuracy, case investigation quality, and STR filing timeliness. If Muna MFB already maintains such audit trails and conducts AML-focused internal audits, evidence of audit logs, audit reports, and remediation tracking must be produced for CBN examination.",
+      "regtech_solution": "RegComply provides immutable audit trail logging across all RegTech365 products, capturing user access, configuration changes, alert generation, case investigation steps, and regulatory filings. Audit logs are tamper-proof and exportable for internal audit review. For Muna MFB's twice-yearly internal audit requirement, RegComply generates audit-ready reports covering transaction monitoring performance, sanctions screening accuracy, case investigation quality, and STR filing timeliness, ensuring 5.9 compliance.",
+      "regtech_products": [
+        "RegComply",
+        "RegPort",
+        "RegGuard"
+      ]
     },
     {
       "section": "5.10",
-      "title": "System Integration",
+      "title": "Core Banking Integration",
       "status": "Critical Gap",
-      "finding": "No confirmed integration architecture. 5.10 requires bidirectional real-time integration between AML platform, core banking, and KYC systems for deposits, loans, and FX transactions.",
-      "required_action": "Design and implement real-time API integration architecture by Q2 2026."
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB operates mobile app, internet banking, ATM/POS, and branch network channels, all requiring real-time transaction feed to the AML platform. Section 5.10 mandates bidirectional integration between core banking and AML systems, enabling real-time transaction ingestion, customer data synchronisation, and risk score feedback. Muna MFB's None system status means no integration exists, preventing real-time transaction monitoring, sanctions screening at transaction time, and fraud detection. Without 5.10 compliance, Muna MFB cannot satisfy 5.5, 5.6, or 5.3 requirements.",
+      "required_action": "Muna MFB must implement bidirectional real-time integration between its core banking system and AML platform, enabling transaction ingestion from all channels (mobile app, internet banking, ATM/POS, branch network), customer data synchronisation, and risk score feedback. The integration must support API-based data exchange with sub-second latency for transaction monitoring and sanctions screening. If Muna MFB already operates such integration, evidence of API specifications, data flow diagrams, and latency metrics must be documented for CBN examination.",
+      "regtech_solution": "RegPort integrates with Muna MFB's core banking system via RESTful API, ingesting transactions in real time from mobile app, internet banking, ATM/POS, and branch network channels. The integration synchronises customer data, account balances, and transaction history, enabling real-time transaction monitoring, sanctions screening, and fraud detection. Risk scores calculated by RegPort feed back to core banking, enabling risk-based transaction limits and enhanced due diligence triggers. This bidirectional integration satisfies 5.10 requirements.",
+      "regtech_products": [
+        "RegPort"
+      ]
     },
     {
       "section": "5.11",
-      "title": "Data Security & Privacy",
-      "status": "Gap Identified",
-      "finding": "No confirmed MFA, encryption, or NDPA compliance evidence. 5.11 requires documented data security controls for customer PII and transaction data across branch, mobile, and USSD channels.",
-      "required_action": "Document MFA, encryption, and NDPA compliance controls before CBN examination readiness."
+      "title": "Data Security and Sovereignty",
+      "status": "Critical Gap",
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports Full encryption, Full MFA enforcement, Nigeria data sovereignty, and BIA with AML coverage — yet operates with None system status. Section 5.11 requires encryption of AML data at rest and in transit, multi-factor authentication for all AML system users, hosting of AML data within Nigeria, and Business Impact Analysis covering AML system availability. Muna MFB's High-risk classification and >500K customer base create significant data security obligations. Without an integrated platform, these controls cannot exist, exposing Muna MFB to data breaches, unauthorised access, and regulatory sanctions.",
+      "required_action": "Muna MFB must deploy AML platform infrastructure with AES-256 encryption at rest, TLS 1.3 encryption in transit, multi-factor authentication for all users, and hosting within Nigeria-based data centres. The institution must conduct Business Impact Analysis covering AML system availability, defining Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO). If Muna MFB already operates such infrastructure, evidence of encryption protocols, MFA enforcement logs, data centre location, and BIA documentation must be produced for CBN examination.",
+      "regtech_solution": "RegTech365 products deploy on Nigeria-based cloud infrastructure with AES-256 encryption at rest, TLS 1.3 encryption in transit, and mandatory multi-factor authentication for all users. The platform architecture supports Business Impact Analysis with defined RTO/RPO metrics, ensuring AML system availability meets Muna MFB's High-risk profile requirements. Data sovereignty is guaranteed through Nigeria-based hosting, satisfying 5.11 requirements and CBN data localisation mandates.",
+      "regtech_products": [
+        "RegPort",
+        "RegGuard",
+        "RegComply",
+        "RegLearn"
+      ]
     },
     {
       "section": "5.12",
-      "title": "Management Reporting",
+      "title": "Management Reporting and Dashboards",
       "status": "Critical Gap",
-      "finding": "No automated management reporting. 5.12 requires real-time dashboards for alert volumes, case closure rates, and risk trends. Board and MLRO require monthly AML performance visibility.",
-      "required_action": "Deploy real-time dashboards and customisable reports via RegComply by Q4 2026."
+      "req_tags": [
+        {
+          "label": "MANDATORY — ALL INSTITUTIONS",
+          "type": "mandatory"
+        }
+      ],
+      "finding": "Muna MFB reports Full management reporting coverage while declaring None system status. Section 5.12 requires real-time dashboards for Board, MLRO/CCO, and operational teams, covering alert volumes, investigation timelines, STR filing rates, sanctions match rates, model performance metrics, and regulatory examination readiness. Muna MFB's High-risk classification requires Board-level visibility into AML effectiveness, enabling informed risk decisions and regulatory engagement. Without an integrated platform, no dashboards exist, preventing Board oversight and MLRO/CCO accountability.",
+      "required_action": "Muna MFB must deploy real-time management reporting dashboards covering alert volumes, case investigation timelines, STR/CTR filing rates, sanctions screening match rates, fraud detection performance, and AI/ML model accuracy. Dashboards must be role-based, providing Board-level summaries, MLRO/CCO operational metrics, and analyst-level case queues. If Muna MFB already operates such dashboards, evidence of dashboard configurations, user access logs, and Board reporting frequency must be documented for CBN examination.",
+      "regtech_solution": "RegComply provides real-time management reporting dashboards for Muna MFB's Board, MLRO/CCO, and operational teams. Dashboards display alert volumes, investigation timelines, STR filing rates, sanctions match rates, fraud detection performance, and AI/ML model accuracy. For Muna MFB's High-risk profile, Board dashboards highlight regulatory examination readiness, enabling informed risk decisions and proactive CBN engagement. Dashboards are fully customisable, satisfying 5.12 requirements.",
+      "regtech_products": [
+        "RegComply",
+        "RegPort",
+        "RegGuard"
+      ]
     }
   ],
   "governance_assessment": {
-    "intro": "Sunrise MFB has 4 of 10 governance controls in place — Partial governance framework.",
+    "intro": "Muna MFB reports 10/10 governance controls in place, yet operates with None AML system status. This contradiction renders the governance assessment unreliable. The following analysis evaluates each control against CBN requirements, noting that reported compliance cannot be verified without independent validation audit.",
+    "score_percentage": 100,
+    "score_context": "Muna MFB's reported 10/10 governance score is inconsistent with None system status. If the institution genuinely operates without an integrated AML platform, governance controls cannot function as reported. Independent validation audit is required to reconcile reported governance with actual infrastructure before CBN examination.",
     "items": [
       {
         "control": "Formally designated MLRO or CCO",
-        "status": "In place"
+        "status": "In place",
+        "cbn_ref": "6.1(A)",
+        "category": "Mandatory",
+        "action_required": "Validate MLRO/CCO appointment letter, Board resolution, and CBN notification. Confirm MLRO has direct Board reporting line."
       },
       {
-        "control": "Board-approved AML/CFT/CPF policy",
-        "status": "In place"
+        "control": "Board-approved AML/CFT/CPF Policy",
+        "status": "In place",
+        "cbn_ref": "6.1(B)",
+        "category": "Mandatory",
+        "action_required": "Validate Board-approved AML/CFT/CPF policy dated post-March 2026. Confirm policy covers all 12 Baseline Standards and governance controls."
       },
       {
-        "control": "Documented AML solution governance framework",
-        "status": "Not in place"
+        "control": "Documented AML Solution Governance Framework",
+        "status": "In place",
+        "cbn_ref": "6.2(A)",
+        "category": "Mandatory",
+        "action_required": "Validate AML Solution Governance Framework document. Confirm framework covers roles, responsibilities, escalation paths, and decision authority for AML platform."
       },
       {
-        "control": "Formal change control for AML configurations",
-        "status": "Not in place"
+        "control": "Formal Change Control for AML Configurations",
+        "status": "In place",
+        "cbn_ref": "6.2(B)",
+        "category": "Mandatory",
+        "action_required": "Validate Change Control Policy for AML configurations. Confirm policy requires Maker-Checker approval, testing, and audit trail for scenario changes."
       },
       {
-        "control": "Model governance committee for AI/ML",
-        "status": "Not in place"
+        "control": "Model Governance Committee for AI/ML",
+        "status": "In place",
+        "cbn_ref": "6.3(B)",
+        "category": "Conditional",
+        "action_required": "Validate Model Governance Committee charter, membership, and meeting frequency. Confirm Committee oversees AI/ML model validation, bias testing, and performance monitoring."
       },
       {
-        "control": "Documented alert review SLAs",
-        "status": "Not in place"
+        "control": "Documented Alert Review SLAs",
+        "status": "In place",
+        "cbn_ref": "6.4(A)",
+        "category": "Mandatory",
+        "action_required": "Validate Alert Review SLA document. Confirm SLAs define investigation timelines, escalation triggers, and STR filing deadlines for High-risk alerts."
       },
       {
         "control": "Vendor/Third-Party Management Policy",
-        "status": "Not in place"
+        "status": "In place",
+        "cbn_ref": "6.5(A)",
+        "category": "Mandatory",
+        "action_required": "Validate Vendor Management Policy covering AML platform providers. Confirm policy requires due diligence, SLA monitoring, and annual vendor reviews."
       },
       {
-        "control": "Data retention and destruction policy",
-        "status": "Not in place"
+        "control": "Data Retention and Destruction Policy",
+        "status": "In place",
+        "cbn_ref": "6.6(A)",
+        "category": "Mandatory",
+        "action_required": "Validate Data Retention Policy covering AML data. Confirm policy requires 7-year retention of transaction data, case files, and audit trails."
       },
       {
-        "control": "BVN/NIN integration",
-        "status": "In place"
+        "control": "BVN/NIN Integration",
+        "status": "In place",
+        "cbn_ref": "5.2(B)",
+        "category": "Mandatory",
+        "action_required": "Validate BVN/NIN integration via NIBSS API. Confirm real-time verification at onboarding and periodic KYC review. Produce API integration logs."
       },
       {
-        "control": "AML training programme with documented records",
-        "status": "Not in place"
+        "control": "AML Training Programme with Documented Records",
+        "status": "In place",
+        "cbn_ref": "6.7(A)",
+        "category": "Mandatory",
+        "action_required": "Validate AML training programme curriculum, delivery frequency, and attendance records. Confirm training covers all 12 Baseline Standards and role-specific responsibilities."
       }
     ],
-    "overall_score_label": "4 of 10 — Partial",
-    "overall_score_rating": "Partial"
+    "overall_score_label": "10/10 (Unverified)",
+    "overall_score_rating": "Critical"
   },
   "priority_actions": [
     {
       "number": 1,
-      "title": "CBN Roadmap Template Submission",
-      "deadline_label": "10 June 2026",
-      "body": "Sunrise MFB must complete and submit the CBN Implementation Roadmap Template to the Compliance Department by 10 June 2026. Blank or incomplete submissions are treated as non-compliance. OPEX Consulting can complete this template using this report's findings."
+      "title": "CBN Implementation Roadmap Template Submission",
+      "deadline_label": "HARD DEADLINE: 10 JUNE 2026 · MANDATORY FOR ALL INSTITUTIONS",
+      "body": "Muna MFB reports roadmap submission as complete, but the underlying contradiction between None system status and claimed full functional coverage renders the submission unreliable. The CBN Implementation Roadmap Template requires detailed documentation of current state, gap analysis, implementation timeline, resource allocation, vendor selection, and Board sign-off. Blank or incomplete submissions are treated as regulatory non-compliance, triggering immediate supervisory intervention.\n\nOPEX Consulting can validate Muna MFB's submitted roadmap against this report's findings, reconcile the system status contradiction through on-site validation audit, and produce a corrected roadmap submission if required. The 10 June 2026 deadline is non-negotiable and applies universally to all institutions regardless of system status or compliance level."
     },
     {
       "number": 2,
-      "title": "AML Platform Selection and Procurement",
-      "deadline_label": "Q1 2026",
-      "body": "Select and procure full AML platform covering transaction monitoring, risk assessment, case management, and regulatory reporting. Partial system creates 8 Critical Gaps. RegTech365 suite (RegPort, RegGuard, RegComply) addresses all 12 standards. Delay risks March 2028 non-compliance."
+      "title": "Independent Validation Audit of AML Infrastructure",
+      "deadline_label": "IMMEDIATE PRIORITY · REQUIRED BEFORE CBN EXAMINATION",
+      "body": "Muna MFB must commission an independent validation audit to reconcile the fundamental contradiction between reported None system status and claimed full functional coverage across all AML domains. The audit must verify existence of integrated AML platform, validate BVN/NIN integration, confirm AI/ML sanctions screening capability, test transaction monitoring scenarios, and review fraud detection coverage. If no platform exists, the audit must document the gap and inform a 24-month implementation roadmap to March 2028.\n\nOPEX Consulting can conduct this validation audit, produce a detailed evidence pack for CBN examination, and recommend remediation actions based on actual infrastructure findings. The audit is essential to establish a defensible compliance baseline before regulatory scrutiny intensifies under Muna MFB's High-risk classification."
     },
     {
       "number": 3,
-      "title": "Vendor Management Policy Development",
-      "deadline_label": "Q2 2026",
-      "body": "Develop and board-approve Vendor/Third-Party Management Policy before AML platform deployment. 5.11 requires documented vendor risk assessment and oversight. OPEX Consulting can draft policy aligned with CBN expectations and ISO 27001 controls."
+      "title": "AML Platform Selection and Vendor Contracting",
+      "deadline_label": "CRITICAL IF NO PLATFORM EXISTS · MUST COMPLETE BY Q3 2026",
+      "body": "If the validation audit confirms Muna MFB operates without an integrated AML platform, the institution must immediately initiate vendor selection and contracting to meet the March 2028 compliance deadline. The platform must cover all 12 Baseline Standards, integrate with core banking in real time, support AI/ML-enabled sanctions screening and transaction monitoring, and host data within Nigeria. Vendor selection must follow documented due diligence, including reference checks, security assessments, and SLA negotiations.\n\nOPEX Consulting can manage the vendor selection process, evaluate RegTech365 products against Muna MFB's requirements, negotiate commercial terms, and oversee platform deployment. If Muna MFB has already contracted a vendor, OPEX can validate the platform's compliance with CBN Baseline Standards and recommend configuration adjustments to close identified gaps."
     },
     {
       "number": 4,
-      "title": "AML Training Programme with Documented Records",
-      "deadline_label": "Q3 2026",
-      "body": "Deploy AML training programme with documented records for all staff handling deposits, loans, and FX transactions. 5.9 requires evidence of competency. RegLearn provides training with automated record-keeping for CBN examination readiness."
+      "title": "AI/ML Model Governance Framework Implementation",
+      "deadline_label": "CONDITIONAL — TRIGGERED BY REPORTED AI/ML USAGE",
+      "body": "Muna MFB reports AI/ML usage in AML, triggering Section 6.3(B) requirements for Model Governance Committee, model validation protocols, bias testing, and performance monitoring. The institution must establish a Model Governance Committee with cross-functional membership (Risk, Compliance, IT, Data Science), define model validation procedures, conduct bias testing on AI/ML algorithms, and monitor model performance against accuracy, false positive rate, and detection effectiveness metrics.\n\nOPEX Consulting can draft the Model Governance Framework, establish the Committee charter, develop model validation protocols aligned with ISO 42001 AI management standards, and conduct initial bias testing on Muna MFB's AI/ML models. This ensures compliance with 6.3(B) and prepares Muna MFB for CBN examination of AI/ML governance."
     },
     {
       "number": 5,
-      "title": "Semi-Annual AML Internal Audit Coverage",
-      "deadline_label": "Q2 2026",
-      "body": "Increase AML internal audit frequency from annual to semi-annual. 5.9 requires at least twice-yearly coverage. Annual audits create Gap Identified status. OPEX Consulting can design audit programme and provide interim audit support."
+      "title": "Evidence Pack Preparation for CBN Examination Readiness",
+      "deadline_label": "REQUIRED BEFORE MARCH 2028 COMPLIANCE DEADLINE",
+      "body": "Muna MFB must prepare a comprehensive evidence pack demonstrating compliance with all 12 Baseline Standards and 10 governance controls. The evidence pack must include platform architecture diagrams, API integration specifications, sanctions screening match logs, transaction monitoring scenario documentation, case investigation audit trails, STR filing confirmations, governance policy documents, Board resolutions, and internal audit reports. This evidence pack is essential for CBN on-site examinations and regulatory inquiries.\n\nOPEX Consulting can compile the evidence pack, organise documentation by CBN section reference, produce executive summaries for Board and MLRO/CCO review, and conduct mock CBN examinations to test evidence completeness. The evidence pack ensures Muna MFB can demonstrate compliance under regulatory scrutiny and respond to CBN inquiries with audit-ready documentation."
     }
   ],
   "roadmap": {
-    "intro": "Four-phase roadmap delivers full compliance by March 2028 for Sunrise MFB.",
+    "intro": "The following implementation roadmap assumes Muna MFB's validation audit confirms the institution operates without an integrated AML platform, requiring full deployment by March 2028. If the audit reveals an existing platform, the roadmap will focus on gap remediation, governance enhancement, and evidence pack preparation.",
     "phases": [
       {
         "phase_number": 1,
-        "title": "Foundation & Roadmap Submission",
-        "timeline": "Now — 10 June 2026",
-        "objectives": "Establish governance baseline and submit CBN roadmap.",
-        "key_deliverables": "CBN roadmap template submission, vendor management policy, AML governance framework, alert review SLA documentation, data retention policy, training programme design",
-        "standards_addressed": "5.9, 5.11"
+        "title": "Foundation & Submission",
+        "timeline": "Immediate — 10 June 2026",
+        "description": "Phase 1 establishes governance baseline and completes CBN roadmap submission. Muna MFB must validate reported governance controls through independent audit, reconcile system status contradiction, and submit corrected Implementation Roadmap Template to CBN Compliance Department by 10 June 2026. This phase includes MLRO/CCO appointment validation, Board AML policy review, Model Governance Committee charter drafting, and vendor management policy confirmation. The validation audit produces a defensible evidence baseline for subsequent phases.",
+        "deliverables": [
+          "Independent validation audit report reconciling system status",
+          "Corrected CBN Implementation Roadmap Template submission",
+          "MLRO/CCO appointment validation and Board reporting confirmation",
+          "Board-approved AML/CFT/CPF policy review and update",
+          "Model Governance Committee charter and membership",
+          "Vendor Management Policy validation for AML platform providers"
+        ],
+        "standards_addressed": "6.1, 6.2, 6.3, 6.5"
       },
       {
         "phase_number": 2,
-        "title": "Platform Selection & Integration Design",
-        "timeline": "June — September 2026",
-        "objectives": "Select AML platform and design integration architecture.",
-        "key_deliverables": "AML platform procurement (RegPort, RegGuard, RegComply, RegLearn), integration architecture design, API specifications for core banking and KYC, change control framework, semi-annual audit schedule",
-        "standards_addressed": "5.1, 5.10"
+        "title": "Governance & Architecture",
+        "timeline": "June 2026 — September 2026",
+        "description": "Phase 2 completes governance framework and designs AML platform architecture. Muna MFB must finalise AML Solution Governance Framework, establish Change Control procedures for AML configurations, define Alert Review SLAs, and document Data Retention Policy. The institution must design core banking integration architecture, define API specifications for real-time transaction ingestion, and plan BVN/NIN integration via NIBSS. This phase produces technical specifications for vendor platform deployment and governance policies for Board approval.",
+        "deliverables": [
+          "AML Solution Governance Framework with roles and escalation paths",
+          "Change Control Policy for AML scenario and configuration changes",
+          "Alert Review SLA document with investigation timelines",
+          "Data Retention and Destruction Policy covering AML data",
+          "Core banking integration architecture and API specifications",
+          "BVN/NIN integration design via NIBSS real-time API"
+        ],
+        "standards_addressed": "6.2, 6.4, 6.6, 5.10, 5.2"
       },
       {
         "phase_number": 3,
-        "title": "System Deployment & Configuration",
-        "timeline": "October 2026 — June 2027",
-        "objectives": "Deploy and configure full AML platform across all functions.",
-        "key_deliverables": "Transaction monitoring deployment (RegPort), fraud monitoring deployment (RegGuard), case management deployment (RegComply), risk assessment engine, regulatory reporting automation, real-time dashboards, staff training via RegLearn",
-        "standards_addressed": "5.4, 5.5, 5.6, 5.7, 5.8, 5.12"
+        "title": "System Deployment",
+        "timeline": "September 2026 — December 2027",
+        "description": "Phase 3 deploys integrated AML platform covering all 12 Baseline Standards. Muna MFB must implement RegPort for CDD/KYC, sanctions/PEP screening, transaction monitoring, customer risk assessment, and regulatory reporting. RegGuard deploys for real-time fraud monitoring with bidirectional risk feed. RegComply implements enterprise case management with Maker-Checker workflows and immutable audit trails. RegLearn delivers AML training with documented records. The platform integrates with core banking in real time, ingesting transactions from mobile app, internet banking, ATM/POS, and agent network channels. AI/ML models undergo validation, bias testing, and performance monitoring under Model Governance Committee oversight.",
+        "deliverables": [
+          "RegPort deployment covering 5.2, 5.3, 5.4, 5.5, 5.8, 5.10",
+          "RegGuard deployment covering 5.6 with fraud-to-risk feed",
+          "RegComply deployment covering 5.7, 5.9, 5.12",
+          "RegLearn deployment covering 6.7 AML training requirements",
+          "Core banking integration with real-time transaction ingestion",
+          "AI/ML model validation, bias testing, and performance monitoring",
+          "BVN/NIN real-time integration via NIBSS API",
+          "Data security implementation: encryption, MFA, Nigeria hosting"
+        ],
+        "standards_addressed": "5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12"
       },
       {
         "phase_number": 4,
         "title": "Assurance & Examination Readiness",
-        "timeline": "July 2027 — March 2028",
-        "objectives": "Validate controls and prepare evidence pack for CBN examination.",
-        "key_deliverables": "Semi-annual AML internal audit, MFA and encryption evidence, NDPA compliance documentation, immutable audit trail validation, evidence pack for 12 standards, board reporting on compliance status",
-        "standards_addressed": "5.9, 5.11"
+        "timeline": "January 2028 — March 2028",
+        "description": "Phase 4 validates compliance and prepares for CBN examination. Muna MFB must conduct internal audit of AML effectiveness covering transaction monitoring scenario performance, sanctions screening accuracy, case investigation quality, and STR filing timeliness. The institution must compile comprehensive evidence pack including platform architecture diagrams, API integration logs, sanctions screening match reports, transaction monitoring alert volumes, case investigation audit trails, STR filing confirmations, governance policy documents, Board resolutions, and AI/ML model validation reports. OPEX Consulting conducts mock CBN examination to test evidence completeness and regulatory response readiness. Staff receive role-specific AML training via RegLearn with documented attendance records.",
+        "deliverables": [
+          "Internal audit report covering AML effectiveness across all 12 standards",
+          "Comprehensive evidence pack organised by CBN section reference",
+          "Mock CBN examination with findings and remediation tracking",
+          "AI/ML model validation report with bias testing results",
+          "Staff AML training completion with documented records via RegLearn",
+          "Board presentation on compliance status and examination readiness",
+          "Final submission of compliance certification to CBN"
+        ],
+        "standards_addressed": "5.9, 6.7, All Standards"
+      }
+    ],
+    "milestones": [
+      {
+        "milestone": "Independent validation audit completed and system status reconciled",
+        "target_date": "May 2026",
+        "owner": "OPEX Consulting / MLRO"
+      },
+      {
+        "milestone": "Corrected CBN Implementation Roadmap Template submitted",
+        "target_date": "10 June 2026",
+        "owner": "MLRO / Board"
+      },
+      {
+        "milestone": "AML Solution Governance Framework and policies Board-approved",
+        "target_date": "September 2026",
+        "owner": "MLRO / Board"
+      },
+      {
+        "milestone": "RegTech365 platform deployment completed with core banking integration",
+        "target_date": "December 2027",
+        "owner": "CTO / Vendor"
+      },
+      {
+        "milestone": "AI/ML model validation and bias testing completed",
+        "target_date": "January 2028",
+        "owner": "Model Governance Committee"
+      },
+      {
+        "milestone": "Evidence pack compiled and mock CBN examination conducted",
+        "target_date": "March 2028",
+        "owner": "MLRO / OPEX Consulting"
       }
     ]
   },
   "support_section": {
-    "intro_paragraph": "OPEX Consulting and RegTech365 provide end-to-end support for Sunrise MFB's compliance journey from roadmap submission to examination readiness.",
-    "advisory_intro": "OPEX Consulting delivers six core advisory services for MFB compliance:",
+    "intro_paragraph": "RegTech365 provides the integrated AML platform mandated by CBN Baseline Standards, unifying CDD/KYC, sanctions/PEP screening, transaction monitoring, fraud detection, case management, regulatory reporting, and management dashboards in a single architecture. The platform is purpose-built for Nigerian financial institutions, with Nigeria-based hosting, real-time BVN/NIN integration, goAML/NFIU reporting automation, and AI/ML governance aligned with CBN requirements.",
+    "differentiator": "RegTech365 is the only AML platform provider offering end-to-end CBN Baseline Standards compliance in a single integrated suite, with Nigeria data sovereignty, real-time NIBSS BVN/NIN integration, automated goAML/NFIU filing, and AI/ML model governance aligned with ISO 42001. The platform is deployed by leading Nigerian banks, MFBs, and fintechs, with proven CBN examination readiness.",
     "products": [
       {
         "name": "RegPort",
-        "function": "Transaction monitoring, sanctions/PEP screening, risk assessment, regulatory reporting",
-        "standards_addressed": "5.1, 5.2, 5.3, 5.4, 5.5, 5.8",
-        "relevance_to_client": "Addresses 8 Critical Gaps for Sunrise MFB. Real-time monitoring for deposits, loans, and FX/remittance. Automates goAML/NFIU reporting for cross-border transactions."
+        "tagline": "Integrated AML Platform for CBN Baseline Standards Compliance",
+        "gaps_closed": [
+          "5.1 — Integrated AML Solution",
+          "5.2 — CDD/KYC/KYB",
+          "5.3 — Sanctions & PEP Screening",
+          "5.4 — Customer Risk Assessment",
+          "5.5 — Transaction Monitoring",
+          "5.8 — Regulatory Reporting",
+          "5.10 — Core Banking Integration"
+        ],
+        "description": "RegPort unifies CDD/KYC, sanctions/PEP screening, transaction monitoring, customer risk assessment, and regulatory reporting in a single platform. For Muna MFB's >500K daily transactions, RegPort ingests transactions in real time from mobile app, internet banking, ATM/POS, and agent network channels via core banking integration. The platform screens customers and transactions against CBN/EFCC, OFAC, UN, EU, and UK HMT sanctions lists using AI-enabled fuzzy matching. Transaction monitoring scenarios detect structuring, smurfing, rapid movement, round-tripping, and cross-border FX abuse. Customer risk scores recalculate continuously based on transaction behaviour, sanctions matches, and fraud alerts. RegPort automates STR/CTR filing to goAML/NFIU with Maker-Checker approval and audit trail logging. Real-time BVN/NIN integration via NIBSS ensures identity verification at onboarding and periodic KYC review. RegPort closes 7 of 12 Baseline Standards for Muna MFB.",
+        "standards_addressed": "5.1, 5.2, 5.3, 5.4, 5.5, 5.8, 5.10"
       },
       {
         "name": "RegGuard",
-        "function": "Real-time fraud monitoring and detection",
-        "standards_addressed": "5.6",
-        "relevance_to_client": "Critical for Sunrise MFB's mobile app and USSD channels. Detects fraud patterns across branch, digital, and agent networks in real time."
+        "tagline": "Real-Time Fraud Monitoring with Bidirectional Risk Feed",
+        "gaps_closed": [
+          "5.6 — Fraud Monitoring"
+        ],
+        "description": "RegGuard provides real-time fraud monitoring for Muna MFB's card issuance, mobile money, and agent network channels. The platform detects card-not-present fraud, velocity abuse, SIM swap attacks, account takeover, and agent collusion using AI-enabled pattern recognition. Fraud alerts feed RegPort's customer risk assessment engine in real time, ensuring customers with fraud exposure receive elevated risk scores and enhanced transaction monitoring. For Muna MFB's agent banking network, RegGuard monitors agent-level transaction velocity, dormancy reactivation, and suspicious patterns, flagging agent collusion and money mule activity. The bidirectional fraud-to-risk feed satisfies Section 5.6 requirements, enabling Muna MFB to distinguish genuine fraud from money laundering disguised as fraud. RegGuard integrates with RegComply for case investigation and STR filing workflows.",
+        "standards_addressed": "5.6"
       },
       {
         "name": "RegComply",
-        "function": "Enterprise case management, audit trail, governance logs, management reporting",
-        "standards_addressed": "5.7, 5.9, 5.12",
-        "relevance_to_client": "Provides Maker-Checker workflow, immutable audit trail, and real-time dashboards. Closes 3 Critical Gaps for case management, audit, and reporting."
+        "tagline": "Enterprise Case Management with Immutable Audit Trails",
+        "gaps_closed": [
+          "5.7 — Enterprise Case Management",
+          "5.9 — Audit Trail",
+          "5.12 — Management Reporting"
+        ],
+        "description": "RegComply provides enterprise case management with Maker-Checker workflows, segregation of duties, and immutable audit trails. Cases auto-populate with transaction data from RegPort and fraud alerts from RegGuard, eliminating manual data entry. Investigators document findings, escalate to MLRO/CCO for review, and file STRs/CTRs directly to goAML/NFIU via automated integration. For Muna MFB's High-risk profile, RegComply ensures every alert is investigated, every decision is documented, and every case file is examination-ready. The platform logs all user activity, configuration changes, alert generation, case investigation steps, and regulatory filings in tamper-proof audit trails. Real-time management dashboards display alert volumes, investigation timelines, STR filing rates, sanctions match rates, fraud detection performance, and AI/ML model accuracy for Board, MLRO/CCO, and operational teams. RegComply closes 3 of 12 Baseline Standards for Muna MFB.",
+        "standards_addressed": "5.7, 5.9, 5.12"
       },
       {
         "name": "RegLearn",
-        "function": "AML/compliance training with documented records",
-        "standards_addressed": "5.9",
-        "relevance_to_client": "Delivers documented training records for staff handling deposits, loans, and FX. Addresses governance gap and supports CBN examination readiness."
+        "tagline": "AML Training Programme with Documented Records",
+        "gaps_closed": [
+          "6.7 — AML Training"
+        ],
+        "description": "RegLearn delivers role-specific AML training covering all 12 CBN Baseline Standards, governance controls, and operational procedures. For Muna MFB's staff, RegLearn provides training modules on CDD/KYC procedures, sanctions screening, transaction monitoring alert investigation, fraud detection, case management workflows, STR/CTR filing, and AI/ML model governance. The platform tracks training completion, quiz scores, and certification status, producing documented records for CBN examination. Training content updates automatically when CBN issues new circulars or regulatory guidance, ensuring Muna MFB's staff remain current on compliance obligations. RegLearn satisfies Section 6.7 requirements, ensuring all staff receive documented AML training aligned with their roles and responsibilities.",
+        "standards_addressed": "6.7"
       }
     ],
     "advisory_services": [
-      "CBN roadmap template completion and submission",
-      "AML/CFT/CPF policy drafting and board presentation",
-      "MLRO/CCO appointment advisory and role definition",
-      "Evidence pack preparation for CBN examination readiness",
-      "ISO/IEC 27001 and 42001 alignment for Section 6 AI governance",
-      "Agent network AML controls review and framework"
+      {
+        "title": "CBN Roadmap Template completion and submission",
+        "description": "OPEX validates Muna MFB's submitted roadmap, reconciles system status contradiction, and produces corrected submission by 10 June 2026."
+      },
+      {
+        "title": "AML/CFT/CPF policy drafting and Board presentation",
+        "description": "OPEX drafts Board-approved AML/CFT/CPF policy covering all 12 Baseline Standards and governance controls for Muna MFB."
+      },
+      {
+        "title": "MLRO appointment advisory and role definition",
+        "description": "OPEX validates MLRO/CCO appointment, confirms Board reporting line, and defines role responsibilities aligned with CBN requirements."
+      },
+      {
+        "title": "Evidence pack preparation for CBN examination readiness",
+        "description": "OPEX compiles comprehensive evidence pack organised by CBN section reference, conducts mock examination, and validates documentation completeness."
+      },
+      {
+        "title": "ISO 27001 and ISO 42001 alignment",
+        "description": "OPEX aligns Muna MFB's data security and AI/ML governance with ISO 27001 and ISO 42001 standards."
+      },
+      {
+        "title": "goAML/NFIU reporting support and filing",
+        "description": "OPEX configures automated goAML/NFIU integration, validates STR/CTR filing workflows, and trains staff on regulatory reporting procedures."
+      },
+      {
+        "title": "Vendor due diligence and platform selection",
+        "description": "OPEX manages vendor selection process, evaluates RegTech365 products, negotiates commercial terms, and oversees platform deployment for Muna MFB."
+      },
+      {
+        "title": "Governance framework drafting",
+        "description": "OPEX drafts AML Solution Governance Framework, Change Control Policy, Alert Review SLAs, and Data Retention Policy for Board approval."
+      }
     ],
-    "next_steps_box": "Contact OPEX Consulting to schedule roadmap workshop and platform demonstration. Immediate action required to meet 10 June 2026 deadline."
+    "cta": {
+      "title": "Resolve the System Status Contradiction Before CBN Examination",
+      "subtitle": "Muna MFB's reported None system status contradicts claimed full functional coverage. OPEX Consulting can conduct independent validation audit, reconcile infrastructure with reported capabilities, and prepare defensible evidence pack for regulatory scrutiny.",
+      "primary_button_label": "Schedule Validation Audit",
+      "secondary_button_label": "Request RegTech365 Demo"
+    }
   }
 }
