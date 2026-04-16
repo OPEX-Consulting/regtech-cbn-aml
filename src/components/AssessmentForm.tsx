@@ -583,40 +583,83 @@ const AssessmentForm: React.FC = () => {
       });
     }, 800);
 
-    // Call FastAPI
+    // ── Submit to background job + poll for result ────────────────────────
+    // Step 1: POST to /submit-aml-assessment — returns job_id immediately (<1 s)
+    // Step 2: Poll /aml-report-status/{job_id} every 3 s until done or error
+    // This avoids Azure Container Apps' 240-second HTTP response timeout.
     let reportJson: AmlReportJson;
+    const apiUrl = import.meta.env.VITE_REGWATCH_API_URL;
+    // const apiUrl = "http://localhost:8000/api/v1";
     try {
-      const response = await fetch("http://localhost:8001/api/v1/generate-aml-report", {
+      // ── Step 1: Submit ────────────────────────────────────────────────
+      const submitRes = await fetch(`${apiUrl}/submit-aml-assessment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inputJson),
-        signal: AbortSignal.timeout(600_000), // 10-minute browser-side timeout
+        signal: AbortSignal.timeout(600_000), // 10-minute timeout — should respond in < 1 s
       });
 
-      clearInterval(progressInterval);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`FastAPI error (${response.status}): ${errorText || response.statusText}`);
+      if (!submitRes.ok) {
+        const errorText = await submitRes.text();
+        throw new Error(`Submission failed (${submitRes.status}): ${errorText || submitRes.statusText}`);
       }
 
-      const fnData = await response.json();
+      const { job_id } = await submitRes.json();
+      if (!job_id) throw new Error("No job_id returned from server.");
 
-      // Support both { report: ... } and direct report responses
-      const report = fnData?.report || fnData;
-      if (!report || typeof report !== "object") {
-        throw new Error("Invalid response format from report generator.");
+      // ── Step 2: Poll ──────────────────────────────────────────────────
+      const POLL_INTERVAL_MS = 3000;
+      const MAX_WAIT_MS = 600_000; // 10-minute overall cap
+      const pollStart = Date.now();
+
+      while (true) {
+        await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+
+        if (Date.now() - pollStart > MAX_WAIT_MS) {
+          throw new Error("Report generation timed out after 10 minutes.");
+        }
+
+        const statusRes = await fetch(`${apiUrl}/aml-report-status/${job_id}`, {
+          signal: AbortSignal.timeout(60_000), // 60-second timeout — safer for long-running AI tasks
+        });
+
+        if (!statusRes.ok) {
+          // Transient network error — keep polling
+          console.warn("Poll request failed, retrying...", statusRes.status);
+          continue;
+        }
+
+        const statusData = await statusRes.json();
+
+        if (statusData.status === "pending") {
+          // Still running — loop again
+          continue;
+        }
+
+        if (statusData.status === "error") {
+          throw new Error(statusData.message || "Report generation failed on server.");
+        }
+
+        if (statusData.status === "done") {
+          clearInterval(progressInterval);
+
+          const report = statusData.report?.report || statusData.report;
+          if (!report || typeof report !== "object") {
+            throw new Error("Invalid report data received from server.");
+          }
+
+          reportJson = report as AmlReportJson;
+          reportJson._input = {
+            cbn_risk: data.cbnRisk,
+            tx_vol: data.txVol,
+            geo: data.geo,
+          };
+
+          setReportData(reportJson);
+          setReportProgress(100);
+          break;
+        }
       }
-
-      reportJson = report as AmlReportJson;
-      reportJson._input = {
-        cbn_risk: data.cbnRisk,
-        tx_vol: data.txVol,
-        geo: data.geo,
-      };
-
-      setReportData(reportJson);
-      setReportProgress(100);
     } catch (err: any) {
       clearInterval(progressInterval);
       console.error("Report generation failed:", err);
