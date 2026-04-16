@@ -640,10 +640,7 @@ const AssessmentForm: React.FC = () => {
     <div className="max-w-[720px] mx-auto px-4 py-6 pb-12">
       {/* Brand */}
       <div className="flex items-center gap-2.5 mb-6">
-        <div className="w-2 h-2 rounded-full bg-primary-dark" />
-        <span className="text-[13px] font-medium text-muted-foreground tracking-wider uppercase">
-          OPEX Consulting · RegTech365
-        </span>
+        <img src="/reglogo.svg" alt="RegTech365" className="h-5" />
       </div>
 
       {/* Title */}
