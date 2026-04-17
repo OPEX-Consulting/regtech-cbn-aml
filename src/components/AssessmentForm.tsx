@@ -355,6 +355,7 @@ const coverageItems: { key: keyof FormData; name: string; desc: string }[] = [
    ═══════════════════════════════════════════════════════════════════════ */
 
 const STORAGE_KEY = "aml_assessment_draft";
+const REPORT_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-aml-report";
 
 const loadDraft = (): { step: number; data: FormData } => {
   try {
@@ -566,49 +567,42 @@ const AssessmentForm: React.FC = () => {
 
     setReportProgress(5);
 
-    // ── Live progress ticker ──────────────────────────────────────────────
-    // Advances the bar from 5% → 92% while the AI is working.
-    // Each tick adds a smaller increment as we approach 92% so it never
-    // quite reaches it — the real 100% jump only fires on success.
-    let currentPct = 5;
-    const progressInterval = setInterval(() => {
-      setReportProgress((prev) => {
-        if (prev === null || prev >= 92) return prev;
-        // Slow down as we approach the ceiling
-        const remaining = 92 - (prev ?? 5);
-        const increment = Math.max(0.4, remaining * 0.025);
-        const next = Math.min(92, (prev ?? 5) + increment);
-        currentPct = next;
-        return next;
-      });
-    }, 800);
-
-    // Call FastAPI
+    // Generate report from external AML report API
     let reportJson: AmlReportJson;
+    let progressInterval: number | undefined;
     try {
-      const response = await fetch("http://localhost:8001/api/v1/generate-aml-report", {
+      progressInterval = window.setInterval(() => {
+        setReportProgress((prev) => {
+          if (prev === null) return prev;
+          if (prev >= 96) return prev;
+          // Keep the bar moving, but reserve 100% for actual completion.
+          const next = prev < 60 ? prev + 6 : prev + 2;
+          return Math.min(next, 96);
+        });
+      }, 1800);
+
+      const response = await fetch(REPORT_API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify(inputJson),
-        signal: AbortSignal.timeout(600_000), // 10-minute browser-side timeout
       });
 
-      clearInterval(progressInterval);
+      const fnData = await response.json().catch(() => null);
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`FastAPI error (${response.status}): ${errorText || response.statusText}`);
+        const errMsg =
+          fnData?.detail?.[0]?.msg ||
+          fnData?.error ||
+          `Report API failed with status ${response.status}`;
+        throw new Error(errMsg);
       }
 
-      const fnData = await response.json();
+      if (!fnData?.report) throw new Error("Report API returned no report data.");
 
-      // Support both { report: ... } and direct report responses
-      const report = fnData?.report || fnData;
-      if (!report || typeof report !== "object") {
-        throw new Error("Invalid response format from report generator.");
-      }
-
-      reportJson = report as AmlReportJson;
+      reportJson = fnData.report as AmlReportJson;
       reportJson._input = {
         cbn_risk: data.cbnRisk,
         tx_vol: data.txVol,
@@ -623,6 +617,8 @@ const AssessmentForm: React.FC = () => {
       toast.error(`Report generation failed: ${err.message ?? "Unknown error"}`);
       setSubmitting(false);
       setReportProgress(null);
+    } finally {
+      if (progressInterval) window.clearInterval(progressInterval);
     }
   };
 
@@ -652,6 +648,20 @@ const AssessmentForm: React.FC = () => {
     }
   };
 
+  const handleStartNewAssessment = () => {
+    assessmentIdRef.current = null;
+    setSubmitting(false);
+    setReportProgress(null);
+    setReportData(null);
+    setRegwatchCtaStatus("idle");
+    setErrors([]);
+    setShowErrors(false);
+    setStep(1);
+    setData(initialData);
+    localStorage.removeItem(STORAGE_KEY);
+    window.scrollTo(0, 0);
+  };
+
   /* ── Loading screen ─────────────────────────────────────────────────── */
 
   if (reportProgress !== null) {
@@ -660,6 +670,7 @@ const AssessmentForm: React.FC = () => {
         progress={reportProgress}
         institutionName={data.instName}
         onDownload={startDownload}
+        onStartNewAssessment={handleStartNewAssessment}
         onGetFullReport={handleGetFullReport}
         regwatchCtaStatus={regwatchCtaStatus}
       />
@@ -676,10 +687,7 @@ const AssessmentForm: React.FC = () => {
     <div className="max-w-[720px] mx-auto px-4 py-6 pb-12">
       {/* Brand */}
       <div className="flex items-center gap-2.5 mb-6">
-        <div className="w-2 h-2 rounded-full bg-primary-dark" />
-        <span className="text-[13px] font-medium text-muted-foreground tracking-wider uppercase">
-          OPEX Consulting · RegTech365
-        </span>
+        <img src="/reglogo.svg" alt="RegTech365" className="h-5" />
       </div>
 
       {/* Title */}
