@@ -1,47 +1,90 @@
 {
-  "inst_name": "Sunrise Microfinance Bank Ltd",
-  "contact_name": "Amara Okonkwo",
-  "contact_email": "amara@sunrisemfb.ng",
-  "contact_role": "Chief Compliance Officer",
-  "inst_type": "MFB",
+  "inst_name": "Johndup",
+  "contact_name": "Modupe",
+  "contact_email": "samuel.john@opexconsult.co.uk",
+  "contact_phone": "",
+  "contact_role": "CCO",
+  "inst_type": "DMB",
   "tx_vol": "1K-50K",
-  "cust_base": "10K-100K",
+  "cust_base": "<10K",
   "cbn_risk": "Medium",
-  "geo": "Multiple states",
+  "geo": "Single state",
   "group_structure": "Standalone",
   "products": [
     "Retail deposits",
-    "Credit / loans",
-    "FX / remittance"
+    "Trade finance",
+    "Credit / loans"
   ],
   "channels": [
-    "Branch network",
-    "Mobile app",
-    "USSD"
+    "ATM / POS"
   ],
-  "aml_status": "Partial",
+  "aml_status": "Manual",
   "aml_functions": [
     "CDD/KYC/KYB",
-    "Sanctions & PEP screening"
+    "Sanctions & PEP screening",
+    "Customer risk assessment",
+    "Transaction monitoring",
+    "Fraud monitoring",
+    "Case management",
+    "Regulatory reporting (STR/CTR)",
+    "Audit trail"
   ],
   "aiml": "No",
   "auto_close": "No",
   "risk_factors": [
-    "PEP exposure",
-    "Cross-border FX"
+    "PEP exposure"
   ],
   "governance": {
-    "mlro": "Yes",
-    "board-policy": "Yes",
+    "mlro": "No",
+    "board-policy": "No",
     "aml-gov-framework": "No",
     "change-control": "No",
     "model-gov": "No",
     "alert-sla": "No",
     "vendor-policy": "No",
     "data-retention": "No",
-    "bvn-nin": "Yes",
+    "bvn-nin": "No",
     "training": "No"
   },
-  "audit": "Annually",
-  "extra_context": "We are currently looking to automate our transaction monitoring and case management processes to meet the 10 June 2026 roadmap deadline."
+  "audit": "Not covered",
+  "extra_context": "",
+  "cov_cdd": "manual",
+  "cov_sanctions": "manual",
+  "cov_txmon": "manual",
+  "cov_fraud": "manual",
+  "cov_case": "manual",
+  "cov_reporting": "manual",
+  "cov_risk": "manual",
+  "cov_audit": "manual",
+  "cov_security": "manual",
+  "bvn_status": "Manual",
+  "kyc_review": "Manual",
+  "ubo_map": "Manual",
+  "sanctions_capab": "Manual",
+  "sanction_lists": [
+    "CBN / EFCC domestic lists"
+  ],
+  "fraud_capab": "None",
+  "fraud_feed": "No",
+  "reporting_method": "goAML portal",
+  "report_approval": "Informal",
+  "encryption": "None",
+  "mfa": "Not enforced",
+  "data_sov": "Nigeria",
+  "bia_status": "No BIA",
+  "impl_approach": "Hybrid",
+  "vendor_status": "Demos seen",
+  "roadmap_status": "Not started",
+  "biggest_concern": "budget",
+  "regulatory_context": "",
+  "support": [
+    "CBN Roadmap Template completion",
+    "AML/CFT/CPF policy drafting",
+    "Vendor evaluation support",
+    "RegTech365 product demo",
+    "End-to-end implementation",
+    "Internal audit co-sourcing",
+    "Staff AML training",
+    "ISO alignment advisory"
+  ]
 }

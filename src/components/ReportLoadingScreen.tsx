@@ -64,6 +64,7 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
   const [factVisible, setFactVisible] = useState(true);
   const [elapsedSec, setElapsedSec] = useState(0);
 
+  // Rotate Did You Know facts
   useEffect(() => {
     const interval = setInterval(() => {
       setFactVisible(false);

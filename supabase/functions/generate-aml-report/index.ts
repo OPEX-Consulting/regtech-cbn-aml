@@ -7,13 +7,100 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-request-timeout",
 };
 
+/**
+ * DEFAULT_STANDARDS: Boilerplate descriptions for "Compliant" status.
+ * Used for hydration so AI only needs to generate gaps.
+ */
+const DEFAULT_STANDARDS: Record<string, any> = {
+  "5.1": { section: "5.1", title: "Integrated AML Solution", status: "Compliant" },
+  "5.2": { section: "5.2", title: "CDD/KYC/KYB", status: "Compliant" },
+  "5.3": { section: "5.3", title: "Sanctions & PEP Screening", status: "Compliant" },
+  "5.4": { section: "5.4", title: "Customer Risk Assessment", status: "Compliant" },
+  "5.5": { section: "5.5", title: "Transaction Monitoring", status: "Compliant" },
+  "5.6": { section: "5.6", title: "Fraud Monitoring", status: "Compliant" },
+  "5.7": { section: "5.7", title: "Case Management", status: "Compliant" },
+  "5.8": { section: "5.8", title: "Regulatory Reporting", status: "Compliant" },
+  "5.9": { section: "5.9", title: "Audit Trail", status: "Compliant" },
+  "5.10": { section: "5.10", title: "Core Banking Integration", status: "Compliant" },
+  "5.11": { section: "5.11", title: "Data Security", status: "Compliant" },
+  "5.12": { section: "5.12", title: "Management Information", status: "Compliant" }
+};
+
+/**
+ * STATIC_PRODUCTS: Full descriptions and taglines for RegTech365 products.
+ * Used for "hydration" to keep the AI prompt small and descriptions machine-perfect.
+ */
+const STATIC_PRODUCTS: Record<string, any> = {
+  "RegPort": {
+    "tagline": "Integrated AML Platform for CBN Baseline Standards Compliance",
+    "description": "RegPort unifies CDD/KYC, sanctions/PEP screening, transaction monitoring, customer risk assessment, and regulatory reporting in a single platform. The platform is purpose-built for Nigerian financial institutions, featuring real-time BVN/NIN integration via NIBSS, automated goAML/NFIU filing, and AI-enabled fuzzy matching for international sanctions lists.",
+    "standards_addressed": "5.1, 5.2, 5.3, 5.4, 5.5, 5.8, 5.10"
+  },
+  "RegGuard": {
+    "tagline": "Real-Time Fraud Monitoring with Bidirectional Risk Feed",
+    "description": "RegGuard provides real-time fraud monitoring for card issuance, mobile money, and agent network channels. It detects pattern-based fraud like SIM swap attacks and account takeover, with an automated feed that pushes fraud alerts directly into customer risk scores to identify money laundering disguised as fraud.",
+    "standards_addressed": "5.6"
+  },
+  "RegComply": {
+    "tagline": "Enterprise Case Management with Immutable Audit Trails",
+    "description": "RegComply delivers the mandatory Case Management and Governance Audit layer. It enforces Maker-Checker workflows for investigation, provides role-based access for MLROs, and maintains tamper-proof audit logs of all configuration changes and alert dispositions required for CBN examination.",
+    "standards_addressed": "5.7, 5.9, 5.12"
+  },
+  "RegLearn": {
+    "tagline": "AML Training Programme with Documented Records",
+    "description": "RegLearn provides role-specific AML/CFT/CPF training modules covering the 12 Baseline Standards. The platform tracks staff completion, assessment scores, and certification status, producing the documented training records specifically mandated under Section 6.7 of the Circular.",
+    "standards_addressed": "6.7"
+  }
+};
+
+/**
+ * STATIC_ADVISORY: Default items for OPEX Consulting advisory services.
+ */
+const STATIC_ADVISORY = [
+  { "title": "CBN Roadmap Template completion", "description": "End-to-end support in completing and validating the mandatory 12-section roadmap for June 10th submission." },
+  { "title": "AML/CFT/CPF policy drafting", "description": "Development of Board-approved policies aligned with the new 2026 Baseline Standards and ISO 42001." },
+  { "title": "MLRO appointment advisory", "description": "Guidance on role definition, reporting lines, and CBN notification for newly appointed MLROs." },
+  { "title": "Evidence pack preparation", "description": "Compilation of all technical and governance documentation into an audit-ready format for CBN examination." },
+  { "title": "ISO 27001 and 42001 alignment", "description": "Gap analysis and implementation support for international security and AI governance standards." },
+  { "title": "Vendor due diligence", "description": "Structured evaluation of RegTech platform providers against CBN technical requirements." },
+  { "title": "Governance framework drafting", "description": "Drafting of AML Solution Governance, Change Control, and Data Retention policies." }
+];
+
+
 const SYSTEM_PROMPT = `You are a regulatory compliance analyst specialising in Nigerian financial sector regulation. Your task is to generate a structured CBN AML Baseline Standards gap assessment report in valid JSON only.
 
 ## CRITICAL OUTPUT RULES
 - Output ONLY valid JSON. No preamble, no explanation, no markdown fences.
-- All content must be institution-specific. Generic boilerplate is a failure.
+- All content must be institution-specific. Use the provided [inst_name] instead of generic placeholders like "the institution" or "GG".
 - Write in authoritative regulatory prose — direct, precise, evidence-based.
 - Name specific RegTech365 products (RegPort, RegGuard, RegComply, RegLearn) only where genuinely relevant to the gap.
+- **MAXIMUM BREVITY**: Use exactly enough words to be clear. Avoid filler phrases ("it is recommended that...", "at this point in time..."). Start actions with strong verbs.
+
+---
+
+## BREVITY STANDARD — READ BEFORE WRITING ANYTHING
+
+Every string field has a hard word limit. Count words before writing. When in doubt, summarise.
+
+GOOD finding (22 words):
+"No transaction monitoring system exists. 5.5 requires real-time multi-scenario monitoring — mandatory for IMTOs processing cross-border flows."
+
+BAD finding (45 words):
+"The institution currently does not have any form of automated transaction monitoring capability in place, which means that it is unable to satisfy the numerous requirements set out under 5.5 of the CBN Baseline Standards, including real-time monitoring and network analysis."
+
+GOOD required_action (10 words):
+"Deploy real-time transaction monitoring via RegPort before roadmap submission."
+
+BAD required_action (22 words):
+"The institution should take immediate steps to implement an automated transaction monitoring solution that meets the requirements of 5.5 of the Baseline Standards."
+
+GOOD body (25 words):
+"GG must submit the CBN Implementation Roadmap by 10 June 2026. Incomplete submissions constitute non-compliance. OPEX Consulting can finalize this template using these assessment findings."
+
+BAD body (75 words):
+"GG is required under Circular BSD/DIR/PUB/LAB/019/002 to complete and submit to the CBN Compliance Department the official Implementation Roadmap Template, which spans 12 sections including executive summary, implementation strategy, gap analysis, timeline, resource plan, and board sign-off. Every field must be fully completed as blank or incomplete responses are treated as non-compliance by the CBN. OPEX Consulting is available to complete this template on behalf of the institution."
+
+Apply this standard to every field.
 
 ---
 
@@ -21,13 +108,10 @@ const SYSTEM_PROMPT = `You are a regulatory compliance analyst specialising in N
 
 The user message contains the institution's self-assessment data as a JSON object. Use the exact field names below to read input values. Do NOT rely on any other naming convention.
 
-### Identity & Contact
+### Identity & Profile
 - inst_name: string — institution's legal name
 - inst_type: string — institution type code. One of: "DMB", "MFB", "IMTO", "PSP", "MMO", "Fintech"
-- contact_name: string — primary contact full name
-- contact_email: string — primary contact email
-- contact_phone: string — primary contact phone number
-- contact_role: string — contact's role/title (e.g., "MLRO / CCO", "Head of Compliance", "CEO / MD")
+- contact_name: string — secondary contact name (PII like email/phone/role removed for privacy)
 
 ### Scale, Risk & Profile
 - tx_vol: string — daily transaction volume. One of: "<1K", "1K-50K", "50K-500K", ">500K"
@@ -196,37 +280,13 @@ Deliverables must reference institution's actual gaps — not a generic list.
 
 ---
 
-## PRODUCTS — ALWAYS EXACTLY THESE 4 IN THIS ORDER
-
-1. RegPort — transaction monitoring, sanctions/PEP screening, risk assessment, regulatory reporting
-2. RegGuard — real-time fraud monitoring and detection
-3. RegComply — enterprise case management, audit trail, governance logs, management reporting
-4. RegLearn — AML/compliance training with documented records
+## PRODUCTS (IDENTIFIERS)
+Standard RegTech365 products: RegPort, RegGuard, RegComply, RegLearn.
 
 ---
 
-## ADVISORY SERVICES — ALWAYS EXACTLY 8 ITEMS
-
-Each item must have a title (bold heading, ~6 words) and a description (supporting text, ~15 words).
-
-Always include these 5 titles:
-1. CBN Roadmap Template completion and submission
-2. AML/CFT/CPF policy drafting and Board presentation
-3. MLRO appointment advisory and role definition
-4. Evidence pack preparation for CBN examination readiness
-5. ISO 27001 and ISO 42001 alignment
-
-6th item: derive from institution type:
-- IMTO → goAML/NFIU reporting support and filing
-- PSP → open banking data governance advisory
-- MFB with agent banking → agent network AML controls review
-- DMB → correspondent banking due diligence framework
-- MMO → mobile money ML/TF risk framework
-- Finance Company → credit-linked AML risk assessment
-- Other → derive from products, channels, or risk factors
-
-7th: Vendor due diligence and platform selection
-8th: Governance framework drafting
+## ADVISORY SERVICES
+Standard advisory services (Roadmap, Policy, MLRO, ISO, etc.) are handled programmatically. You should only identify 1-2 highly specific additional advisory needs based on the institution's type and risk profile.
 
 ---
 
@@ -251,21 +311,21 @@ Conditional requirements are triggered by institution type, risk class, product 
 ## FIELD-LEVEL CONTENT GUIDANCE
 
 ### Executive Summary
-- lead: ~60 words. Institutional context — who they are, what they face.
-- body_paragraphs: 3 paragraphs, each ~100 words. Cover: (1) circular context and scope, (2) assessment findings overview, (3) urgency and next steps.
-- inline_alert: ~50 words. A critical CBN quote or warning relevant to this institution type. Start with specific CBN language.
+- lead: ~40 words. Institutional context — who they are, what they face.
+- body_paragraphs: 3 paragraphs, each ~50 words. Cover: (1) circular context and scope, (2) assessment findings overview, (3) urgency and next steps.
+- inline_alert: ~30 words. A critical CBN quote or warning relevant to this institution type. Start with specific CBN language.
 
 ### Profile
 - group_structure: e.g., "Standalone entity" or "Subsidiary of XYZ Group"
-- risk_factors_display: formatted string of risk factors with separators (e.g., "Cross-border / FX transactions · Material fraud exposure")
-- sector_context_box: ~60 words. Why this institution type's profile matters for CBN examination.
+- risk_factors_display: formatted string of risk factors with separators
+- sector_context_box: ~25 words.
 
 ### Gap Analysis Standards
-- finding: ~80-120 words. Full paragraph with CBN context. State what's missing, cite the CBN requirement, explain implications for this institution type.
-- required_action: ~60-80 words. Full paragraph. Directive. What must be done, by when, and what happens if not.
-- regtech_solution: ~60-80 words. How RegTech365 products specifically close this gap. Institution-specific.
-- regtech_products: array of product names referenced (e.g., ["RegPort", "RegGuard"])
-- req_tags: array of {label, type} badges. label is like "MANDATORY — ALL INSTITUTIONS" or "CONDITIONAL — TRIGGERED FOR [INST]". type is "mandatory" or "conditional".
+- finding: ~35 words. State what's missing, cite CBN requirement, explain implication.
+- required_action: ~25 words. Directive. What must be done and by when.
+- regtech_solution: ~25 words. How RegTech365 specifically closes this gap.
+- regtech_products: array of product names (e.g., ["RegPort", "RegGuard"])
+- req_tags: array of {label, type} badges.
 
 ### Governance Assessment
 - score_percentage: numeric (e.g., 20 for 2/10)
@@ -277,17 +337,17 @@ Conditional requirements are triggered by institution type, risk class, product 
 - body: ~120-150 words across 2 paragraphs. (1) What must be done and why. (2) How OPEX/RegTech365 supports.
 
 ### Roadmap
-- Each phase: description (~80-100 words, full paragraph) replacing objectives
-- deliverables: array of individual deliverable strings (for tag pills)
+- Each phase: description (~40-50 words, one tight paragraph)
+- deliverables: array of short strings
 - milestones: array of {milestone, target_date, owner} (~6 items)
 
 ### Products
-- tagline: product subtitle (~10 words)
+- name: One of RegPort, RegGuard, RegComply, RegLearn.
 - gaps_closed: array of section labels (e.g., "5.5 — Transaction Monitoring")
-- description: ~100-120 words. Full paragraph. Institution-specific relevance.
+- (Other fields like tagline/description are added programmatically — do not generate them).
 
 ### Support Section
-- differentiator: ~60 words. "What makes this different" paragraph.
+- differentiator: ~40 words.
 
 ### CTA
 - title, subtitle, primary_button_label, secondary_button_label
@@ -303,9 +363,6 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     "inst_name": "string",
     "inst_type": "string",
     "inst_type_full": "string",
-    "contact_name": "string",
-    "contact_email": "string",
-    "contact_role": "string",
     "report_date": "string",
     "circular_ref": "BSD/DIR/PUB/LAB/019/002",
     "roadmap_deadline": "10 June 2026",
@@ -318,14 +375,14 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     "risk_factors_display": "string"
   },
   "executive_summary": {
-    "lead": "string (~60 words)",
-    "body_paragraphs": ["string (~100 words)", "string (~100 words)", "string (~100 words)"],
-    "inline_alert": "string (~50 words)"
+    "lead": "string (~30 words)",
+    "body_paragraphs": ["string (~40 words)", "string (~40 words)", "string (~40 words)"],
+    "inline_alert": "string (~25 words)"
   },
   "overall_rating": {
     "rating": "CRITICAL | HIGH | MEDIUM | LOW",
     "rating_label": "string (MAX 10 words)",
-    "sector_context_note": "string (~60 words)"
+    "sector_context_note": "string (~30 words)"
   },
   "scorecard": {
     "aml_system_status_label": "string",
@@ -341,33 +398,33 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     "internal_audit_rating": "Compliant | Gap Identified | Critical Gap",
     "risk_factors_label": "string",
     "risk_factors_rating": "Elevated | Standard | Critical",
-    "regulatory_context_box": "string (~60 words)"
+    "regulatory_context_box": "string (~30 words)"
   },
   "profile": {
-    "sector_context_box": "string (~60 words)"
+    "sector_context_box": "string (~40 words)"
   },
   "requirement_categories_intro": "string (~40 words)",
-  "requirement_categories_alert": "string (~60 words)",
+  "requirement_categories_alert": "string (~40 words)",
   "requirement_categories": [
-    { "area": "string", "cbn_ref": "string", "category": "Mandatory | Conditional", "trigger": "string (~25 words)" }
+    { "area": "string", "cbn_ref": "string", "category": "Mandatory | Conditional", "trigger": "string (~15 words)" }
   ],
-  "gap_analysis_intro": "string (~50 words)",
+  "gap_analysis_intro": "string (~40 words)",
   "standards": [
     {
       "section": "5.1",
       "title": "string",
       "status": "Compliant | Gap Identified | Critical Gap",
       "req_tags": [{ "label": "string", "type": "mandatory | conditional" }],
-      "finding": "string (~80-120 words)",
-      "required_action": "string (~60-80 words)",
-      "regtech_solution": "string (~60-80 words)",
+      "finding": "string (~60 words)",
+      "required_action": "string (~40 words)",
+      "regtech_solution": "string (~40 words)",
       "regtech_products": ["string"]
     }
   ],
   "governance_assessment": {
-    "intro": "string (~60 words)",
+    "intro": "string (~50 words)",
     "score_percentage": 0,
-    "score_context": "string (~60 words)",
+    "score_context": "string (~50 words)",
     "items": [
       {
         "control": "Formally designated MLRO or CCO",
@@ -385,17 +442,17 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
       "number": 1,
       "title": "string",
       "deadline_label": "string (~15 words)",
-      "body": "string (~120-150 words, 2 paragraphs)"
+      "body": "string (~60 words, 2 paragraphs)"
     }
   ],
   "roadmap": {
-    "intro": "string (~60 words)",
+    "intro": "string (~50 words)",
     "phases": [
       {
         "phase_number": 1,
         "title": "string",
         "timeline": "string",
-        "description": "string (~80-100 words)",
+        "description": "string (~60 words)",
         "deliverables": ["string"],
         "standards_addressed": "string"
       }
@@ -405,28 +462,24 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
     ]
   },
   "support_section": {
-    "intro_paragraph": "string (~60 words)",
-    "differentiator": "string (~60 words)",
+    "intro_paragraph": "string (~50 words)",
+    "differentiator": "string (~50 words)",
     "products": [
       {
-        "name": "RegPort",
-        "tagline": "string (~10 words)",
-        "gaps_closed": ["string (e.g. 5.5 — Transaction Monitoring)"],
-        "description": "string (~100-120 words)",
-        "standards_addressed": "string"
+        "name": "RegPort | RegGuard | RegComply | RegLearn",
+        "gaps_closed": ["string"]
       }
     ],
     "advisory_services": [
-      { "title": "string (~6 words)", "description": "string (~15 words)" }
+      { "title": "string (Dynamic/Specific)", "description": "string (~15 words)" }
     ],
     "cta": {
       "title": "string",
-      "subtitle": "string (~30 words)",
+      "subtitle": "string (~20 words)",
       "primary_button_label": "string",
       "secondary_button_label": "string"
     }
-  },
-  "disclaimer": "string (~60 words)"
+  }
 }
 
 ---
@@ -444,11 +497,12 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
 Generate ~17 rows. Include all 12 standards plus governance items. Mark each Mandatory or Conditional based on CBN circular. Write institution-specific triggers.
 
 ### standards (exactly 12 entries, 5.1–5.12)
-- req_tags: 1-2 tags per standard. Format: {"label": "MANDATORY — ALL INSTITUTIONS", "type": "mandatory"} or {"label": "CONDITIONAL — TRIGGERED FOR [INST_NAME]", "type": "conditional"}
-- finding: Full paragraph. State the gap, cite CBN requirements, explain implications.
-- required_action: Full paragraph. What must be done.
-- regtech_solution: Full paragraph. How RegTech365 products close this gap specifically.
-- regtech_products: Array of product names used in the solution.
+Ensure every standard (5.1-5.12) is included.
+- req_tags: 1-2 tags per standard.
+- finding: Punchy paragraph (~35 words).
+- required_action: Directive (~25 words).
+- regtech_solution: Solution (~25 words).
+- regtech_products: Array of product names used.
 
 ### governance_assessment (exactly 10 items)
 Items in this order:
@@ -472,37 +526,14 @@ Priority 1 is always roadmap submission. Body should be 2 paragraphs: what + OPE
 Each phase gets a full description paragraph and a deliverables array.
 milestones: exactly 6 milestone rows.
 
-### products (exactly 4, in order: RegPort, RegGuard, RegComply, RegLearn)
-Each gets tagline, gaps_closed array, full description, standards_addressed.
+### products
+Return only name and gaps_closed. Standard boilerplate is added programmatically.
 
-### advisory_services (exactly 8 items)
-Each has title + description.
+### advisory_services
+Return ONLY 1-2 institution-specific items. Standard items are provided by the hydration layer.
 
 ### disclaimer
-Reference Circular BSD/DIR/PUB/LAB/019/002, self-assessment basis, advisory-only nature.
-
----
-
-## FINAL CHECKS BEFORE OUTPUT
-
-- [ ] Overall rating derived from rating rules
-- [ ] Exactly 12 entries in standards array (5.1–5.12, in order)
-- [ ] Each standard has req_tags, finding, required_action, regtech_solution, regtech_products
-- [ ] ~17 requirement_categories entries
-- [ ] Exactly 10 governance_assessment.items with cbn_ref, category, action_required
-- [ ] Exactly 5 priority_actions, Priority 1 is roadmap submission
-- [ ] Exactly 4 roadmap phases with description and deliverables array
-- [ ] Exactly 6 milestones
-- [ ] Exactly 4 products with tagline, gaps_closed, description
-- [ ] Exactly 8 advisory_services with title + description
-- [ ] executive_summary has lead, 3 body_paragraphs, inline_alert
-- [ ] profile.sector_context_box is present
-- [ ] governance_assessment.score_percentage and score_context present
-- [ ] support_section.differentiator is present
-- [ ] support_section.cta is present
-- [ ] disclaimer is present
-- [ ] No field contains generic placeholder language
-- [ ] Output is valid JSON only — nothing before or after the opening and closing braces`;
+Reference Circular BSD/DIR/PUB/LAB/019/002, self-assessment basis, advisory-only nature.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -513,27 +544,37 @@ serve(async (req) => {
     const { inputJson } = await req.json();
     console.log(`DEBUG: Executing v2 HIGH-FIDELITY PROMPT for ${inputJson?.inst_name}`);
 
+    // --- PII STRIPPING START ---
+    // We remove PII from the data sent to AI to reduce tokens and improve privacy.
+    const { contact_email, contact_phone, contact_role, ...minimalInputJson } = inputJson;
+
+    const originalPII = {
+      contact_name: inputJson.contact_name,
+      contact_email: contact_email,
+      contact_phone: contact_phone,
+      contact_role: contact_role,
+    };
+    // --- PII STRIPPING END ---
+
     const apiKey = Deno.env.get("AZURE_CLAUDE_API_KEY");
     const baseURL = Deno.env.get("AZURE_CLAUDE_ENDPOINT");
     const deployment = Deno.env.get("AZURE_CLAUDE_DEPLOYMENT") || "claude-sonnet-4-5";
 
     if (!apiKey || !baseURL) throw new Error("Azure credentials missing.");
 
-    const userMessage = `You are generating a CBN AML gap assessment report. Below is the institution's self-assessment data. Apply all scoring logic, regulatory context, and output schema from your instructions to produce the report JSON.
+    const userMessage = `You are generating a CBN AML gap assessment report for ${inputJson.inst_name}. Below is the institution's self-assessment data. Apply all scoring logic, regulatory context, and output schema from your instructions.
 
 ASSESSMENT DATA:
-${JSON.stringify(inputJson)}
+${JSON.stringify(minimalInputJson)}
 
 Return ONLY the JSON object. No preamble, no explanation, no markdown code fences.`;
 
-    // Log the full prompt sent to Claude
-    console.log("═══════════════ FULL PROMPT SENT TO CLAUDE ═══════════════");
+    // Log the full prompt sent to Claude (ensure logs are safe)
+    console.log("═══════════════ FULL PROMPT SENT TO CLAUDE (MASKED) ═══════════════");
     console.log("SYSTEM PROMPT LENGTH:", SYSTEM_PROMPT.length, "chars");
-    console.log("SYSTEM PROMPT:\n", SYSTEM_PROMPT);
-    console.log("═══════════════ USER MESSAGE ═══════════════");
     console.log("USER MESSAGE LENGTH:", userMessage.length, "chars");
-    console.log("USER MESSAGE:\n", userMessage);
-    console.log("═══════════════ END PROMPT LOG ═══════════════");
+    console.log("ASSESSMENT DATA MASKED: PII fields replaced with [REDACTED]");
+    console.log("═════════════════════════════════════════════════════════════════");
 
     const client = new AnthropicFoundry({ apiKey, baseURL });
     
@@ -559,6 +600,37 @@ Return ONLY the JSON object. No preamble, no explanation, no markdown code fence
     }
     
     const report = JSON.parse(cleanJson);
+
+    // --- PII HYDRATION START ---
+    if (report.meta) {
+      report.meta.contact_name = originalPII.contact_name;
+      report.meta.contact_email = originalPII.contact_email;
+      report.meta.contact_phone = originalPII.contact_phone;
+      report.meta.contact_role = originalPII.contact_role;
+
+      // Set real report date (DD/MM/YYYY)
+      const now = new Date();
+      report.meta.report_date = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+    }
+    // --- PII HYDRATION END ---
+
+    // --- SUPPORT HYDRATION START ---
+    if (report.support_section) {
+        // Hydrate Products
+        if (Array.isArray(report.support_section.products)) {
+            report.support_section.products = report.support_section.products.map((p: any) => {
+                const staticData = STATIC_PRODUCTS[p.name];
+                return staticData ? { ...p, ...staticData } : p;
+            });
+        }
+
+        // Hydrate Advisory (Merge static with dynamic)
+        const dynamicAdvisory = Array.isArray(report.support_section.advisory_services) 
+            ? report.support_section.advisory_services 
+            : [];
+        report.support_section.advisory_services = [...STATIC_ADVISORY, ...dynamicAdvisory];
+    }
+    // --- SUPPORT HYDRATION END ---
 
     return new Response(JSON.stringify({ report }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

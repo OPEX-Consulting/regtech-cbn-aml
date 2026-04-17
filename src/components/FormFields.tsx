@@ -184,6 +184,53 @@ export const TextField: React.FC<TextFieldProps> = ({
   </div>
 );
 
+interface CheckboxFieldProps {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+export const CheckboxField: React.FC<CheckboxFieldProps> = ({
+  label,
+  checked,
+  onChange,
+}) => (
+  <label className="flex items-start gap-2.5 cursor-pointer group mb-5">
+    <div
+      className={`mt-0.5 w-4 h-4 rounded flex-shrink-0 flex items-center justify-center border-[1.5px] transition-all ${
+        checked
+          ? "bg-primary border-primary"
+          : "bg-background border-border group-hover:border-primary"
+      }`}
+    >
+      {checked && (
+        <svg
+          width="10"
+          height="8"
+          viewBox="0 0 10 8"
+          fill="none"
+          className="text-primary-foreground"
+        >
+          <path
+            d="M1 4L3.5 6.5L9 1"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </div>
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className="sr-only"
+    />
+    <span className="text-[13px] text-foreground leading-tight">{label}</span>
+  </label>
+);
+
 interface SelectFieldProps {
   label: string;
   value: string;
