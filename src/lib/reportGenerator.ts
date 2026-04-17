@@ -1081,8 +1081,8 @@ export async function generatePdf(
     }
   }
 
-  const PDF_API_URL = "http://localhost:8000/api/v1/generate-pdf";
-  // const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
+  // const PDF_API_URL = "http://localhost:8000/api/v1/generate-pdf";
+  const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
 
   const res = await fetch(PDF_API_URL, {
     method: "POST",
