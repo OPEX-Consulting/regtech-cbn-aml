@@ -5,7 +5,10 @@
       "Bash(where supabase:*)",
       "Bash(scoop list:*)",
       "Bash(npx supabase:*)",
-      "Bash(npx supabase@2.89.1 functions deploy aml-lead-notify --project-ref eoabxbsvcrmzlvkxqksb)"
+      "Bash(npx supabase@2.89.1 functions deploy aml-lead-notify --project-ref eoabxbsvcrmzlvkxqksb)",
+      "Bash(grep *)",
+      "Bash(git -C /c/Users/john9/OPEX/regtech-cbn-aml log --oneline --all)",
+      "Bash(git *)"
     ]
   }
 }
