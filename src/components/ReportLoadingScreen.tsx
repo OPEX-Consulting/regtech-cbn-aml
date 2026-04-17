@@ -43,13 +43,13 @@ const FACTS = [
   "The CBN Circular BSD/DIR/PUB/LAB/019/002 requires all financial institutions to submit a compliant implementation roadmap by 10 June 2026.",
   "DMBs have 18 months (until September 2027) to achieve full compliance. All OFIs have 24 months (until March 2028).",
   "The CBN has explicitly stated that AML Solutions without effective CDD/KYC linkage will not be regarded as compliant.",
-  "12 Baseline Standards are being assessed — §5.1 through §5.12 — covering everything from sanctions screening to data security.",
+  "12 Baseline Standards are being assessed — 5.1 through 5.12 — covering everything from sanctions screening to data security.",
   "Standalone or batch-feed transaction monitoring is explicitly prohibited for High or Above Average risk institutions.",
   "Automated alert closure requires prior CBN notification and can only operate within a formal governance framework.",
   "IMTOs have mandatory goAML reporting obligations to the NFIU in addition to standard CBN reporting requirements.",
-  "All AML configuration changes must be logged in a tamper-proof, immutable audit trail under §5.9.",
+  "All AML configuration changes must be logged in a tamper-proof, immutable audit trail under 5.9.",
   "Enterprise Case Management (ECM) must include Maker-Checker controls, role-based workflows, and full audit trails.",
-  "RegTech365's RegPort platform addresses §5.1, §5.3, §5.4, §5.5, §5.8, and §5.10 of the CBN Baseline Standards.",
+  "RegTech365's RegPort platform addresses 5.1, 5.3, 5.4, 5.5, 5.8, and 5.10 of the CBN Baseline Standards.",
 ];
 
 export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
@@ -164,54 +164,32 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
                 <ArrowDownToLine className="h-4 w-4 text-cyan-300" />
                 Download PDF
               </button>
-              {onStartNewAssessment && (
-                <button
-                  onClick={onStartNewAssessment}
-                  className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[12px] font-semibold border border-primary-foreground/25 bg-primary-foreground/[0.04] text-primary-foreground/90 transition-all duration-200 hover:border-primary-foreground/50 hover:bg-primary-foreground/[0.08]"
-                >
-                  <RotateCcw className="h-4 w-4 text-violet-300" />
-                  New Assessment
-                </button>
-              )}
-              {onGetFullReport && (
-                <>
-                  {regwatchCtaStatus !== "sent" ? (
-                    <button
-                      onClick={onGetFullReport}
-                      disabled={regwatchCtaStatus === "loading"}
-                      className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[12px] font-semibold border border-primary-foreground/25 bg-primary-foreground/[0.04] text-primary-foreground/90 transition-all duration-200 hover:border-primary-foreground/50 hover:bg-primary-foreground/[0.08] disabled:opacity-55 disabled:cursor-not-allowed"
-                    >
-                      {regwatchCtaStatus === "loading" ? (
-                        <>
-                          <LoaderCircle className="h-4 w-4 text-cyan-300 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Link2 className="h-4 w-4 text-cyan-300" />
-                          RegWatch Full Report
-                        </>
-                      )}
-                    </button>
-                  ) : (
-                    <span className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[12px] font-semibold border border-emerald-300/40 bg-emerald-300/15 text-primary-foreground/90">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-300" />
-                      Link sent to your email
-                    </span>
-                  )}
-                </>
-              )}
+              <a
+                href="https://regport.regtech365.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[12px] font-semibold border border-primary-foreground/25 bg-primary-foreground/[0.04] text-primary-foreground/90 transition-all duration-200 hover:border-primary-foreground/50 hover:bg-primary-foreground/[0.08]"
+              >
+                <Link2 className="h-4 w-4 text-cyan-300" />
+                Explore RegPort
+              </a>
             </div>
-            {onGetFullReport && (
-              <div className="mb-3">
-                {regwatchCtaStatus === "error" && (
-                  <p className="text-xs text-destructive mb-2 font-sans">Something went wrong. Please try again.</p>
-                )}
-                <p className="text-[11px] text-primary-foreground/30 m-0 font-sans">
-                  Free · No account needed · Full CBN AML assessment on RegWatch
-                </p>
-              </div>
-            )}
+            <div className="rounded-lg border border-cyan-300/20 bg-cyan-300/[0.04] px-4 py-3 mb-3 text-center">
+              <p className="text-[12px] font-semibold text-primary-foreground/90 mb-0.5">
+                Your gaps are identified — now close them.
+              </p>
+              <p className="text-[11px] text-primary-foreground/50 mb-2">
+                RegPort automates your CBN AML compliance end-to-end, from CDD to STR filing — so your team focuses on banking, not paperwork.
+              </p>
+              <a
+                href="https://regtech365.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-semibold text-cyan-300 hover:text-cyan-200 underline underline-offset-2"
+              >
+                See how institutions like yours achieve compliance faster →
+              </a>
+            </div>
           </>
         )}
         {progress < 100 && (
@@ -276,7 +254,7 @@ export const ReportLoadingScreen: React.FC<ReportLoadingScreenProps> = ({
 
         <p className="text-[10.5px] text-primary-foreground/30 font-sans">
           {progress < 100
-            ? "This typically takes 30–90 seconds. Please don't close this tab."
+            ? "This typically takes 2-3 minutes. Please don't close this tab."
             : "Your report is ready for review."}
         </p>
       </div>

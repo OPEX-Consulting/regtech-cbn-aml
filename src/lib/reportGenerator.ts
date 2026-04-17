@@ -724,13 +724,16 @@ function getReportCSS(): string {
 
   html { font-size: 15px; scroll-behavior: smooth; }
 
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   body {
     font-family: var(--font-body);
     color: var(--text);
     background: var(--bg);
     line-height: 1.6;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
   }
 
   /* ─── Print ─────────────────────────────────────── */
@@ -1062,33 +1065,29 @@ export async function generatePdf(
 
   onProgress?.(40);
 
-  const iframe = document.createElement("iframe");
-  iframe.style.position = "fixed";
-  iframe.style.right = "0";
-  iframe.style.bottom = "0";
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "none";
-  document.body.appendChild(iframe);
+  const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
 
-  const doc = iframe.contentWindow?.document || iframe.contentDocument;
-  if (!doc) throw new Error("Could not create print frame.");
+  const res = await fetch(PDF_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ html: reportHtml }),
+  });
 
-  doc.open();
-  doc.write(reportHtml);
-  doc.close();
+  if (!res.ok) {
+    throw new Error(`PDF generation failed: ${res.status} ${res.statusText}`);
+  }
 
-  onProgress?.(70);
+  onProgress?.(90);
 
-  // Wait for rendering and fonts
-  setTimeout(() => {
-    onProgress?.(90);
-    iframe.contentWindow?.focus();
-    iframe.contentWindow?.print();
-    onProgress?.(100);
-    
-    setTimeout(() => {
-      document.body.removeChild(iframe);
-    }, 2000);
-  }, 1500);
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `CBN_AML_Report_${r.meta.inst_name.replace(/\s+/g, "_")}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  onProgress?.(100);
 }

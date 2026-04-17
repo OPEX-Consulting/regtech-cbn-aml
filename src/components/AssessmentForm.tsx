@@ -609,6 +609,15 @@ const AssessmentForm: React.FC = () => {
         geo: data.geo,
       };
 
+      // Persist report JSON for audit
+      supabase
+        .from("assessments")
+        .update({ report_json: reportJson } as any)
+        .eq("id", assessmentId)
+        .then(({ error }) => {
+          if (error) console.error("Failed to save report_json:", error);
+        });
+
       setReportData(reportJson);
       setReportProgress(100);
     } catch (err: any) {

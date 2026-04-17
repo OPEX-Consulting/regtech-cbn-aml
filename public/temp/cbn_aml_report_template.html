@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CBN AML Gap Assessment Report | OPEX Consulting & RegTech365</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --navy: #0B1D35;
@@ -93,7 +93,7 @@ body {
   background: linear-gradient(135deg, var(--gold), var(--gold-light));
   border-radius:8px;
   display:flex; align-items:center; justify-content:center;
-  font-family:'Cormorant Garamond',serif;
+  font-family:'DM Sans',sans-serif;
   font-size:18px; font-weight:700;
   color: var(--navy);
 }
@@ -125,12 +125,13 @@ body {
 }
 
 .cover-title {
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(40px,6vw,64px);
-  font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  font-size:clamp(36px,5vw,56px);
+  font-weight:700;
   color:var(--white);
   line-height:1.1;
-  margin-bottom:8px;
+  margin-bottom:12px;
+  letter-spacing:-0.03em;
 }
 
 .cover-title span { color:var(--gold); }
@@ -239,6 +240,7 @@ body {
 .page-header-doc { font-size: 10px; color: var(--muted); }
 
 @media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   .cover { min-height:100vh; }
   .page { padding:40px 48px; }
   .no-print { display:none !important; }
@@ -247,7 +249,7 @@ body {
 
 /* ── TOC ── */
 .toc { padding: 60px 64px; background: var(--off-white); border-bottom: 1px solid var(--border); page-break-after: always; }
-.toc-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--navy); margin-bottom: 32px; }
+.toc-title { font-family: 'DM Sans', sans-serif; font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 32px; letter-spacing: -0.02em; }
 .toc-item { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light); font-size: 14px; color: var(--ink); }
 .toc-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gold); font-weight: 600; width: 24px; }
 .toc-label { flex: 1; color: var(--navy); font-weight: 500; }
@@ -289,23 +291,25 @@ body {
 }
 
 .section-heading {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 26px;
-  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
   color: var(--navy);
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 /* ── EXECUTIVE SUMMARY ── */
 .exec-lead {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
-  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
   color: var(--navy);
   line-height: 1.5;
   margin-bottom: 20px;
   padding-left: 20px;
   border-left: 3px solid var(--gold);
+  letter-spacing: -0.01em;
 }
 
 .exec-body {
@@ -334,11 +338,12 @@ body {
 }
 
 .score-value {
-  font-family:'Cormorant Garamond',serif;
-  font-size:32px;
-  font-weight:700;
-  line-height:1;
-  margin-bottom:6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
 }
 
 .score-label {
@@ -464,10 +469,10 @@ body {
 .score-ring { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
 .score-ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
 .score-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.score-ring-num { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1; }
+.score-ring-num { font-family: 'DM Sans', sans-serif; font-size: 28px; font-weight: 600; color: var(--navy); line-height: 1; letter-spacing: -0.02em; }
 .score-ring-denom { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .score-ring-context { flex: 1; }
-.score-ring-context h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--navy); margin-bottom: 8px; }
+.score-ring-context h3 { font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; letter-spacing: -0.02em; }
 .score-ring-context p { font-size: 13px; color: #2C3E50; line-height: 1.6; }
 
 /* ── PRIORITY ACTIONS ── */
@@ -511,7 +516,7 @@ body {
 .regtech-product-header { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); }
 .product-icon {
   width: 40px; height: 40px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 8px;
-  display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; color: var(--navy);
+  display: flex; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy);
 }
 .product-name { font-size: 15px; font-weight: 600; color: var(--white); }
 .product-name a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 1px; }
@@ -523,7 +528,7 @@ body {
 /* ── CTA ── */
 .cta-box { background: var(--navy); border-radius: 16px; padding: 40px; text-align: center; margin: 40px 0; position: relative; overflow: hidden; }
 .cta-box::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(201,168,76,0.1), transparent); }
-.cta-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--white); margin-bottom: 12px; position: relative; }
+.cta-title { font-family: 'DM Sans', sans-serif; font-size: 26px; font-weight: 700; color: var(--white); margin-bottom: 12px; position: relative; letter-spacing: -0.02em; }
 .cta-subtitle { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 28px; line-height: 1.6; max-width: 500px; margin-left: auto; margin-right: auto; position: relative; }
 .cta-buttons { display: flex; justify-content: center; gap: 16px; position: relative; }
 .btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; }
@@ -928,7 +933,7 @@ function render(r) {
   });
 
   h += `
-    <h3 style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--navy); margin:28px 0 16px;">OPEX Consulting Advisory Services</h3>
+    <h3 style="font-family:'DM Sans',sans-serif; font-size:18px; font-weight:700; color:var(--navy); margin:28px 0 16px; letter-spacing:-0.01em;">OPEX Consulting Advisory Services</h3>
     <div class="services-grid">
       ${(r.support_section.advisory_services || []).map(s => `
         <div class="service-item">
