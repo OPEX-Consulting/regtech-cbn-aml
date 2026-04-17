@@ -352,6 +352,7 @@ const coverageItems: { key: keyof FormData; name: string; desc: string }[] = [
    ═══════════════════════════════════════════════════════════════════════ */
 
 const STORAGE_KEY = "aml_assessment_draft";
+const REPORT_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-aml-report";
 
 const loadDraft = (): { step: number; data: FormData } => {
   try {
@@ -562,16 +563,40 @@ const AssessmentForm: React.FC = () => {
 
     setReportProgress(5);
 
-    // Call edge function
+    // Generate report from external AML report API
     let reportJson: AmlReportJson;
+    let progressInterval: number | undefined;
     try {
-      const { data: fnData, error: fnError } = await supabase.functions.invoke(
-        "generate-aml-report",
-        { body: { inputJson } }
-      );
-      if (fnError) throw fnError;
-      if (fnData?.error) throw new Error(fnData.error);
-      if (!fnData?.report) throw new Error("Edge function returned no report data.");
+      progressInterval = window.setInterval(() => {
+        setReportProgress((prev) => {
+          if (prev === null) return prev;
+          if (prev >= 96) return prev;
+          // Keep the bar moving, but reserve 100% for actual completion.
+          const next = prev < 60 ? prev + 6 : prev + 2;
+          return Math.min(next, 96);
+        });
+      }, 1800);
+
+      const response = await fetch(REPORT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(inputJson),
+      });
+
+      const fnData = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const errMsg =
+          fnData?.detail?.[0]?.msg ||
+          fnData?.error ||
+          `Report API failed with status ${response.status}`;
+        throw new Error(errMsg);
+      }
+
+      if (!fnData?.report) throw new Error("Report API returned no report data.");
 
       reportJson = fnData.report as AmlReportJson;
       reportJson._input = {
@@ -587,6 +612,8 @@ const AssessmentForm: React.FC = () => {
       toast.error(`Report generation failed: ${err.message ?? "Unknown error"}`);
       setSubmitting(false);
       setReportProgress(null);
+    } finally {
+      if (progressInterval) window.clearInterval(progressInterval);
     }
   };
 
@@ -616,6 +643,20 @@ const AssessmentForm: React.FC = () => {
     }
   };
 
+  const handleStartNewAssessment = () => {
+    assessmentIdRef.current = null;
+    setSubmitting(false);
+    setReportProgress(null);
+    setReportData(null);
+    setRegwatchCtaStatus("idle");
+    setErrors([]);
+    setShowErrors(false);
+    setStep(1);
+    setData(initialData);
+    localStorage.removeItem(STORAGE_KEY);
+    window.scrollTo(0, 0);
+  };
+
   /* ── Loading screen ─────────────────────────────────────────────────── */
 
   if (reportProgress !== null) {
@@ -624,6 +665,7 @@ const AssessmentForm: React.FC = () => {
         progress={reportProgress}
         institutionName={data.instName}
         onDownload={startDownload}
+        onStartNewAssessment={handleStartNewAssessment}
         onGetFullReport={handleGetFullReport}
         regwatchCtaStatus={regwatchCtaStatus}
       />
