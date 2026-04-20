@@ -640,9 +640,9 @@ function getRatingClass(r) {
 
 function getProductLink(name) {
   const n = String(name || "").toLowerCase();
-  if (n.includes("regport")) return "https://regport.regtech365.com/";
-  if (n.includes("regguard")) return "https://regguard-client-production.gentlemushroom-84487ebc.eastus.azurecontainerapps.io";
-  if (n.includes("regcomply")) return "https://www.regtech365.com/";
+  if (n.includes("regport")) return "https://www.report.regtech365.com/";
+  if (n.includes("regguard")) return "https://www.guard.regtech365.com/";
+  if (n.includes("regcomply")) return "https://www.comply.regtech365.com/";
   return "https://www.regtech365.com/";
 }
 

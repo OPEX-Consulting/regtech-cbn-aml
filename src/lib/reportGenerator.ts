@@ -1065,7 +1065,7 @@ export async function generatePdf(
 
   onProgress?.(40);
 
-  const fileName = `CBN_AML_Report_${r.meta.inst_name.replace(/\s+/g, "_")}.pdf`;
+  const fileName = `CBN_AML_Gap_Assessment_Report_${r.meta.inst_name.replace(/\s+/g, "_")}.pdf`;
 
   // Acquire file handle now, while still inside the user gesture, before the fetch loses it
   let fileHandle: any = null;
