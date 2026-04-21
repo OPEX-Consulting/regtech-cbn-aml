@@ -1067,20 +1067,6 @@ export async function generatePdf(
 
   const fileName = `CBN_AML_Gap_Assessment_Report_${r.meta.inst_name.replace(/\s+/g, "_")}.pdf`;
 
-  // Acquire file handle now, while still inside the user gesture, before the fetch loses it
-  let fileHandle: any = null;
-  if ("showSaveFilePicker" in window) {
-    try {
-      fileHandle = await (window as any).showSaveFilePicker({
-        suggestedName: fileName,
-        types: [{ description: "PDF Document", accept: { "application/pdf": [".pdf"] } }],
-      });
-    } catch (err: any) {
-      if (err.name === "AbortError") return; // user cancelled — stop here
-      throw err;
-    }
-  }
-
   // const PDF_API_URL = "http://localhost:8000/api/v1/generate-pdf";
   const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
 
@@ -1097,21 +1083,14 @@ export async function generatePdf(
   onProgress?.(90);
 
   const blob = await res.blob();
-
-  if (fileHandle) {
-    const writable = await fileHandle.createWritable();
-    await writable.write(blob);
-    await writable.close();
-  } else {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 
   onProgress?.(100);
 }

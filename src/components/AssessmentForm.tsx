@@ -555,7 +555,7 @@ const AssessmentForm: React.FC = () => {
     try {
       const { error } = await supabase
         .from("assessments")
-        .insert({ ...inputJson, id: assessmentId } as any);
+        .insert({ ...inputJson, id: assessmentId });
       if (error) throw error;
       localStorage.removeItem(STORAGE_KEY);
     } catch (err: any) {
@@ -611,13 +611,14 @@ const AssessmentForm: React.FC = () => {
       };
 
       // Persist report JSON for audit
-      supabase
+      const { error: updateError } = await supabase
         .from("assessments")
-        .update({ report_json: reportJson } as any)
-        .eq("id", assessmentId)
-        .then(({ error }) => {
-          if (error) console.error("Failed to save report_json:", error);
-        });
+        .update({ report_json: reportJson })
+        .eq("id", assessmentId);
+
+      if (updateError) {
+        console.error("Failed to save report_json:", updateError);
+      }
 
       setReportData(reportJson);
       setReportProgress(100);
