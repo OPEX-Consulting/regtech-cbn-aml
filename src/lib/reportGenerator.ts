@@ -1067,8 +1067,8 @@ export async function generatePdf(
 
   const fileName = `CBN_AML_Gap_Assessment_Report_${r.meta.inst_name.replace(/\s+/g, "_")}.pdf`;
 
-  const PDF_API_URL = "http://localhost:8000/api/v1/generate-pdf";
-  // const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
+  // const PDF_API_URL = "http://localhost:8000/api/v1/generate-pdf";
+  const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
 
   const res = await fetch(PDF_API_URL, {
     method: "POST",

@@ -355,8 +355,8 @@ const coverageItems: { key: keyof FormData; name: string; desc: string }[] = [
    ═══════════════════════════════════════════════════════════════════════ */
 
 const STORAGE_KEY = "aml_assessment_draft";
-const REPORT_API_URL = "http://localhost:8000/api/v1/generate-aml-report";
-// const REPORT_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-aml-report";
+// const REPORT_API_URL = "http://localhost:8000/api/v1/generate-aml-report";
+const REPORT_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-aml-report";
 
 const loadDraft = (): { step: number; data: FormData } => {
   try {
