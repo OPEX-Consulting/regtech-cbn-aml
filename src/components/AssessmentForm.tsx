@@ -355,8 +355,8 @@ const coverageItems: { key: keyof FormData; name: string; desc: string }[] = [
    ═══════════════════════════════════════════════════════════════════════ */
 
 const STORAGE_KEY = "aml_assessment_draft";
-// const REPORT_API_URL = "http://localhost:8000/api/v1/generate-aml-report";
-const REPORT_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-aml-report";
+const REPORT_API_URL = "http://localhost:8000/api/v1/generate-aml-report";
+// const REPORT_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-aml-report";
 
 const loadDraft = (): { step: number; data: FormData } => {
   try {
@@ -534,12 +534,15 @@ const AssessmentForm: React.FC = () => {
 
   const startDownload = async () => {
     if (!reportData) return;
+    const toastId = toast.loading("Building your high-fidelity PDF... Please wait.");
     try {
-      await generatePdf(reportData, () => setReportProgress(100));
-      toast.success("Report downloaded successfully.");
+      await generatePdf(reportData, (pct) => {
+        if (pct === 100) setReportProgress(100);
+      });
+      toast.success("Report downloaded successfully.", { id: toastId });
     } catch (err: any) {
       console.error("PDF generation failed:", err);
-      toast.error("PDF generation failed. Please try again.");
+      toast.error("PDF generation failed. Please try again.", { id: toastId });
     }
   };
 
@@ -553,10 +556,15 @@ const AssessmentForm: React.FC = () => {
 
     // Save to Supabase
     try {
-      const { error } = await supabase
+      const { data: insertData, error: insertError } = await supabase
         .from("assessments")
-        .insert({ ...inputJson, id: assessmentId });
-      if (error) throw error;
+        .insert({ ...inputJson, id: assessmentId })
+        .select("id")
+        .single();
+
+      if (insertError) throw insertError;
+      
+      assessmentIdRef.current = insertData.id;
       localStorage.removeItem(STORAGE_KEY);
     } catch (err: any) {
       console.error("Failed to save assessment:", err);
@@ -576,7 +584,6 @@ const AssessmentForm: React.FC = () => {
         setReportProgress((prev) => {
           if (prev === null) return prev;
           if (prev >= 96) return prev;
-          // Keep the bar moving, but reserve 100% for actual completion.
           const next = prev < 60 ? prev + 6 : prev + 2;
           return Math.min(next, 96);
         });
@@ -611,13 +618,18 @@ const AssessmentForm: React.FC = () => {
       };
 
       // Persist report JSON for audit
-      const { error: updateError } = await supabase
+      const { error: updateError, data: updateData } = await supabase
         .from("assessments")
         .update({ report_json: reportJson })
-        .eq("id", assessmentId);
+        .eq("id", assessmentIdRef.current)
+        .select("id");
 
       if (updateError) {
         console.error("Failed to save report_json:", updateError);
+      } else if (!updateData || updateData.length === 0) {
+        console.warn("⚠️ No rows were updated with report_json. This usually means the RLS 'update' policy is missing or targeting the wrong ID.", { id: assessmentIdRef.current });
+      } else {
+        console.log("✅ Successfully saved report_json for assessment:", assessmentIdRef.current);
       }
 
       setReportData(reportJson);
