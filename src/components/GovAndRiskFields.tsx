@@ -47,7 +47,7 @@ export const RiskFlagItem: React.FC<RiskFlagItemProps> = ({
       onChange={(e) => onChange(e.target.checked)}
       className="sr-only"
     />
-    <span>{label}</span>
+    <span className="font-medium">{label}</span>
   </label>
 );
 
@@ -59,7 +59,7 @@ interface GovItemProps {
 
 export const GovItem: React.FC<GovItemProps> = ({ label, value, onChange }) => (
   <div className="flex items-center justify-between py-3 border-b border-border-light gap-3 last:border-b-0">
-    <span className="text-[13px] text-foreground leading-snug flex-1">
+    <span className="text-[13px] font-medium text-foreground leading-snug flex-1">
       {label}
     </span>
     <div className="flex gap-1.5 flex-shrink-0">

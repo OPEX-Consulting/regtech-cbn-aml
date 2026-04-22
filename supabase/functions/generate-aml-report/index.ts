@@ -12,18 +12,18 @@ const corsHeaders = {
  * Used for hydration so AI only needs to generate gaps.
  */
 const DEFAULT_STANDARDS: Record<string, any> = {
-  "5.1": { section: "5.1", title: "Integrated AML Solution", status: "Compliant" },
-  "5.2": { section: "5.2", title: "CDD/KYC/KYB", status: "Compliant" },
-  "5.3": { section: "5.3", title: "Sanctions & PEP Screening", status: "Compliant" },
-  "5.4": { section: "5.4", title: "Customer Risk Assessment", status: "Compliant" },
-  "5.5": { section: "5.5", title: "Transaction Monitoring", status: "Compliant" },
-  "5.6": { section: "5.6", title: "Fraud Monitoring", status: "Compliant" },
+  "5.1": { section: "5.1", title: "AML Solution", status: "Compliant" },
+  "5.2": { section: "5.2", title: "CDD, KYC and KYB", status: "Compliant" },
+  "5.3": { section: "5.3", title: "Sanction Lists & PEP Screening", status: "Compliant" },
+  "5.4": { section: "5.4", title: "Risk Assessment", status: "Compliant" },
+  "5.5": { section: "5.5", title: "Transaction Monitoring & Risk-Based Analyses", status: "Compliant" },
+  "5.6": { section: "5.6", title: "Fraud Monitoring and Detection", status: "Compliant" },
   "5.7": { section: "5.7", title: "Case Management", status: "Compliant" },
-  "5.8": { section: "5.8", title: "Regulatory Reporting", status: "Compliant" },
-  "5.9": { section: "5.9", title: "Audit Trail", status: "Compliant" },
-  "5.10": { section: "5.10", title: "Core Banking Integration", status: "Compliant" },
-  "5.11": { section: "5.11", title: "Data Security", status: "Compliant" },
-  "5.12": { section: "5.12", title: "Management Information", status: "Compliant" }
+  "5.8": { section: "5.8", title: "Reporting", status: "Compliant" },
+  "5.9": { section: "5.9", title: "Audit and Governance", status: "Compliant" },
+  "5.10": { section: "5.10", title: "System Integration & Scalability", status: "Compliant" },
+  "5.11": { section: "5.11", title: "Security & Data Protection", status: "Compliant" },
+  "5.12": { section: "5.12", title: "User Interface & Customisation", status: "Compliant" }
 };
 
 /**
@@ -32,24 +32,29 @@ const DEFAULT_STANDARDS: Record<string, any> = {
  */
 const STATIC_PRODUCTS: Record<string, any> = {
   "RegPort": {
-    "tagline": "Integrated AML Platform for CBN Baseline Standards Compliance",
-    "description": "RegPort unifies CDD/KYC, sanctions/PEP screening, transaction monitoring, customer risk assessment, and regulatory reporting in a single platform. The platform is purpose-built for Nigerian financial institutions, featuring real-time BVN/NIN integration via NIBSS, automated goAML/NFIU filing, and AI-enabled fuzzy matching for international sanctions lists.",
+    "tagline": "Automated AML/CFT and Regulatory Reporting Platform",
+    "description": "RegPort unifies CDD, KYC/KYB verification, and rule-based risk detection into one system, with real-time identity validation across NIN, BVN, CAC, TIN, PVC, FRSC, and Credit Bureau databases. Its STR/SAR rule engine leverages 20+ red flags to detect suspicious patterns. It generates regulator-ready outputs including CTR, STR (via GoAML), ICAD Returns, PEP and Beneficial Ownership reports, and Proliferation Financing risk assessments. Features customer risk profiling, automated workflow case management, and secure API connectivity.",
     "standards_addressed": "5.1, 5.2, 5.3, 5.4, 5.5, 5.8, 5.10"
   },
   "RegGuard": {
-    "tagline": "Real-Time Fraud Monitoring with Bidirectional Risk Feed",
-    "description": "RegGuard provides real-time fraud monitoring for card issuance, mobile money, and agent network channels. It detects pattern-based fraud like SIM swap attacks and account takeover, with an automated feed that pushes fraud alerts directly into customer risk scores to identify money laundering disguised as fraud.",
+    "tagline": "Intelligent Fraud Detection and Risk Learning",
+    "description": "RegGuard provides real-time fraud monitoring and pattern detection across digital channels (card, mobile, agent network). It identifies SIM swap attacks and account takeovers, with an automated feed that pushes fraud signals directly into customer risk scores to identify money laundering disguised as fraud, supporting a unified financial crime risk architecture.",
     "standards_addressed": "5.6"
   },
   "RegComply": {
-    "tagline": "Enterprise Case Management with Immutable Audit Trails",
-    "description": "RegComply delivers the mandatory Case Management and Governance Audit layer. It enforces Maker-Checker workflows for investigation, provides role-based access for MLROs, and maintains tamper-proof audit logs of all configuration changes and alert dispositions required for CBN examination.",
+    "tagline": "Enterprise Governance, Risk, and Compliance (GRC) Module",
+    "description": "RegComply enables organizations to align with international and local frameworks (ISO 27001, GDPR, CBN AML/CFT, etc.). It features an assessment engine for conformity evaluation, audit management with full collaboration support, and centralized evidence management. It implements ISO 27001/31000 methodologies for AI-powered risk identification and treatment, including policy versioning and unified compliance health dashboards.",
     "standards_addressed": "5.7, 5.9, 5.12"
   },
+  "RegWatch": {
+    "tagline": "Real-Time Regulatory Intelligence and Policy Monitoring",
+    "description": "RegWatch is an always-on monitor for the regulatory landscape, curating over 1,500 circulars and standards from CBN, NFIU, and NDPC. It uses AI-driven interpretation to surface relevant policy changes and deliver real-time alert notifications. This intelligence feeds directly into audit workflows and risk assessments to ensure teams are never caught off-guard by new regulatory obligations.",
+    "standards_addressed": "Regulatory Intelligence"
+  },
   "RegLearn": {
-    "tagline": "AML Training Programme with Documented Records",
-    "description": "RegLearn provides role-specific AML/CFT/CPF training modules covering the 12 Baseline Standards. The platform tracks staff completion, assessment scores, and certification status, producing the documented training records specifically mandated under Section 6.7 of the Circular.",
-    "standards_addressed": "6.7"
+    "tagline": "Digital Compliance Academy and Awareness Platform",
+    "description": "RegLearn ensures employee compliance awareness through on-demand courses (AML/CFT, Data Protection, etc.) and monthly live sessions delivered by experts. It offers advanced certification tracks (Certified AML Specialist, DPO Pathway) and provides management dashboards for full visibility into progress and completion rates, satisfying mandatory regulator training requirements.",
+    "standards_addressed": "6.7, 5.12"
   }
 };
 
@@ -73,7 +78,7 @@ const SYSTEM_PROMPT = `You are a regulatory compliance analyst specialising in N
 - Output ONLY valid JSON. No preamble, no explanation, no markdown fences.
 - All content must be institution-specific. Use the provided [inst_name] instead of generic placeholders like "the institution" or "GG".
 - Write in authoritative regulatory prose — direct, precise, evidence-based.
-- Name specific RegTech365 products (RegPort, RegGuard, RegComply, RegLearn) only where genuinely relevant to the gap.
+- Name specific RegTech365 products (RegPort, RegGuard, RegComply, RegWatch, RegLearn) only where genuinely relevant to the gap.
 - **MAXIMUM BREVITY**: Use exactly enough words to be clear. Avoid filler phrases ("it is recommended that...", "at this point in time..."). Start actions with strong verbs.
 
 ---
@@ -189,9 +194,9 @@ The user message contains the institution's self-assessment data as a JSON objec
 ## COMPLIANCE DEADLINES
 
 Derive compliance_deadline and compliance_deadline_basis from institution type:
-- DMBs (commercial, merchant, non-interest banks): September 2027 — 18 months from March 2026 issuance
-- All others (MFBs, PSPs, IMTOs, MMOs, Finance Companies, PMIs): March 2028 — 24 months from issuance
-- Universal roadmap submission deadline (ALL institutions): 10 June 2026
+- DMBs (commercial, merchant, non-interest banks): September 10, 2027 — 18 months from March 10, 2026 issuance
+- All others (MFBs, PSPs, IMTOs, MMOs, Finance Companies, PMIs): March 10, 2028 — 24 months from issuance
+- Universal roadmap submission deadline (ALL institutions): June 10, 2026 — 3 months from issuance
 
 ---
 
@@ -226,18 +231,18 @@ LOW — ALL of:
 
 ### Per-Standard Status
 
-5.1: Critical Gap if None/Manual. Gap Identified if Partial. Compliant only if Full and all 8 functions covered.
-5.2: Use cov_cdd + bvn_status + kyc_review + ubo_map. Critical Gap if cov_cdd is None/Manual OR bvn_status is "No integration". Gap Identified if partial or BVN is manual/batch. Compliant only if cov_cdd Full + bvn Real-time + KYC review automated.
-5.3: Use cov_sanctions + sanctions_capab + sanction_lists. Critical Gap if cov_sanctions None AND sanctions_capab None. Gap Identified if partial screening or limited lists. Compliant only if Real-time AI screening across domestic + international lists.
-5.4: Critical Gap if cov_risk None/Manual. Gap Identified if covered but partial. Compliant only if full system with dynamic scoring.
-5.5: Use cov_txmon. Critical Gap if cov_txmon None/Manual or system is None/Manual. Gap Identified if partial. Compliant only if full real-time system.
-5.6: Use cov_fraud + fraud_capab + fraud_feed. Critical Gap if cov_fraud None AND institution is high-fraud-risk (IMTO, PSP, MMO, card issuer) OR risk factors include material fraud exposure. Gap Identified if not covered but no elevated fraud risk. Compliant only if full real-time fraud monitoring with risk feed.
-5.7: Critical Gap if cov_case None. Gap Identified if partial. Compliant only if ECM with Maker-Checker and full audit trail.
-5.8: Use cov_reporting + reporting_method + report_approval. Critical Gap if cov_reporting None OR reporting_method is "Not filing". Gap Identified if partial or manual portal. Compliant only if fully automated with documented approval.
-5.9: Critical Gap if cov_audit None AND audit is "Not covered". Gap Identified if partial. Compliant only if immutable audit trail + AML internal audit at least twice yearly.
-5.10: Critical Gap if system is None. Gap Identified if partial with no confirmed integration. Compliant only if bidirectional real-time integration confirmed.
-5.11: Use cov_security + encryption + mfa + data_sov + bia_status. Always at minimum Gap Identified. Compliant only if encryption Full + MFA Full + data_sov Nigeria + BIA includes AML.
-5.12: Gap Identified if system is partial or None. Compliant only if full system with real-time dashboards and documented customisation.
+5.1 (AML Solution): Critical Gap if status is None/Manual. Compliant only if Full and supports all 9 functional areas (a-i) including Audit & Governance and Data Protection relevant to AML.
+5.2 (CDD, KYC and KYB): Critical Gap if cov_cdd is None/Manual OR bvn_status is "No integration". Standard 5.2(b)(i) requires real-time identity corroboration via BVN/NIN linkage.
+5.3 (Sanction Lists & PEP Screening): Critical Gap if cov_sanctions None AND sanctions_capab None. Compliant only if Real-time AI screening with fuzzy matching across domestic + international lists. 5.3(a)(viii) requires automated transaction hold/interdiction on confirmed matches.
+5.4 (Risk Assessment): Critical Gap if cov_risk None/Manual. Compliant only if full system with dynamic scoring. 5.4(a)(iv) requires a documented governance framework for AI/ML models including human oversight and explainability.
+5.5 (Transaction Monitoring & Risk-Based Analyses): Critical Gap if status None/Manual. 5.5(b)(vii) mandates strict criteria for "Clearly Low-Risk" automated closure: (a) Rule approved by Governance Committee; (b) Closure decision relies on BOTH transactional context and KYC/KYB data; (c) Customer risk is Low and unchanged; (d) No unresolved alerts/cases. 5.5(b)(vi) requires documented Alert Review SLAs.
+5.6 (Fraud Monitoring and Detection): Required for all institutions (5.6). High-risk institutions (DMBs, PSPs, MMOs, card issuers) must demonstrate a roadmap toward a "Unified Financial Crime Risk Architecture" (5.6(b)(i)).
+5.7 (Case Management): Compliant only if Enterprise Case Management (ECM) with Maker-Checker workflows and immutable audit trails (5.7).
+5.8 (Reporting): Covers STR, SAR, CTR, FTR (5.8). Critical Gap if reporting_method is "Not filing".
+5.9 (Audit and Governance): Critical Gap if cov_audit None. Requires immutable audit trail (5.9) and annual independent validation of AI/ML models (5.5(b)(i)).
+5.10 (System Integration & Scalability): Standard 5.10(d) states standalone transaction feeds are UNACCEPTABLE for institutions rated High or Above Average risk. Must be fully integrated with KYC/KYB and risk profiles.
+5.11 (Security & Data Protection): Requires encryption at rest/transit, MFA, and BIA with defined RTO/RPO (5.11). Must comply with NDPA and Nigerian data sovereignty laws.
+5.12 (User Interface & Customisation): Requires real-time/near real-time dashboards for AML metrics and efficient investigation navigation (5.12).
 
 ### Governance Item Mapping
 Map each of the 10 controls to "In place", "Not confirmed", or "Not in place" using gov_detail:
@@ -306,13 +311,41 @@ For each row:
 Mandatory requirements apply to ALL institutions unconditionally.
 Conditional requirements are triggered by institution type, risk class, product profile, or AI/ML usage.
 
+## CONTEXTUAL GROUNDING
+
+### CBN Circular BSD/DIR/PUB/LAB/019/002
+Issued March 10, 2026, this circular mandates that manual AML controls are no longer sufficient. It requires all banks, MMOs, IMTOs, and OFIs to deploy automated AML/CFT/CPF solutions. Objectives include shifting to real-time monitoring, ensuring interoperability between AML and core banking systems, and leveraging AI/ML for anomaly detection. A hard deadline of June 10, 2026 is set for the submission of a 12-section Implementation Roadmap. Full compliance is required within 18 months for DMBs and 24 months for others. The "Proportionality Principle" allows for calibration based on size, but "High Risk" institutions are explicitly prohibited from using standalone (unintegrated) transaction feeds (5.10d).
+
+### Baseline Standards (5.1 – 5.12)
+- **5.1 AML Solution**: Must support 9 functional areas including risk assessment, sanctions, monitoring, and reporting.
+- **5.2 CDD, KYC & KYB**: Requires real-time identity corroboration (BVN/NIN) and automated risk profiling.
+- **5.3 Sanctions & PEP**: Real-time screening with fuzzy matching; must support automated interdiction/blocking.
+- **5.4 Risk Assessment**: Dynamic scoring; AI/ML models require human oversight and explainability.
+- **5.5 Transaction Monitoring**: Real-time, multi-scenario analysis. Automated alert closure is strictly limited to low-risk scenarios meeting 4 specific criteria.
+- **5.6 Fraud Monitoring**: Real-time monitoring across digital channels; High-risk institutions must roadmap toward a unified AML-Fraud architecture.
+- **5.7 Case Management**: ECM with Maker-Checker workflows and immutable audit trails.
+- **5.8 Reporting**: Automated generation of STR, SAR, CTR, and FTR.
+- **5.9 Audit & Governance**: Tamper-proof logs and annual independent validation of AI models.
+- **5.10 System Integration**: Secure, bidirectional API-based integration with core banking.
+- **5.11 Security & Data Protection**: Encryption, MFA, and NDPA compliance.
+- **5.12 UI & Customisation**: Real-time dashboards and efficient navigation for investigators.
+
+### RegTech365 Platform & Products
+RegTech365 is an integrated regulatory technology ecosystem that combines intelligent automation, AI-driven analytics, and document-centric workflows to simplify compliance. It transforms reactive obligations into proactive, intelligence-driven systems.
+
+- **RegPort**: Automated AML/CFT platform. Unifies CDD/KYC/KYB, real-time identity validation (NIN, BVN, etc.), STR/SAR rule engine (20+ flags), and regulator-ready reporting (CTR, STR, ICAD, GoAML).
+- **RegComply**: GRC module for framework alignment (ISO 27001, GDPR, CBN). Features audit management, centralized evidence, AI-powered risk models, and unified health dashboards.
+- **RegGuard**: Intelligent fraud detection (SIM swap, account takeover) with a bidirectional feed pushing signals into the AML risk score for a unified financial crime architecture.
+- **RegWatch**: Regulatory intelligence module. Monitors 1,500+ circulars from CBN/NFIU/NDPC. AI interpretation surfaces policy changes and alerts teams to new obligations.
+- **RegLearn**: Digital compliance academy. On-demand AML/CFT and specialized courses (Certified AML Specialist, DPO). Management dashboards track progress to satisfy training mandates.
+
 ---
 
 ## FIELD-LEVEL CONTENT GUIDANCE
 
 ### Executive Summary
 - lead: ~40 words. Institutional context — who they are, what they face.
-- body_paragraphs: 3 paragraphs, each ~50 words. Cover: (1) circular context and scope, (2) assessment findings overview, (3) urgency and next steps.
+- body_paragraphs: 3 paragraphs, each ~50 words. Use CONTEXTUAL GROUNDING to cover: (1) circular context and scope, (2) assessment findings overview, (3) urgency of the June 10 roadmap and next steps.
 - inline_alert: ~30 words. A critical CBN quote or warning relevant to this institution type. Start with specific CBN language.
 
 ### Profile
@@ -321,9 +354,9 @@ Conditional requirements are triggered by institution type, risk class, product 
 - sector_context_box: ~25 words.
 
 ### Gap Analysis Standards
-- finding: ~35 words. State what's missing, cite CBN requirement, explain implication.
-- required_action: ~25 words. Directive. What must be done and by when.
-- regtech_solution: ~25 words. How RegTech365 specifically closes this gap.
+- finding: ~35 words. State what's missing, cite the specific CBN standard (5.1-5.12) from CONTEXTUAL GROUNDING, and explain the regulatory implication.
+- required_action: ~25 words. Directive. What must be done and by when (referencing the June 10 deadline where applicable).
+- regtech_solution: ~25 words. How the assigned RegTech365 product specifically closes this gap using the technical capabilities described in CONTEXTUAL GROUNDING.
 - regtech_products: array of product names (e.g., ["RegPort", "RegGuard"])
 - req_tags: array of {label, type} badges.
 
@@ -339,7 +372,7 @@ Conditional requirements are triggered by institution type, risk class, product 
 ### Roadmap
 - Each phase: description (~40-50 words, one tight paragraph)
 - deliverables: array of short strings
-- milestones: array of {milestone, target_date, owner} (~6 items)
+- milestones: array of {milestone, month_offset, owner}. month_offset is an integer representing number of months from today.
 
 ### Products
 - name: One of RegPort, RegGuard, RegComply, RegLearn.
@@ -360,18 +393,10 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
 
 {
   "meta": {
-    "inst_name": "string",
-    "inst_type": "string",
     "inst_type_full": "string",
     "report_date": "string",
-    "circular_ref": "BSD/DIR/PUB/LAB/019/002",
-    "roadmap_deadline": "10 June 2026",
     "compliance_deadline": "string",
     "compliance_deadline_basis": "string",
-    "cbn_risk": "string",
-    "tx_vol": "string",
-    "geo": "string",
-    "group_structure": "string",
     "risk_factors_display": "string"
   },
   "executive_summary": {
@@ -458,7 +483,7 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
       }
     ],
     "milestones": [
-      { "milestone": "string", "target_date": "string", "owner": "string" }
+      { "milestone": "string", "month_offset": 0, "owner": "string" }
     ]
   },
   "support_section": {
@@ -603,6 +628,18 @@ Return ONLY the JSON object. No preamble, no explanation, no markdown code fence
 
     // --- PII HYDRATION START ---
     if (report.meta) {
+      // Re-insert exact fields from input to save prompt tokens
+      report.meta.inst_name = minimalInputJson.inst_name;
+      report.meta.inst_type = minimalInputJson.inst_type;
+      report.meta.cbn_risk = minimalInputJson.cbn_risk;
+      report.meta.tx_vol = minimalInputJson.tx_vol;
+      report.meta.geo = minimalInputJson.geo;
+      report.meta.group_structure = minimalInputJson.group_structure;
+
+      // Re-insert static constants
+      report.meta.circular_ref = "BSD/DIR/PUB/LAB/019/002";
+      report.meta.roadmap_deadline = "10 June 2026";
+
       report.meta.contact_name = originalPII.contact_name;
       report.meta.contact_email = originalPII.contact_email;
       report.meta.contact_phone = originalPII.contact_phone;
@@ -630,6 +667,22 @@ Return ONLY the JSON object. No preamble, no explanation, no markdown code fence
             : [];
         report.support_section.advisory_services = [...STATIC_ADVISORY, ...dynamicAdvisory];
     }
+
+    // --- ROADMAP HYDRATION START ---
+    if (report.roadmap && Array.isArray(report.roadmap.milestones)) {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const now = new Date();
+        
+        report.roadmap.milestones = report.roadmap.milestones.map((m: any) => {
+            const milestoneDate = new Date(now.getFullYear(), now.getMonth() + (m.month_offset || 0), 1);
+            const targetDateStr = `${monthNames[milestoneDate.getMonth()]} ${milestoneDate.getFullYear()}`;
+            
+            // Re-map month_offset to target_date for the final JSON
+            const { month_offset, ...rest } = m;
+            return { ...rest, target_date: targetDateStr };
+        });
+    }
+    // --- ROADMAP HYDRATION END ---
     // --- SUPPORT HYDRATION END ---
 
     return new Response(JSON.stringify({ report }), {

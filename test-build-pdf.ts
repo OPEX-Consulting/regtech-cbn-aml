@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { chromium } from 'playwright';
 
 /**
@@ -47,11 +47,11 @@ async function main() {
     const scriptToInject = `const DEMO_REPORT = ${escapedJson};`;
     
     // Replace the DEMO_REPORT variable in the built-in script
-    let updatedHtml = templateHtml.replace(/const DEMO_REPORT = \{[\s\S]*?\};/, scriptToInject);
+    let updatedHtml = templateHtml.replace(/const DEMO_REPORT\s*=\s*\{[\s\S]*?\};/, scriptToInject);
 
     if (updatedHtml === templateHtml) {
         console.warn("⚠️ Could not find DEMO_REPORT block in template, injecting as fallback script.");
-        updatedHtml = templateHtml.replace('</body>', `<script>window.addEventListener('load', () => renderReport(${escapedJson}));</script></body>`);
+        updatedHtml = templateHtml.replace('</body>', `<script>window.addEventListener('load', () => render(${escapedJson}));</script></body>`);
     }
 
     fs.writeFileSync(outputHtmlPath, updatedHtml);

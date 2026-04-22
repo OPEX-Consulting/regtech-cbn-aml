@@ -255,7 +255,7 @@ function govStatusDisplay(status: string): string {
 function buildCover(r: AmlReportJson): string {
   const rc = ratingClass(r.overall_rating.rating);
   const ratingText = `${r.scorecard.standards_critical_gap_count} of 12 standards carry a Critical Gap. ${r.scorecard.standards_compliant_count === 0 ? 'No standard is currently assessed as Compliant.' : `${r.scorecard.standards_compliant_count} standard(s) assessed as Compliant.`} Immediate action required before ${r.meta.roadmap_deadline}.`;
-  
+
   return `
   <div class="report-cover">
     <div class="cover-brand">
@@ -301,7 +301,7 @@ function buildCover(r: AmlReportJson): string {
     </div>
     <div class="cover-footer">
       <div>Prepared by OPEX Consulting / RegTech365</div>
-      <div>compliance@opexconsulting.ng</div>
+      <div>business@regtech365.com</div>
       <div class="cover-footer-note">Confidential — for internal compliance planning only<br>Not legal advice</div>
     </div>
   </div>`;
@@ -357,7 +357,7 @@ function buildSection1(r: AmlReportJson): string {
 function buildSection2(r: AmlReportJson): string {
   const sc = r.scorecard;
   const sectorBox = r.profile?.sector_context_box || r.overall_rating.sector_context_note || "";
-  
+
   return `
   <div class="report-section page-break" id="section-2">
     <div class="section-eyebrow">SECTION TWO</div>
@@ -444,7 +444,7 @@ function buildSection4(r: AmlReportJson): string {
   const standards = (r.standards || []).map(s => {
     const tags = (s.req_tags || []).map(t => reqTagBadge(t)).join(" ");
     const products = (s.regtech_products || []).map(p => `<span class="product-pill">→ ${esc(p)}</span>`).join(" ");
-    
+
     return `
     <div class="std-card avoid-break ${gapRowClass(s.status)}">
       <div class="std-card-header">
@@ -610,7 +610,7 @@ function buildSection8(r: AmlReportJson): string {
 
   const products = ss.products.map(p => {
     const gapsClosed = p.gaps_closed.map(g => `<span class="gap-closed-tag">${esc(g)}</span>`).join("");
-    
+
     return `
     <div class="product-card-v2 avoid-break">
       <div class="product-card-header-v2">
@@ -635,16 +635,16 @@ function buildSection8(r: AmlReportJson): string {
       <div class="cta-title">${esc(cta.title)}</div>
       <p class="cta-subtitle">${esc(cta.subtitle)}</p>
       <div class="cta-buttons">
-        <a class="cta-btn cta-btn-primary" href="mailto:compliance@opexconsulting.ng">${esc(cta.primary_button_label)} →</a>
-        <a class="cta-btn cta-btn-secondary" href="mailto:compliance@opexconsulting.ng">${esc(cta.secondary_button_label)}</a>
+        <a class="cta-btn cta-btn-primary" href="mailto:business@regtech365.com?subject=CBN%20Roadmap%20Support%20-%20${encodeURIComponent(r.meta.inst_name)}">${esc(cta.primary_button_label)} →</a>
+        <a class="cta-btn cta-btn-secondary" href="mailto:business@regtech365.com?subject=RegPort%20Demo%20Request%20-%20${encodeURIComponent(r.meta.inst_name)}">${esc(cta.secondary_button_label)}</a>
       </div>
     </div>` : `
     <div class="cta-box avoid-break">
-      <div class="cta-title">The next step is straightforward</div>
-      <p class="cta-subtitle">${esc(ss.next_steps_box || "Contact us for a complimentary advisory session.")}</p>
+      <div class="cta-title">Finalize Your Mandatory CBN Roadmap</div>
+      <p class="cta-subtitle">The CBN Circular mandates that all institutions submit a detailed 12-section Implementation Roadmap by <strong>June 10, 2026</strong>. OPEX Consulting can finalize your roadmap template based on this assessment.</p>
       <div class="cta-buttons">
-        <a class="cta-btn cta-btn-primary" href="mailto:compliance@opexconsulting.ng">Book Advisory Session →</a>
-        <a class="cta-btn cta-btn-secondary" href="mailto:compliance@opexconsulting.ng">Request RegPort Demo</a>
+        <a class="cta-btn cta-btn-primary" href="mailto:business@regtech365.com?subject=CBN%20Roadmap%20Support%20-%20${encodeURIComponent(r.meta.inst_name)}">Get Roadmap Support →</a>
+        <a class="cta-btn cta-btn-secondary" href="mailto:business@regtech365.com?subject=RegPort%20Demo%20Request%20-%20${encodeURIComponent(r.meta.inst_name)}">Request RegPort/RegGuard/RegComply/RegLearn Demo</a>
       </div>
     </div>`;
 
@@ -672,7 +672,7 @@ function buildFooter(r: AmlReportJson): string {
     <p class="disclaimer-text"><strong>Disclaimer</strong>${esc(disclaimerText)}</p>
   </div>
   <div class="report-footer">
-    <span class="footer-brand">OPEX Consulting Limited &nbsp;·&nbsp; RegTech365 &nbsp;·&nbsp; compliance@opexconsulting.ng</span>
+    <span class="footer-brand">OPEX Consulting Limited &nbsp;·&nbsp; RegTech365 &nbsp;·&nbsp; business@regtech365.com</span>
   </div>`;
 }
 
@@ -1006,12 +1006,36 @@ export async function generatePdf(
   onProgress?: (pct: number) => void
 ): Promise<void> {
   onProgress?.(10);
-  
+
   const r = { ...reportData };
   if (r._input) {
+    // PII & Meta Hydration
+    r.meta.inst_name = r.meta.inst_name || r._input.inst_name || "—";
+    r.meta.contact_name = r.meta.contact_name || r._input.contact_name || "—";
+    r.meta.contact_email = r.meta.contact_email || r._input.contact_email || "—";
+    r.meta.contact_role = r.meta.contact_role || r._input.contact_role || "—";
     r.meta.cbn_risk = r.meta.cbn_risk || r._input.cbn_risk || "—";
     r.meta.tx_vol = r.meta.tx_vol || txVolLabel(r._input.tx_vol ?? "");
     r.meta.geo = r.meta.geo || r._input.geo || "—";
+    r.meta.report_date = r.meta.report_date || new Date().toLocaleDateString('en-GB');
+    r.meta.circular_ref = "BSD/DIR/PUB/LAB/019/002";
+    r.meta.roadmap_deadline = "10 June 2026";
+  }
+
+  // Roadmap Hydration (Convert relative offsets to real dates)
+  if (r.roadmap && Array.isArray(r.roadmap.milestones)) {
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const now = new Date();
+
+    r.roadmap.milestones = r.roadmap.milestones.map((m: any) => {
+      // If target_date is missing OR looks like a raw offset, calculate it
+      if (!m.target_date || typeof m.month_offset === 'number') {
+        const milestoneDate = new Date(now.getFullYear(), now.getMonth() + (m.month_offset || 0), 1);
+        const targetDateStr = `${monthNames[milestoneDate.getMonth()]} ${milestoneDate.getFullYear()}`;
+        return { ...m, target_date: targetDateStr };
+      }
+      return m;
+    });
   }
 
   // Attempt to use the external premium template for consistency
@@ -1067,8 +1091,8 @@ export async function generatePdf(
 
   const fileName = `CBN_AML_Gap_Assessment_Report_${r.meta.inst_name.replace(/\s+/g, "_")}.pdf`;
 
-  // const PDF_API_URL = "http://localhost:8000/api/v1/generate-pdf";
-  const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
+  const PDF_API_URL = "http://localhost:8000/api/v1/generate-pdf";
+  // const PDF_API_URL = "https://regtech365-ai.gentlemeadow-8588bc06.eastus.azurecontainerapps.io/api/v1/generate-pdf";
 
   const res = await fetch(PDF_API_URL, {
     method: "POST",
