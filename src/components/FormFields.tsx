@@ -3,7 +3,7 @@ import React from "react";
 interface RadioGroupFieldProps {
   label: string;
   name: string;
-  options: { id: string; value: string; label: string }[];
+  options: { id: string; value: string; label: string; description?: string }[];
   value: string;
   onChange: (value: string) => void;
   columns?: 1 | 2 | 3 | 4;
@@ -60,7 +60,14 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
               onChange={() => onChange(opt.value)}
               className="sr-only"
             />
-            {opt.label}
+            <div className="flex flex-col">
+              <span className="font-medium">{opt.label}</span>
+              {opt.description && (
+                <span className="text-[11px] text-muted-foreground mt-0.5 leading-tight">
+                  {opt.description}
+                </span>
+              )}
+            </div>
           </label>
         ))}
       </div>
@@ -70,7 +77,7 @@ export const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
 
 interface CheckboxGroupFieldProps {
   label: string;
-  options: { id: string; value: string; label: string }[];
+  options: { id: string; value: string; label: string; description?: string }[];
   values: string[];
   onChange: (values: string[]) => void;
   columns?: 1 | 2 | 3;
@@ -146,7 +153,14 @@ export const CheckboxGroupField: React.FC<CheckboxGroupFieldProps> = ({
                 onChange={() => toggle(opt.value)}
                 className="sr-only"
               />
-              {opt.label}
+              <div className="flex flex-col">
+                <span className="font-medium">{opt.label}</span>
+                {opt.description && (
+                  <span className="text-[11px] text-muted-foreground mt-0.5 leading-tight">
+                    {opt.description}
+                  </span>
+                )}
+              </div>
             </label>
           );
         })}
@@ -227,7 +241,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
       onChange={(e) => onChange(e.target.checked)}
       className="sr-only"
     />
-    <span className="text-[13px] text-foreground leading-tight">{label}</span>
+    <span className="text-[13px] font-medium text-foreground leading-tight">{label}</span>
   </label>
 );
 

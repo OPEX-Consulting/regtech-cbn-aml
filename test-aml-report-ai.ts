@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { AnthropicFoundry } from "@anthropic-ai/foundry-sdk";
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
  * MASTER REGULATORY TEST: AZURE CLAUDE STREAMING
@@ -79,6 +79,18 @@ async function main() {
 
         // --- PII UNMASKING START ---
         if (parsed.meta) {
+          // Re-insert exact fields from input to save prompt tokens
+          parsed.meta.inst_name = minimalInputJson.inst_name;
+          parsed.meta.inst_type = minimalInputJson.inst_type;
+          parsed.meta.cbn_risk = minimalInputJson.cbn_risk;
+          parsed.meta.tx_vol = minimalInputJson.tx_vol;
+          parsed.meta.geo = minimalInputJson.geo;
+          parsed.meta.group_structure = minimalInputJson.group_structure;
+
+          // Re-insert static constants
+          parsed.meta.circular_ref = "BSD/DIR/PUB/LAB/019/002";
+          parsed.meta.roadmap_deadline = "10 June 2026";
+
           parsed.meta.contact_name = originalPII.contact_name;
           parsed.meta.contact_email = originalPII.contact_email;
           parsed.meta.contact_phone = originalPII.contact_phone;
@@ -139,6 +151,22 @@ async function main() {
             : [];
           parsed.support_section.advisory_services = [...STATIC_ADVISORY, ...dynamicAdvisory];
         }
+
+        // --- ROADMAP HYDRATION START ---
+        if (parsed.roadmap && Array.isArray(parsed.roadmap.milestones)) {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const now = new Date();
+            
+            parsed.roadmap.milestones = parsed.roadmap.milestones.map((m: any) => {
+                const milestoneDate = new Date(now.getFullYear(), now.getMonth() + (m.month_offset || 0), 1);
+                const targetDateStr = `${monthNames[milestoneDate.getMonth()]} ${milestoneDate.getFullYear()}`;
+                
+                // Re-map month_offset to target_date for the final JSON
+                const { month_offset, ...rest } = m;
+                return { ...rest, target_date: targetDateStr };
+            });
+        }
+        // --- ROADMAP HYDRATION END ---
         // --- HYDRATION END ---
 
         const outputPath = path.resolve(process.cwd(), "temp/last_ai_report_response.json");

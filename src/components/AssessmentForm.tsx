@@ -324,13 +324,33 @@ const vendorStatusOptions = [
 ];
 
 const supportOptions = [
-  { id: "su-roadmap", value: "CBN Roadmap Template completion", label: "Help completing the CBN Roadmap Template by June 10" },
-  { id: "su-policy", value: "AML/CFT/CPF policy drafting", label: "Drafting or reviewing our AML/CFT/CPF policy" },
+  { 
+    id: "su-roadmap", 
+    value: "CBN Roadmap Template completion", 
+    label: "Help completing the CBN Roadmap Template by June 10",
+    description: "Mandatory 12-section submission required for all CBN-licenced institutions."
+  },
+  { 
+    id: "su-policy", 
+    value: "AML/CFT/CPF policy drafting", 
+    label: "Drafting or reviewing our AML/CFT/CPF policy",
+    description: "Tailored policies aligned with the new 2026 Baseline Standards and ISO 42001."
+  },
   { id: "su-vendor", value: "Vendor evaluation support", label: "Vendor evaluation and AML platform selection" },
-  { id: "su-demo", value: "RegTech365 product demo", label: "Demonstration of RegPort / RegGuard / RegComply" },
+  {
+    id: "su-demo",
+    value: "RegTech365 product demo",
+    label: "Demonstration of the RegTech365 Product Suite",
+    description: "Including RegPort (AML), RegGuard (Fraud), RegComply (GRC), RegWatch (Intelligence), and RegLearn (Academy).",
+  },
   { id: "su-e2e", value: "End-to-end implementation", label: "End-to-end implementation support through March 2028" },
   { id: "su-audit", value: "Internal audit co-sourcing", label: "Internal audit co-sourcing for AML" },
-  { id: "su-training", value: "Staff AML training", label: "Staff AML training (RegLearn) with documented records" },
+  {
+    id: "su-training",
+    value: "Staff AML training",
+    label: "Staff AML training (RegLearn academy)",
+    description: "On-demand AML/CFT, DPO, and Risk tracks with management dashboards and documented records.",
+  },
   { id: "su-iso", value: "ISO alignment advisory", label: "ISO 27001 / ISO 42001 alignment advisory" },
 ];
 
@@ -339,15 +359,15 @@ const supportOptions = [
    ═══════════════════════════════════════════════════════════════════════ */
 
 const coverageItems: { key: keyof FormData; name: string; desc: string }[] = [
-  { key: "covCdd", name: "Customer Due Diligence / KYC / KYB", desc: "Automated with BVN/NIN linkage — 5.2" },
-  { key: "covSanctions", name: "Sanctions & PEP Screening", desc: "Real-time with fuzzy matching — 5.3" },
-  { key: "covTxmon", name: "Transaction Monitoring", desc: "Rules-based and/or AI/ML with alert generation — 5.5" },
-  { key: "covFraud", name: "Fraud Monitoring & Detection", desc: "Real-time across cards, e-channels, digital — 5.6" },
+  { key: "covCdd", name: "CDD, KYC and KYB", desc: "Automated with BVN/NIN linkage — 5.2" },
+  { key: "covSanctions", name: "Sanction Lists & PEP Screening", desc: "Real-time with fuzzy matching — 5.3" },
+  { key: "covTxmon", name: "Transaction Monitoring & Risk-Based Analyses", desc: "Rules-based and/or AI/ML with alert generation — 5.5" },
+  { key: "covFraud", name: "Fraud Monitoring and Detection", desc: "Real-time across cards, e-channels, digital — 5.6" },
   { key: "covCase", name: "Case Management", desc: "Enterprise ECM with maker-checker and audit trail — 5.7" },
-  { key: "covReporting", name: "Regulatory Reporting (STR/CTR/SAR/FTR)", desc: "Automated generation and goAML submission — 5.8" },
-  { key: "covRisk", name: "Customer Risk Assessment", desc: "Dynamic profiling tied to documented risk appetite — 5.4" },
-  { key: "covAudit", name: "Immutable Audit Trail & Logging", desc: "Tamper-proof logs of all events and actions — 5.9" },
-  { key: "covSecurity", name: "Data Security & NDPA Compliance", desc: "Encryption, MFA, data sovereignty, BIA — 5.11" },
+  { key: "covReporting", name: "Reporting", desc: "Automated generation (STR/CTR/SAR/FTR) — 5.8" },
+  { key: "covRisk", name: "Risk Assessment", desc: "Dynamic profiling tied to documented risk appetite — 5.4" },
+  { key: "covAudit", name: "Audit and Governance", desc: "Tamper-proof logs and configuration trails — 5.9" },
+  { key: "covSecurity", name: "Security & Data Protection", desc: "Encryption, MFA, data sovereignty, BIA — 5.11" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -612,6 +632,11 @@ const AssessmentForm: React.FC = () => {
 
       reportJson = fnData.report as AmlReportJson;
       reportJson._input = {
+        inst_name: data.instName,
+        contact_name: data.contactName,
+        contact_email: data.contactEmail,
+        contact_phone: data.contactPhone,
+        contact_role: data.contactRole,
         cbn_risk: data.cbnRisk,
         tx_vol: data.txVol,
         geo: data.geo,
