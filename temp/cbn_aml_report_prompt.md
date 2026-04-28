@@ -200,10 +200,11 @@ Deliverables must reference institution's actual gaps — not a generic list.
 
 ## PRODUCTS — ALWAYS EXACTLY THESE 4 IN THIS ORDER
 
-1. RegPort — transaction monitoring, sanctions/PEP screening, risk assessment, regulatory reporting
-2. RegGuard — real-time fraud monitoring and detection
-3. RegComply — enterprise case management, audit trail, governance logs, management reporting
-4. RegLearn — AML/compliance training with documented records
+1. RegPort — AML platform for transaction monitoring, sanctions/PEP screening, customer risk scoring, and automated regulatory reporting (5.1-5.5, 5.8, 5.10).
+2. RegGuard — Fraud monitoring for card, mobile money, and agent networks with automated risk feeds to the AML engine (5.6).
+3. RegComply — GRC and case management platform with maker-checker workflows and immutable audit trails (5.7, 5.9, 5.11, 5.12).
+4. RegWatch — Regulatory intelligence and policy monitoring for real-time compliance updates.
+5. RegLearn — Compliance academy for staff training with documented records for CBN examination (6.7).
 
 relevance_to_client must be specific to this institution's type, gaps, and risk factors.
 
@@ -358,6 +359,7 @@ Produce output matching this schema exactly. Do not add, remove, or rename any k
       { "name": "RegPort", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" },
       { "name": "RegGuard", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" },
       { "name": "RegComply", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" },
+      { "name": "RegWatch", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" },
       { "name": "RegLearn", "function": "string", "standards_addressed": "string", "relevance_to_client": "string" }
     ],
     "advisory_services": [ "string", "string", "string", "string", "string", "string" ],

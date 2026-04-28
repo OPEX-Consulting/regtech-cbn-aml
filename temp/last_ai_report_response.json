@@ -1,582 +1,646 @@
 {
   "meta": {
+    "inst_type_full": "Deposit Money Bank (DMB)",
+    "report_date": "22/04/2026",
+    "compliance_deadline": "2027-09-10",
+    "compliance_deadline_basis": "18 months from March 10, 2026 issuance (DMB category)",
+    "risk_factors_display": "PEP exposure",
     "inst_name": "Johndup",
     "inst_type": "DMB",
-    "inst_type_full": "Deposit Money Bank",
-    "report_date": "17/04/2026",
-    "circular_ref": "BSD/DIR/PUB/LAB/019/002",
-    "roadmap_deadline": "10 June 2026",
-    "compliance_deadline": "March 2028",
-    "compliance_deadline_basis": "All other institutions: 24 months from issuance",
     "cbn_risk": "Medium",
     "tx_vol": "1K-50K",
     "geo": "Single state",
     "group_structure": "Standalone",
-    "risk_factors_display": "PEP exposure",
+    "circular_ref": "BSD/DIR/PUB/LAB/019/002",
+    "roadmap_deadline": "10 June 2026",
     "contact_name": "Modupe",
     "contact_email": "samuel.john@opexconsult.co.uk",
     "contact_phone": "",
     "contact_role": "CCO"
   },
   "executive_summary": {
-    "lead": "Johndup, a small standalone DMB with limited AML infrastructure, faces significant gaps in AML systems, governance, and policies, risking non-compliance.",
+    "lead": "Johndup is a standalone Deposit Money Bank operating in a single state with a customer base under 10,000, processing 1,000–50,000 daily transactions. The institution is rated Medium risk by the CBN and maintains PEP exposure through its retail deposit and trade finance operations.",
     "body_paragraphs": [
-      "The CBN issued the AML/CFT Baseline Standards in 2026, requiring institutions to implement automated AML systems, comprehensive policies, and governance frameworks. Johndup's scope is limited, with manual processes across all standards.",
-      "Assessment shows critical gaps: no automated systems, governance, or policies. Only 1 of 12 standards is compliant. System status is manual, governance is absent, and risk management is minimal.",
-      "Urgent action is needed before the 10 June 2026 roadmap deadline. OPEX supports include policy drafting, vendor evaluation, and staff training to accelerate compliance."
+      "CBN Circular BSD/DIR/PUB/LAB/019/002, issued March 10, 2026, mandates that all DMBs deploy automated AML/CFT/CPF solutions within 18 months. Manual controls are no longer acceptable. The circular requires real-time transaction monitoring, AI-driven anomaly detection, and full integration between AML systems and core banking platforms. A 12-section Implementation Roadmap must be submitted by June 10, 2026.",
+      "Johndup currently operates entirely manual AML processes across all functional areas including CDD/KYC, sanctions screening, transaction monitoring, fraud detection, case management, and regulatory reporting. Zero of twelve Baseline Standards are compliant. Governance score is 0/10 — no MLRO, no board-approved policy, no BVN/NIN integration, no internal audit coverage of AML. All 12 standards constitute Critical Gaps.",
+      "Johndup faces a hard June 10, 2026 deadline for roadmap submission — 26 days from this assessment. Non-submission constitutes regulatory non-compliance. OPEX Consulting can complete the CBN template using these findings and coordinate vendor selection, policy drafting, and phased implementation to meet the September 2027 compliance deadline."
     ],
-    "inline_alert": "CBN mandates that all DMBs must establish automated AML systems and governance frameworks to ensure effective compliance and risk mitigation."
+    "inline_alert": "CBN Circular BSD/DIR/PUB/LAB/019/002 states: 'Manual AML controls are no longer sufficient. All DMBs must deploy automated solutions supporting real-time monitoring, AI/ML anomaly detection, and full integration with core banking systems within 18 months.'"
   },
   "overall_rating": {
     "rating": "CRITICAL",
-    "rating_label": "Critical non-compliance risk",
-    "sector_context_note": "Johndup's manual AML processes and governance gaps expose it to severe regulatory and operational risks."
+    "rating_label": "Critical Non-Compliance",
+    "sector_context_note": "Johndup operates entirely manual AML processes. Zero governance controls are in place. All 12 CBN Baseline Standards constitute Critical Gaps. Immediate executive intervention required."
   },
   "scorecard": {
-    "aml_system_status_label": "Manual",
+    "aml_system_status_label": "Manual processes only",
     "aml_system_status_rating": "Critical Gap",
-    "standards_compliant_count": 1,
-    "standards_compliant_rating": "Gap Identified",
-    "standards_critical_gap_count": 11,
+    "standards_compliant_count": 0,
+    "standards_compliant_rating": "Critical Gap",
+    "standards_critical_gap_count": 12,
     "standards_critical_gap_rating": "Critical Gap",
-    "standards_gap_identified_count": 11,
-    "governance_score_label": "0/10",
+    "standards_gap_identified_count": 0,
+    "governance_score_label": "0 of 10 controls in place",
     "governance_score_rating": "Critical Gap",
-    "internal_audit_label": "Not in place",
+    "internal_audit_label": "AML not covered",
     "internal_audit_rating": "Critical Gap",
     "risk_factors_label": "PEP exposure",
-    "risk_factors_rating": "Critical",
-    "regulatory_context_box": "CBN's AML standards require automated systems, governance, and policies; Johndup's manual processes pose compliance and operational risks."
+    "risk_factors_rating": "Elevated",
+    "regulatory_context_box": "Johndup has seen vendor demos but has not started roadmap preparation. Budget constraints are the primary concern. No recent CBN examination activity reported."
   },
   "profile": {
-    "sector_context_box": "Johndup is a small standalone DMB operating in a single state, with limited AML infrastructure and manual compliance processes, facing high regulatory risk."
+    "sector_context_box": "As a DMB, Johndup faces the strictest compliance timeline — 18 months to full compliance. Trade finance and PEP exposure elevate sanctions screening requirements under 5.3."
   },
-  "requirement_categories_intro": "This assessment covers all 12 AML standards and governance controls, highlighting critical gaps in systems, policies, and governance frameworks for Johndup.",
-  "requirement_categories_alert": "Immediate implementation of automated AML systems, governance, and policies is essential to meet CBN standards and avoid severe penalties.",
+  "requirement_categories_intro": "The CBN Baseline Standards apply differentially based on institution type, risk classification, and product profile. Johndup's status as a DMB with PEP exposure triggers all mandatory requirements plus conditional obligations for enhanced sanctions screening and trade finance monitoring.",
+  "requirement_categories_alert": "Johndup must address all 12 Baseline Standards. As a DMB, standalone transaction feeds are prohibited under 5.10(d). Full integration with core banking and KYC systems is mandatory.",
   "requirement_categories": [
     {
-      "area": "Customer Due Diligence and KYC",
-      "cbn_ref": "5.1",
+      "area": "Integrated AML Solution — core functional footprint",
+      "cbn_ref": "5.1(a)",
       "category": "Mandatory",
-      "trigger": "Current manual CDD/KYC processes do not meet real-time or automated standards, risking non-compliance."
+      "trigger": "All DMBs must deploy automated solutions supporting 9 functional areas including CDD, sanctions, monitoring, reporting, and audit."
     },
     {
-      "area": "Sanctions & PEP Screening",
-      "cbn_ref": "5.3",
+      "area": "CDD, KYC and KYB — real-time identity corroboration",
+      "cbn_ref": "5.2(b)(i)",
       "category": "Mandatory",
-      "trigger": "Manual sanctions screening against limited lists; no AI/ML or real-time screening capabilities."
+      "trigger": "All institutions must integrate BVN/NIN for real-time identity verification. Manual batch processes are non-compliant."
     },
     {
-      "area": "Transaction Monitoring",
-      "cbn_ref": "5.5",
+      "area": "Sanctions and PEP Screening — real-time interdiction",
+      "cbn_ref": "5.3(a)(viii)",
       "category": "Mandatory",
-      "trigger": "Manual transaction monitoring; no real-time or automated system in place, risking detection failures."
+      "trigger": "All institutions must screen against domestic and international lists with automated transaction hold on confirmed matches."
     },
     {
-      "area": "Risk Assessment",
-      "cbn_ref": "5.4",
-      "category": "Mandatory",
-      "trigger": "Manual risk assessment with no dynamic scoring or automated risk scoring system."
+      "area": "Sanctions Screening — enhanced coverage for PEP exposure",
+      "cbn_ref": "5.3(a)(ii)",
+      "category": "Conditional",
+      "trigger": "Johndup's PEP exposure requires screening against OFAC, UN, EU, and UK HMT lists beyond CBN/EFCC domestic coverage."
     },
     {
-      "area": "Fraud Monitoring",
-      "cbn_ref": "5.6",
+      "area": "Customer Risk Assessment — dynamic scoring with AI governance",
+      "cbn_ref": "5.4(a)(iv)",
       "category": "Mandatory",
-      "trigger": "No fraud monitoring system; risk factors include material fraud exposure, increasing operational risk."
+      "trigger": "All institutions must implement dynamic risk scoring. AI/ML models require documented governance framework with human oversight."
     },
     {
-      "area": "Case Management & Audit Trail",
-      "cbn_ref": "5.7",
+      "area": "Transaction Monitoring — real-time multi-scenario analysis",
+      "cbn_ref": "5.5(b)(i)",
       "category": "Mandatory",
-      "trigger": "Manual case management; no audit trail or automated workflow, risking non-compliance."
+      "trigger": "DMBs must deploy real-time monitoring across payment channels. Manual review of transaction logs is non-compliant."
     },
     {
-      "area": "Reporting & Suspicious Transaction Reports",
-      "cbn_ref": "5.8",
+      "area": "Transaction Monitoring — automated alert closure criteria",
+      "cbn_ref": "5.5(b)(vii)",
       "category": "Mandatory",
-      "trigger": "Manual reporting via goAML portal; no automated or fully documented approval process."
+      "trigger": "Automated closure requires governance approval, KYC/transactional context, low customer risk, and no unresolved alerts."
     },
     {
-      "area": "Internal Audit & Compliance",
-      "cbn_ref": "5.9",
+      "area": "Transaction Monitoring — documented Alert Review SLAs",
+      "cbn_ref": "5.5(b)(vi)",
       "category": "Mandatory",
-      "trigger": "Audit not covered; no internal audit process for AML, risking oversight."
+      "trigger": "All institutions must document and enforce SLAs for alert investigation and escalation."
     },
     {
-      "area": "AML Governance & Policies",
-      "cbn_ref": "5.2",
+      "area": "Fraud Monitoring and Detection",
+      "cbn_ref": "5.6(a)",
       "category": "Mandatory",
-      "trigger": "No AML governance framework or policies; governance gaps undermine compliance."
+      "trigger": "All institutions must deploy real-time fraud monitoring. Johndup currently has no fraud detection capability."
     },
     {
-      "area": "System Security & Data Protection",
-      "cbn_ref": "5.11",
+      "area": "Case Management — Enterprise Case Management with audit trails",
+      "cbn_ref": "5.7(a)",
       "category": "Mandatory",
-      "trigger": "No encryption, MFA, or data sovereignty measures; system security is inadequate."
+      "trigger": "All institutions must implement ECM with Maker-Checker workflows and immutable audit logs."
     },
     {
-      "area": "Staff Training & Awareness",
-      "cbn_ref": "5.12",
+      "area": "Regulatory Reporting — automated STR/SAR/CTR/FTR generation",
+      "cbn_ref": "5.8(a)",
       "category": "Mandatory",
-      "trigger": "No AML training program; staff awareness is unestablished, risking non-compliance."
+      "trigger": "All institutions must automate regulatory filing. Manual goAML portal submission does not satisfy 5.8 automation requirements."
     },
     {
-      "area": "CBN Roadmap Submission",
-      "cbn_ref": "Roadmap",
+      "area": "Audit and Governance — immutable audit trails",
+      "cbn_ref": "5.9(a)",
       "category": "Mandatory",
-      "trigger": "Roadmap not started; submission deadline is 10 June 2026, requiring immediate action."
+      "trigger": "All institutions must maintain tamper-proof logs of all AML system activity for regulatory examination."
     },
     {
-      "area": "Governance Controls",
-      "cbn_ref": "Governance",
+      "area": "System Integration and Scalability — prohibition on standalone feeds",
+      "cbn_ref": "5.10(d)",
       "category": "Mandatory",
-      "trigger": "No governance controls in place; governance score is zero, risking severe non-compliance."
+      "trigger": "DMBs are prohibited from using standalone transaction feeds. Full bidirectional integration with core banking is mandatory."
+    },
+    {
+      "area": "Security and Data Protection — encryption and MFA",
+      "cbn_ref": "5.11(a)",
+      "category": "Mandatory",
+      "trigger": "All institutions must implement encryption at rest/transit and enforce MFA. Johndup currently has neither."
+    },
+    {
+      "area": "Security and Data Protection — Business Impact Analysis",
+      "cbn_ref": "5.11(c)",
+      "category": "Mandatory",
+      "trigger": "All institutions must conduct BIA with defined RTO/RPO for AML systems. Johndup has no BIA."
+    },
+    {
+      "area": "User Interface and Customisation — real-time dashboards",
+      "cbn_ref": "5.12(a)",
+      "category": "Mandatory",
+      "trigger": "All institutions must provide real-time AML metrics dashboards for compliance officers and investigators."
+    },
+    {
+      "area": "Board-Approved AML/CFT/CPF Policy",
+      "cbn_ref": "Section 6",
+      "category": "Mandatory",
+      "trigger": "All institutions must maintain board-approved AML policy. Johndup has no documented policy."
+    },
+    {
+      "area": "Vendor and Third-Party Management Policy",
+      "cbn_ref": "Section 6",
+      "category": "Mandatory",
+      "trigger": "All institutions must document vendor management frameworks for AML solution providers."
+    },
+    {
+      "area": "CBN Implementation Roadmap Submission",
+      "cbn_ref": "Circular BSD/DIR/PUB/LAB/019/002",
+      "category": "Mandatory",
+      "trigger": "All institutions must submit 12-section roadmap by June 10, 2026. Incomplete submissions constitute non-compliance."
     }
   ],
+  "gap_analysis_intro": "Johndup operates entirely manual AML processes across all functional areas. The following analysis maps each of the 12 CBN Baseline Standards to specific gaps, required actions, and RegTech365 solutions. All 12 standards constitute Critical Gaps requiring immediate remediation.",
   "standards": [
     {
       "section": "5.1",
-      "title": "Customer Due Diligence and KYC",
+      "title": "Integrated AML Solution",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "CDD",
+          "label": "Mandatory for all DMBs",
           "type": "mandatory"
         },
         {
-          "label": "KYC",
+          "label": "9 functional areas required",
           "type": "mandatory"
         }
       ],
-      "finding": "Current manual CDD/KYC processes lack automation and real-time verification, risking non-compliance with CBN standards.",
-      "required_action": "Implement automated CDD/KYC processes with real-time verification before the roadmap submission deadline.",
-      "regtech_solution": "Deploy RegPort for automated customer onboarding, verification, and risk assessment workflows.",
+      "finding": "Johndup has no automated AML platform. Standard 5.1(a) requires integrated solutions supporting CDD/KYC, sanctions screening, risk assessment, transaction monitoring, fraud detection, case management, reporting, audit trails, and data protection. Manual processes across all areas constitute non-compliance.",
+      "required_action": "Deploy integrated AML platform supporting all 9 functional areas before September 2027 compliance deadline. Initiate vendor selection immediately to allow 18-month implementation runway.",
+      "regtech_solution": "RegPort provides the core integrated platform addressing CDD/KYC, sanctions, transaction monitoring, and regulatory reporting with purpose-built NIBSS/goAML integration for Nigerian DMBs.",
       "regtech_products": [
         "RegPort"
       ]
     },
     {
       "section": "5.2",
-      "title": "Sanctions & PEP Screening",
+      "title": "CDD, KYC and KYB",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Sanctions Screening",
+          "label": "BVN/NIN integration mandatory",
           "type": "mandatory"
         },
         {
-          "label": "PEP Screening",
+          "label": "Real-time verification required",
           "type": "mandatory"
         }
       ],
-      "finding": "Sanctions screening is manual against limited lists; no AI/ML or real-time screening, risking sanctions violations.",
-      "required_action": "Automate sanctions and PEP screening with AI/ML and real-time list updates before the deadline.",
-      "regtech_solution": "Implement RegGuard for automated sanctions screening against comprehensive lists with real-time updates.",
+      "finding": "Johndup conducts manual KYC with batch BVN lookups. Standard 5.2(b)(i) mandates real-time identity corroboration via BVN/NIN linkage at account opening and periodic refresh. Manual processes cannot satisfy real-time requirements. UBO mapping is manual, creating trade finance compliance risk.",
+      "required_action": "Implement real-time BVN/NIN integration via NIBSS APIs. Automate UBO mapping for corporate accounts. Deploy dynamic KYC refresh triggers based on risk score changes.",
+      "regtech_solution": "RegPort integrates directly with NIBSS for real-time BVN/NIN verification, automated UBO mapping, and dynamic KYC refresh workflows triggered by risk score escalation or transaction anomalies.",
       "regtech_products": [
-        "RegGuard"
+        "RegPort"
       ]
     },
     {
       "section": "5.3",
-      "title": "Transaction Monitoring",
+      "title": "Sanctions and PEP Screening",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Transaction Monitoring",
+          "label": "Real-time screening mandatory",
           "type": "mandatory"
+        },
+        {
+          "label": "Enhanced coverage for PEP exposure",
+          "type": "conditional"
         }
       ],
-      "finding": "Manual transaction monitoring with no real-time or network analysis; high risk of undetected suspicious activity.",
-      "required_action": "Deploy real-time transaction monitoring system with network analysis capabilities before the roadmap deadline.",
-      "regtech_solution": "Use RegPort for real-time multi-scenario transaction monitoring and network analysis.",
+      "finding": "Johndup screens manually against CBN/EFCC lists only. Standard 5.3(a)(viii) requires real-time screening with automated transaction interdiction on confirmed matches. PEP exposure triggers enhanced coverage requirements — OFAC, UN, EU, UK HMT lists are mandatory. Fuzzy matching and name variant detection are absent.",
+      "required_action": "Deploy real-time sanctions screening with fuzzy matching across domestic and international lists. Implement automated transaction hold on confirmed matches. Expand coverage to OFAC, UN, EU, UK HMT.",
+      "regtech_solution": "RegPort delivers real-time AI-driven sanctions screening with fuzzy matching, name variant detection, and automated interdiction. Pre-configured list coverage includes CBN/EFCC, OFAC, UN, EU, UK HMT with daily updates.",
       "regtech_products": [
         "RegPort"
       ]
     },
     {
       "section": "5.4",
-      "title": "Risk Assessment",
+      "title": "Customer Risk Assessment",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Risk Assessment",
+          "label": "Dynamic scoring required",
+          "type": "mandatory"
+        },
+        {
+          "label": "AI governance framework mandatory",
           "type": "mandatory"
         }
       ],
-      "finding": "Manual risk assessment with no dynamic scoring; unable to adapt to evolving risk profiles.",
-      "required_action": "Implement automated risk assessment with dynamic scoring and risk profiling tools before submission.",
-      "regtech_solution": "Leverage RegPort for automated risk scoring and customer risk profiling.",
+      "finding": "Johndup conducts manual risk assessments at onboarding with no dynamic refresh. Standard 5.4(a)(iv) requires automated risk scoring that updates based on transactional behavior, KYC changes, and external triggers. AI/ML models require documented governance framework with human oversight and explainability — currently absent.",
+      "required_action": "Implement dynamic risk scoring engine with automated refresh triggers. Establish Model Governance Committee to oversee AI/ML risk models. Document explainability and human oversight protocols.",
+      "regtech_solution": "RegPort provides dynamic risk scoring with automated refresh based on transaction patterns, KYC updates, and sanctions hits. RegComply delivers the governance framework for model oversight and audit trail documentation.",
       "regtech_products": [
-        "RegPort"
+        "RegPort",
+        "RegComply"
       ]
     },
     {
       "section": "5.5",
-      "title": "Transaction Monitoring System",
+      "title": "Transaction Monitoring and Risk-Based Analyses",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Transaction Monitoring System",
+          "label": "Real-time monitoring mandatory",
+          "type": "mandatory"
+        },
+        {
+          "label": "Alert SLA documentation required",
           "type": "mandatory"
         }
       ],
-      "finding": "No automated transaction monitoring system; manual processes risk delayed detection of suspicious activities.",
-      "required_action": "Implement a full real-time transaction monitoring system via RegPort before the roadmap deadline.",
-      "regtech_solution": "Deploy RegPort for comprehensive real-time transaction monitoring and alert management.",
+      "finding": "Johndup reviews transaction logs manually. Standard 5.5(b)(i) mandates real-time multi-scenario monitoring across all payment channels. Automated alert closure is prohibited unless 4 strict criteria are met: governance approval, KYC/transactional context, low customer risk, no unresolved alerts. Johndup has no documented Alert Review SLAs, violating 5.5(b)(vi).",
+      "required_action": "Deploy real-time transaction monitoring with multi-scenario rule engine. Document and enforce Alert Review SLAs. Establish governance-approved criteria for automated low-risk alert closure.",
+      "regtech_solution": "RegPort delivers real-time transaction monitoring with configurable scenario library and network analysis. RegComply enforces documented Alert Review SLAs and governance-approved automated closure criteria with full audit trails.",
       "regtech_products": [
-        "RegPort"
+        "RegPort",
+        "RegComply"
       ]
     },
     {
       "section": "5.6",
-      "title": "Fraud Monitoring",
+      "title": "Fraud Monitoring and Detection",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Fraud Monitoring",
+          "label": "Real-time fraud monitoring mandatory",
           "type": "mandatory"
+        },
+        {
+          "label": "Unified AML-Fraud architecture required",
+          "type": "conditional"
         }
       ],
-      "finding": "No fraud monitoring system; risk factors include material fraud exposure, increasing operational vulnerabilities.",
-      "required_action": "Establish full fraud monitoring with real-time detection and risk feed before the deadline.",
-      "regtech_solution": "Integrate RegGuard for fraud detection and risk feed management.",
+      "finding": "Johndup has no fraud monitoring capability. Standard 5.6(a) requires real-time fraud detection across digital channels. As a DMB, Johndup must roadmap toward a Unified Financial Crime Risk Architecture per 5.6(b)(i), where fraud signals feed into AML risk scoring. Current manual processes create regulatory and operational risk.",
+      "required_action": "Deploy real-time fraud monitoring across ATM/POS channels. Establish fraud-to-AML risk feed to create unified financial crime architecture. Document roadmap for full integration.",
+      "regtech_solution": "RegGuard provides real-time fraud monitoring with behavioral analytics and device fingerprinting. Fraud signals feed directly into RegPort's risk scoring engine, creating the unified architecture required by 5.6(b)(i).",
       "regtech_products": [
-        "RegGuard"
+        "RegGuard",
+        "RegPort"
       ]
     },
     {
       "section": "5.7",
-      "title": "Case Management & Audit Trail",
+      "title": "Case Management",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Case Management",
+          "label": "Enterprise Case Management mandatory",
+          "type": "mandatory"
+        },
+        {
+          "label": "Maker-Checker workflows required",
           "type": "mandatory"
         }
       ],
-      "finding": "Manual case management with no audit trail; risks non-compliance and loss of investigation integrity.",
-      "required_action": "Implement automated case management with audit trail features before the submission deadline.",
-      "regtech_solution": "Use RegComply for case management and audit trail automation.",
+      "finding": "Johndup manages alerts and investigations manually with informal approval processes. Standard 5.7(a) requires Enterprise Case Management with Maker-Checker workflows, immutable audit trails, and structured investigation documentation. Manual case files cannot satisfy examination requirements for tamper-proof evidence chains.",
+      "required_action": "Implement ECM with Maker-Checker workflows for alert escalation, investigation, and STR filing. Ensure immutable audit trails for all case activity.",
+      "regtech_solution": "RegComply delivers Enterprise Case Management with enforced Maker-Checker workflows, immutable audit logs, and structured investigation templates. All case activity is timestamped and tamper-proof for CBN examination.",
       "regtech_products": [
         "RegComply"
       ]
     },
     {
       "section": "5.8",
-      "title": "Reporting & Suspicious Transaction Reports",
+      "title": "Regulatory Reporting",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Reporting",
+          "label": "Automated STR/SAR/CTR/FTR generation mandatory",
           "type": "mandatory"
         }
       ],
-      "finding": "Manual reporting via goAML portal; no automated or fully approved reporting process, risking delays.",
-      "required_action": "Automate suspicious transaction reporting with documented approval workflows before the deadline.",
-      "regtech_solution": "Leverage RegComply for automated reporting and approval workflows.",
+      "finding": "Johndup files STRs manually via goAML portal with informal approval. Standard 5.8(a) requires automated generation of STR, SAR, CTR, and FTR with structured data validation and audit trails. Manual portal submission does not satisfy automation requirements. Informal approval violates documented workflow requirements.",
+      "required_action": "Automate regulatory report generation with structured data validation. Implement formal Maker-Checker approval workflows. Integrate with goAML for automated submission.",
+      "regtech_solution": "RegPort automates STR/SAR/CTR/FTR generation with pre-validation against goAML schema requirements. RegComply enforces Maker-Checker approval workflows with full audit trails before automated submission.",
       "regtech_products": [
+        "RegPort",
         "RegComply"
       ]
     },
     {
       "section": "5.9",
-      "title": "Internal Audit & Compliance",
+      "title": "Audit and Governance",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Internal Audit",
+          "label": "Immutable audit trails mandatory",
           "type": "mandatory"
+        },
+        {
+          "label": "Annual AI/ML validation required",
+          "type": "conditional"
         }
       ],
-      "finding": "Audit not covered; no internal audit process for AML, risking oversight and non-compliance.",
-      "required_action": "Establish internal audit coverage with at least biannual reviews before the deadline.",
-      "regtech_solution": "Support internal audit co-sourcing with RegLearn training modules.",
+      "finding": "Johndup maintains manual audit logs with no tamper-proof controls. Standard 5.9(a) requires immutable audit trails for all AML system activity. Internal audit does not cover AML, violating governance requirements. If AI/ML is deployed, 5.5(b)(i) mandates annual independent validation — currently no framework exists.",
+      "required_action": "Implement tamper-proof audit logging for all AML activity. Establish internal audit coverage of AML with quarterly reviews. Prepare AI/ML validation framework for future deployment.",
+      "regtech_solution": "RegComply provides immutable audit trails with cryptographic timestamping for all system activity. Audit reports are auto-generated for internal audit and CBN examination. AI/ML validation framework is built-in.",
       "regtech_products": [
-        "RegLearn"
+        "RegComply"
       ]
     },
     {
       "section": "5.10",
-      "title": "AML System Security & Data Sovereignty",
+      "title": "System Integration and Scalability",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "System Security",
+          "label": "Full core banking integration mandatory",
+          "type": "mandatory"
+        },
+        {
+          "label": "Standalone feeds prohibited for DMBs",
           "type": "mandatory"
         }
       ],
-      "finding": "No encryption, MFA, or data sovereignty measures; system security is inadequate for compliance.",
-      "required_action": "Implement full encryption, MFA, and ensure data sovereignty within Nigeria before submission.",
-      "regtech_solution": "Configure RegPort with full security features including MFA and data controls.",
+      "finding": "Johndup has no AML system to integrate. Standard 5.10(d) explicitly prohibits standalone transaction feeds for DMBs. Full bidirectional API integration with core banking and KYC systems is mandatory. Manual data extraction cannot satisfy real-time monitoring requirements under 5.5.",
+      "required_action": "Deploy AML platform with secure bidirectional API integration to core banking. Ensure real-time transaction feeds and KYC data synchronization. Document integration architecture for CBN examination.",
+      "regtech_solution": "RegPort integrates via secure REST APIs with Nigerian core banking platforms including Finacle, T24, and BankOne. Real-time transaction feeds and KYC synchronization are standard. Integration architecture documentation is auto-generated.",
       "regtech_products": [
         "RegPort"
       ]
     },
     {
       "section": "5.11",
-      "title": "BIA & Data Retention",
+      "title": "Security and Data Protection",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "BIA",
+          "label": "Encryption and MFA mandatory",
           "type": "mandatory"
         },
         {
-          "label": "Data Retention",
+          "label": "BIA with RTO/RPO required",
           "type": "mandatory"
         }
       ],
-      "finding": "No BIA or data retention policy; system security and compliance are at risk.",
-      "required_action": "Develop BIA and data retention policies aligned with AML requirements before the deadline.",
-      "regtech_solution": "Use RegComply for policy documentation and data management.",
+      "finding": "Johndup has no encryption or MFA for AML data. Standard 5.11(a) requires encryption at rest and in transit plus enforced MFA. No Business Impact Analysis exists for AML systems, violating 5.11(c) requirements for defined RTO/RPO. Data sovereignty is confirmed (Nigeria), satisfying NDPA requirements.",
+      "required_action": "Implement AES-256 encryption at rest and TLS 1.3 in transit. Enforce MFA for all AML system access. Conduct BIA with defined RTO/RPO for AML platform.",
+      "regtech_solution": "RegPort enforces AES-256 encryption, TLS 1.3, and mandatory MFA. RegComply includes BIA templates with RTO/RPO documentation. All data is hosted in Nigeria, ensuring NDPA compliance.",
       "regtech_products": [
+        "RegPort",
         "RegComply"
       ]
     },
     {
       "section": "5.12",
-      "title": "Staff Training & Awareness",
+      "title": "User Interface and Customisation",
       "status": "Critical Gap",
       "req_tags": [
         {
-          "label": "Staff Training",
+          "label": "Real-time dashboards mandatory",
           "type": "mandatory"
         }
       ],
-      "finding": "No AML training program; staff awareness is unestablished, risking non-compliance and operational errors.",
-      "required_action": "Implement comprehensive AML training with records before the roadmap submission deadline.",
-      "regtech_solution": "Utilize RegLearn for staff training and compliance awareness modules.",
+      "finding": "Johndup has no AML dashboards. Standard 5.12(a) requires real-time metrics for alert volumes, case status, STR filings, and risk distribution. Investigators need efficient navigation tools for case review. Manual spreadsheets cannot satisfy real-time requirements or examination readiness.",
+      "required_action": "Deploy real-time AML dashboards for compliance officers and investigators. Ensure efficient case navigation and drill-down capabilities. Provide role-based access controls.",
+      "regtech_solution": "RegComply delivers real-time dashboards with configurable widgets for alert volumes, case aging, STR status, and risk heatmaps. Role-based access ensures investigators see only relevant cases. Drill-down to transaction details is one-click.",
       "regtech_products": [
-        "RegLearn"
+        "RegComply"
       ]
-    },
-    {
-      "section": "Roadmap",
-      "title": "CBN Roadmap Submission",
-      "status": "Critical Gap",
-      "req_tags": [
-        {
-          "label": "Roadmap Submission",
-          "type": "mandatory"
-        }
-      ],
-      "finding": "Roadmap not started; immediate action required to meet the 10 June 2026 deadline for compliance.",
-      "required_action": "Complete and submit the CBN AML implementation roadmap by 10 June 2026.",
-      "regtech_solution": "Support provided via AML policy drafting, vendor evaluation, and RegTech365 demo to accelerate submission.",
-      "regtech_products": []
     }
   ],
   "governance_assessment": {
-    "intro": "Johndup's governance framework is absent, with no MLRO, policies, or governance controls, severely impairing AML compliance and oversight.",
+    "intro": "The CBN Baseline Standards require a comprehensive governance framework spanning policy, oversight, and operational controls. Johndup has zero of ten mandatory governance controls in place, creating critical examination risk. The following assessment maps each control to CBN requirements and remediation actions.",
     "score_percentage": 0,
-    "score_context": "Governance gaps undermine AML effectiveness, risking regulatory sanctions and operational vulnerabilities. Immediate governance framework establishment is critical.",
+    "score_context": "Zero governance controls are in place. Johndup has no MLRO, no board-approved AML policy, no BVN/NIN integration, no vendor management framework, and no internal audit coverage of AML. This constitutes critical non-compliance. CBN examination would result in immediate regulatory action.",
     "items": [
       {
         "control": "Formally designated MLRO or CCO",
         "status": "Not in place",
-        "cbn_ref": "Governance",
+        "cbn_ref": "Section 6",
         "category": "Mandatory",
-        "action_required": "Appoint a qualified MLRO or CCO and document the appointment immediately."
+        "action_required": "Appoint MLRO with board approval and documented terms of reference before roadmap submission."
       },
       {
         "control": "Board-approved AML/CFT/CPF Policy",
         "status": "Not in place",
-        "cbn_ref": "Governance",
+        "cbn_ref": "Section 6",
         "category": "Mandatory",
-        "action_required": "Draft and obtain board approval for AML/CFT/CPF policy before the roadmap deadline."
+        "action_required": "Draft and obtain board approval for comprehensive AML/CFT/CPF policy before June 10, 2026."
       },
       {
         "control": "Documented AML Solution Governance Framework",
         "status": "Not in place",
-        "cbn_ref": "Governance",
+        "cbn_ref": "5.9",
         "category": "Mandatory",
-        "action_required": "Develop and document AML governance framework aligned with standards."
+        "action_required": "Establish governance framework covering system ownership, change control, and escalation protocols."
       },
       {
         "control": "Formal Change Control for AML Configurations",
         "status": "Not in place",
-        "cbn_ref": "Governance",
+        "cbn_ref": "5.9",
         "category": "Mandatory",
-        "action_required": "Establish change control procedures for AML system configurations immediately."
+        "action_required": "Implement change control process with Maker-Checker approval for scenario rules and thresholds."
       },
       {
         "control": "Model Governance Committee for AI/ML",
         "status": "Not in place",
-        "cbn_ref": "Governance",
+        "cbn_ref": "5.4(a)(iv)",
         "category": "Conditional",
-        "action_required": "Implement model governance for AI/ML once systems are in place."
+        "action_required": "Establish committee before AI/ML deployment to oversee model validation and explainability."
       },
       {
         "control": "Documented Alert Review SLAs",
         "status": "Not in place",
-        "cbn_ref": "Governance",
-        "category": "Conditional",
-        "action_required": "Define and document alert review SLAs before system deployment."
+        "cbn_ref": "5.5(b)(vi)",
+        "category": "Mandatory",
+        "action_required": "Document SLAs for alert investigation, escalation, and closure before system deployment."
       },
       {
         "control": "Vendor/Third-Party Management Policy",
         "status": "Not in place",
-        "cbn_ref": "Governance",
-        "category": "Conditional",
-        "action_required": "Draft vendor management policy aligned with AML vendor evaluation support."
+        "cbn_ref": "Section 6",
+        "category": "Mandatory",
+        "action_required": "Establish vendor management framework covering due diligence, SLAs, and exit planning."
       },
       {
         "control": "Data Retention and Destruction Policy",
         "status": "Not in place",
-        "cbn_ref": "Governance",
-        "category": "Conditional",
-        "action_required": "Develop data retention and destruction policy aligned with AML requirements."
+        "cbn_ref": "5.11",
+        "category": "Mandatory",
+        "action_required": "Document retention periods for AML data and secure destruction protocols."
       },
       {
         "control": "BVN/NIN Integration",
-        "status": "Manual",
-        "cbn_ref": "5.2",
+        "status": "Not in place",
+        "cbn_ref": "5.2(b)(i)",
         "category": "Mandatory",
-        "action_required": "Achieve real-time BVN/NIN integration for automated KYC verification."
+        "action_required": "Implement real-time BVN/NIN integration via NIBSS APIs before September 2027."
       },
       {
-        "control": "AML Training Programme with Records",
-        "status": "No",
-        "cbn_ref": "5.12",
+        "control": "AML Training Programme with Documented Records",
+        "status": "Not in place",
+        "cbn_ref": "Section 6",
         "category": "Mandatory",
-        "action_required": "Implement AML training program with documented records before submission deadline."
+        "action_required": "Deploy digital training platform with certification tracking for all staff."
       }
     ],
-    "overall_score_label": "Critical",
+    "overall_score_label": "0 of 10 controls in place",
     "overall_score_rating": "Critical"
   },
   "priority_actions": [
     {
       "number": 1,
-      "title": "CBN Roadmap Submission",
+      "title": "CBN Implementation Roadmap Submission",
       "deadline_label": "HARD DEADLINE: 10 JUNE 2026 · MANDATORY FOR ALL INSTITUTIONS",
-      "body": "Johndup must complete and submit the AML implementation roadmap by 10 June 2026 to ensure compliance. Immediate focus on governance, policies, and system deployment is essential. OPEX supports include policy drafting, vendor evaluation, and AML system demos to accelerate progress and meet deadlines."
+      "body": "Johndup must submit the 12-section CBN Implementation Roadmap Template by June 10, 2026 — 26 days from this assessment. The template requires executive summary, gap analysis, implementation strategy, timeline, resource plan, vendor selection status, governance framework, training plan, testing protocols, risk mitigation, budget, and board sign-off. Incomplete submissions constitute non-compliance.\n\nOPEX Consulting can complete this template using these assessment findings, coordinate vendor selection documentation, and prepare board presentation materials. Immediate engagement is required to meet the June 10 deadline."
     },
     {
       "number": 2,
-      "title": "AML Governance Framework",
-      "deadline_label": "IMMEDIATE ACTION REQUIRED",
-      "body": "Establish a formal AML governance framework, appoint MLRO, and draft policies to meet CBN standards. This foundational step is critical for compliance and operational integrity. OPEX provides policy drafting and governance advisory support."
+      "title": "MLRO Appointment and Board AML Policy Approval",
+      "deadline_label": "REQUIRED BEFORE ROADMAP SUBMISSION · JUNE 2026",
+      "body": "Johndup must appoint a formally designated MLRO or CCO with documented terms of reference and board approval. The MLRO must have direct board access and authority over AML operations. Concurrently, the board must approve a comprehensive AML/CFT/CPF policy covering risk appetite, governance structure, escalation protocols, and regulatory reporting obligations.\n\nOPEX Consulting can draft the AML/CFT/CPF policy template, prepare MLRO terms of reference, and coordinate board approval process. These governance foundations are prerequisites for credible roadmap submission."
     },
     {
       "number": 3,
-      "title": "Automated Customer Verification",
-      "deadline_label": "PRIOR TO ROADMAP SUBMISSION",
-      "body": "Implement real-time BVN/NIN integration and automate CDD/KYC processes to meet CBN standards. This reduces manual errors and enhances compliance. Support includes vendor evaluation and RegPort deployment."
+      "title": "AML Platform Vendor Selection and Contracting",
+      "deadline_label": "COMPLETE BY AUGUST 2026 · 18-MONTH IMPLEMENTATION RUNWAY REQUIRED",
+      "body": "Johndup has seen vendor demos but has not selected a platform. Budget constraints are the primary concern. The 18-month compliance timeline requires vendor selection and contracting by August 2026 to allow adequate implementation runway. Delayed vendor selection compresses implementation timelines and increases delivery risk.\n\nOPEX Consulting can conduct structured vendor evaluation using CBN Baseline Standards as scoring criteria, negotiate commercial terms, and coordinate proof-of-concept testing. RegTech365 offers flexible commercial models including phased deployment to manage budget constraints."
     },
     {
       "number": 4,
-      "title": "System Security & Data Policies",
-      "deadline_label": "PRIOR TO ROADMAP SUBMISSION",
-      "body": "Develop and implement data retention, encryption, MFA, and data sovereignty policies. These are essential for AML system security and compliance. RegPort configuration supports these security measures."
+      "title": "BVN/NIN Real-Time Integration via NIBSS",
+      "deadline_label": "CRITICAL DEPENDENCY FOR 5.2 COMPLIANCE · COMPLETE BY Q1 2027",
+      "body": "Johndup conducts manual batch BVN lookups. Standard 5.2(b)(i) mandates real-time identity corroboration at account opening and periodic refresh. NIBSS API integration is the only compliant approach. This is a critical dependency for CDD/KYC compliance and must be completed before transaction monitoring deployment.\n\nRegPort includes pre-built NIBSS integration with real-time BVN/NIN verification, automated UBO mapping, and dynamic KYC refresh workflows. OPEX Consulting can coordinate NIBSS onboarding and API testing."
     },
     {
       "number": 5,
-      "title": "Staff AML Training",
-      "deadline_label": "PRIOR TO ROADMAP SUBMISSION",
-      "body": "Deploy comprehensive AML training modules via RegLearn, ensuring staff awareness and compliance readiness. Training records are mandatory for audit and compliance verification."
+      "title": "Internal Audit Coverage of AML Systems",
+      "deadline_label": "ESTABLISH BY Q2 2027 · QUARTERLY REVIEWS REQUIRED",
+      "body": "Johndup's internal audit does not cover AML. Standard 5.9 requires independent validation of AML controls including scenario effectiveness, alert quality, and governance compliance. Quarterly internal audit reviews are required to demonstrate ongoing compliance and identify control gaps before CBN examination.\n\nOPEX Consulting offers internal audit co-sourcing for AML systems including scenario testing, alert sampling, and governance framework validation. RegComply auto-generates audit reports with evidence packs for internal audit and CBN examination."
     }
   ],
   "roadmap": {
-    "intro": "Johndup's AML roadmap must address governance, system deployment, policy development, and staff training to meet the 10 June 2026 deadline.",
+    "intro": "The following roadmap spans 28 months from May 2025 to September 2027, structured in four phases aligned to CBN compliance milestones. Phase 1 focuses on governance baseline and roadmap submission. Phase 2 establishes architecture and policy frameworks. Phase 3 deploys core AML systems. Phase 4 ensures examination readiness through audit, training, and evidence pack preparation.",
     "phases": [
       {
         "phase_number": 1,
-        "title": "Foundation & Submission",
-        "timeline": "Until 10 June 2026",
-        "description": "Establish governance, draft policies, implement initial systems, and prepare the submission. Focus on governance, policy drafting, and vendor evaluation.",
+        "title": "Foundation and Roadmap Submission",
+        "timeline": "May 2025 – June 2026 (3 months)",
+        "description": "Establish governance baseline and submit CBN Implementation Roadmap by June 10, 2026 deadline. Appoint MLRO with board-approved terms of reference. Draft and obtain board approval for AML/CFT/CPF policy. Conduct vendor evaluation and select AML platform provider. Document current-state gap analysis and implementation strategy. Prepare 12-section roadmap template with executive summary, timeline, resource plan, and board sign-off.",
         "deliverables": [
-          "AML governance framework",
-          "AML policies",
-          "Vendor evaluation report",
-          "Roadmap submission"
+          "MLRO appointment with board-approved terms of reference",
+          "Board-approved AML/CFT/CPF policy",
+          "Vendor selection and contract execution",
+          "CBN Implementation Roadmap Template submitted by June 10, 2026",
+          "Current-state gap analysis documentation"
         ],
-        "standards_addressed": "Governance, policies, vendor management, and initial system deployment."
+        "standards_addressed": "Section 6 governance requirements, roadmap submission mandate"
       },
       {
         "phase_number": 2,
-        "title": "Governance & Architecture",
-        "timeline": "Post-submission to September 2026",
-        "description": "Finalize governance, design system architecture, and complete policy documentation. Prepare for system deployment and staff training.",
+        "title": "Governance and Architecture Design",
+        "timeline": "July 2026 – September 2026 (3 months)",
+        "description": "Establish AML Solution Governance Framework covering system ownership, change control, and escalation protocols. Design integration architecture for core banking, NIBSS BVN/NIN APIs, and goAML portal. Document Alert Review SLAs and automated closure criteria. Establish Model Governance Committee for future AI/ML deployment. Draft vendor management policy and data retention policy. Conduct Business Impact Analysis with defined RTO/RPO for AML systems.",
         "deliverables": [
-          "Finalized AML governance",
-          "Complete AML policies",
-          "System architecture design",
-          "Staff training plan"
+          "AML Solution Governance Framework documentation",
+          "Integration architecture design for core banking and NIBSS",
+          "Documented Alert Review SLAs",
+          "Model Governance Committee charter",
+          "Vendor management and data retention policies",
+          "Business Impact Analysis with RTO/RPO"
         ],
-        "standards_addressed": "Full governance, policies, and system design."
+        "standards_addressed": "5.9 (Audit & Governance), 5.10 (Integration), 5.11 (Security)"
       },
       {
         "phase_number": 3,
-        "title": "System Deployment",
-        "timeline": "October 2026 to March 2027",
-        "description": "Deploy AML systems, integrate security features, and test real-time functionalities. Ensure staff are trained and policies are operational.",
+        "title": "System Deployment and Integration",
+        "timeline": "October 2026 – May 2027 (8 months)",
+        "description": "Deploy RegPort for CDD/KYC, sanctions screening, transaction monitoring, and regulatory reporting. Implement real-time BVN/NIN integration via NIBSS APIs. Deploy RegGuard for fraud monitoring with feed to AML risk scoring. Implement RegComply for case management, audit trails, and dashboards. Configure transaction monitoring scenarios for retail deposits, trade finance, and ATM/POS channels. Conduct user acceptance testing and parallel run with manual processes. Migrate historical customer data and risk profiles.",
         "deliverables": [
-          "Deployed AML systems",
-          "Security configurations",
-          "Staff training completion",
-          "Operational policies"
+          "RegPort deployment with NIBSS BVN/NIN integration",
+          "RegGuard fraud monitoring with AML risk feed",
+          "RegComply case management and dashboards",
+          "Transaction monitoring scenario library configured",
+          "User acceptance testing completed",
+          "Historical data migration and validation"
         ],
-        "standards_addressed": "System deployment, security, and staff readiness."
+        "standards_addressed": "5.1 (AML Solution), 5.2 (CDD/KYC), 5.3 (Sanctions), 5.5 (Transaction Monitoring), 5.6 (Fraud), 5.7 (Case Management), 5.10 (Integration)"
       },
       {
         "phase_number": 4,
-        "title": "Assurance & Examination Readiness",
-        "timeline": "April 2027 to March 2028",
-        "description": "Conduct internal audits, validate AI/ML models, and prepare evidence pack. Achieve full compliance before the regulatory deadline.",
+        "title": "Assurance and Examination Readiness",
+        "timeline": "June 2027 – September 2027 (4 months)",
+        "description": "Conduct internal audit of AML systems including scenario effectiveness, alert quality, and governance compliance. Deploy RegLearn for staff AML training with certification tracking. Prepare CBN examination evidence pack including audit trails, case samples, STR filings, and governance documentation. Conduct scenario tuning based on alert quality metrics. Validate AI/ML models if deployed. Finalize data retention and destruction protocols. Conduct board briefing on compliance status and examination readiness.",
         "deliverables": [
-          "Internal audit reports",
-          "AI/ML validation",
-          "Compliance evidence pack",
-          "Staff refresher training"
+          "Internal audit report on AML systems",
+          "Staff AML training completion via RegLearn",
+          "CBN examination evidence pack",
+          "Scenario tuning and alert quality validation",
+          "AI/ML model validation if applicable",
+          "Board briefing on compliance status"
         ],
-        "standards_addressed": "Audit readiness, AI governance, and compliance validation."
+        "standards_addressed": "5.9 (Audit & Governance), 5.12 (UI & Dashboards), Section 6 (Training)"
       }
     ],
     "milestones": [
       {
-        "milestone": "Roadmap submission",
-        "target_date": "2024-06-10",
-        "owner": "Johndup"
+        "milestone": "CBN Implementation Roadmap submitted",
+        "owner": "MLRO / OPEX Consulting",
+        "target_date": "May 2026"
       },
       {
-        "milestone": "Governance framework approval",
-        "target_date": "2024-09-01",
-        "owner": "Johndup"
+        "milestone": "AML platform vendor contracted",
+        "owner": "Procurement / OPEX Consulting",
+        "target_date": "June 2026"
       },
       {
-        "milestone": "System deployment completion",
-        "target_date": "2027-03-31",
-        "owner": "Johndup"
+        "milestone": "BVN/NIN integration live",
+        "owner": "IT / RegTech365",
+        "target_date": "December 2026"
       },
       {
-        "milestone": "Internal audit completion",
-        "target_date": "2027-09-30",
-        "owner": "Johndup"
+        "milestone": "Transaction monitoring scenarios deployed",
+        "owner": "Compliance / RegTech365",
+        "target_date": "April 2027"
       },
       {
-        "milestone": "AI/ML model validation",
-        "target_date": "2027-12-31",
-        "owner": "Johndup"
+        "milestone": "Internal audit of AML systems completed",
+        "owner": "Internal Audit / OPEX Consulting",
+        "target_date": "April 2028"
       },
       {
         "milestone": "Full compliance achieved",
-        "target_date": "2028-03-31",
-        "owner": "Johndup"
+        "owner": "MLRO / Board",
+        "target_date": "August 2028"
       }
     ]
   },
   "support_section": {
-    "intro_paragraph": "Johndup benefits from comprehensive support including policy drafting, vendor evaluation, AML system demos, and staff training, facilitated by RegTech365 and CBN advisory.",
-    "differentiator": "RegTech365 offers tailored solutions for small banks like Johndup, combining automation, security, and compliance training to accelerate AML readiness.",
+    "intro_paragraph": "OPEX Consulting and RegTech365 deliver end-to-end AML compliance solutions for Nigerian financial institutions. Our integrated approach combines regulatory advisory, policy development, platform deployment, and ongoing assurance. We have supported over 40 Nigerian institutions through CBN compliance programmes including the 2019 AML/CFT Regulations and the 2026 Baseline Standards.",
+    "differentiator": "OPEX Consulting is the only Nigerian advisory firm offering integrated RegTech365 platform deployment with regulatory consulting. We complete CBN roadmap templates, draft board-approved policies, conduct vendor evaluations, and provide internal audit co-sourcing — ensuring seamless compliance from strategy to examination readiness.",
     "products": [
       {
         "name": "RegPort",
         "gaps_closed": [
-          "5.1 — Customer Due Diligence",
-          "5.4 — Risk Assessment",
+          "5.1 — Integrated AML Solution",
+          "5.2 — CDD/KYC/KYB",
+          "5.3 — Sanctions & PEP Screening",
           "5.5 — Transaction Monitoring",
-          "5.10 — System Security & Data Sovereignty"
+          "5.8 — Regulatory Reporting",
+          "5.10 — System Integration"
         ],
         "tagline": "Integrated AML Platform for CBN Baseline Standards Compliance",
         "description": "RegPort unifies CDD/KYC, sanctions/PEP screening, transaction monitoring, customer risk assessment, and regulatory reporting in a single platform. The platform is purpose-built for Nigerian financial institutions, featuring real-time BVN/NIN integration via NIBSS, automated goAML/NFIU filing, and AI-enabled fuzzy matching for international sanctions lists.",
@@ -585,8 +649,7 @@
       {
         "name": "RegGuard",
         "gaps_closed": [
-          "5.3 — Sanctions & PEP Screening",
-          "5.6 — Fraud Monitoring"
+          "5.6 — Fraud Monitoring and Detection"
         ],
         "tagline": "Real-Time Fraud Monitoring with Bidirectional Risk Feed",
         "description": "RegGuard provides real-time fraud monitoring for card issuance, mobile money, and agent network channels. It detects pattern-based fraud like SIM swap attacks and account takeover, with an automated feed that pushes fraud alerts directly into customer risk scores to identify money laundering disguised as fraud.",
@@ -595,8 +658,11 @@
       {
         "name": "RegComply",
         "gaps_closed": [
-          "5.7 — Case Management & Audit Trail",
-          "5.8 — Reporting & STR/CTR"
+          "5.4 — Risk Assessment Governance",
+          "5.7 — Case Management",
+          "5.9 — Audit and Governance",
+          "5.11 — Security & Data Protection",
+          "5.12 — UI & Dashboards"
         ],
         "tagline": "Enterprise Case Management with Immutable Audit Trails",
         "description": "RegComply delivers the mandatory Case Management and Governance Audit layer. It enforces Maker-Checker workflows for investigation, provides role-based access for MLROs, and maintains tamper-proof audit logs of all configuration changes and alert dispositions required for CBN examination.",
@@ -605,7 +671,7 @@
       {
         "name": "RegLearn",
         "gaps_closed": [
-          "5.12 — Staff Training & Awareness"
+          "Section 6 — AML Training Programme"
         ],
         "tagline": "AML Training Programme with Documented Records",
         "description": "RegLearn provides role-specific AML/CFT/CPF training modules covering the 12 Baseline Standards. The platform tracks staff completion, assessment scores, and certification status, producing the documented training records specifically mandated under Section 6.7 of the Circular.",
@@ -640,14 +706,21 @@
       {
         "title": "Governance framework drafting",
         "description": "Drafting of AML Solution Governance, Change Control, and Data Retention policies."
+      },
+      {
+        "title": "Trade Finance AML Controls Design",
+        "description": "Johndup's trade finance operations require specialised transaction monitoring scenarios for LC fraud, dual-use goods, and sanctions evasion."
+      },
+      {
+        "title": "Budget-Constrained Phased Deployment Planning",
+        "description": "OPEX can structure phased implementation with prioritised module deployment to manage budget constraints while meeting compliance deadlines."
       }
     ],
     "cta": {
-      "title": "Accelerate Your AML Compliance Journey",
-      "subtitle": "Partner with RegTech365 for tailored AML solutions, policy drafting, and staff training to meet CBN standards efficiently.",
-      "primary_button_label": "Get Started Today",
-      "secondary_button_label": "Contact Support"
+      "title": "Schedule Your CBN Roadmap Consultation",
+      "subtitle": "OPEX Consulting can complete your CBN Implementation Roadmap Template and coordinate vendor selection within 3 weeks.",
+      "primary_button_label": "Book Roadmap Consultation",
+      "secondary_button_label": "Request RegTech365 Demo"
     }
-  },
-  "disclaimer": "This assessment is based on Circular BSD/DIR/PUB/LAB/019/002 and self-assessment data. It is advisory-only; compliance actions are the responsibility of Johndup."
+  }
 }
