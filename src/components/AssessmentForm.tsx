@@ -327,7 +327,7 @@ const supportOptions = [
   { id: "su-roadmap", value: "CBN Roadmap Template completion", label: "Help completing the CBN Roadmap Template by June 10" },
   { id: "su-policy", value: "AML/CFT/CPF policy drafting", label: "Drafting or reviewing our AML/CFT/CPF policy" },
   { id: "su-vendor", value: "Vendor evaluation support", label: "Vendor evaluation and AML platform selection" },
-  { id: "su-demo", value: "RegTech365 product demo", label: "Demonstration of RegPort / RegGuard / RegComply" },
+  { id: "su-demo", value: "RegTech365 product demo", label: "Demonstration of RegPort (Integrated AML), RegGuard (Fraud Monitoring), and RegComply (Case Management)" },
   { id: "su-e2e", value: "End-to-end implementation", label: "End-to-end implementation support through March 2028" },
   { id: "su-audit", value: "Internal audit co-sourcing", label: "Internal audit co-sourcing for AML" },
   { id: "su-training", value: "Staff AML training", label: "Staff AML training (RegLearn) with documented records" },
