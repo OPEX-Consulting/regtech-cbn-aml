@@ -510,6 +510,7 @@ const AssessmentForm: React.FC = () => {
         if (!d.contactEmail.trim()) errs.push("Work email is required");
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contactEmail)) errs.push("Please enter a valid email");
         if (!d.contactRole.trim()) errs.push("Role is required");
+        if (!d.contactPhone.trim()) errs.push("Phone number is required");
         if (!d.instType) errs.push("Please select an institution type");
         if (!d.marketingConsent) errs.push("Please consent to receive regulatory updates to proceed");
         break;
@@ -773,7 +774,7 @@ const AssessmentForm: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <TextField label="Work email" value={data.contactEmail} onChange={(v) => update("contactEmail", v)} placeholder="name@institution.com" type="email" />
-            <TextField label="Phone (optional)" value={data.contactPhone} onChange={(v) => update("contactPhone", v)} placeholder="+234…" type="tel" />
+            <TextField label="Phone number" value={data.contactPhone} onChange={(v) => update("contactPhone", v)} placeholder="+234…" type="tel" />
           </div>
           <TextField label="Your role / title" value={data.contactRole} onChange={(v) => update("contactRole", v)} placeholder="e.g. Chief Compliance Officer" />
           <RadioGroupField label="Institution type" name="inst-type" options={institutionTypes} value={data.instType} onChange={(v) => update("instType", v)} columns={2} />
